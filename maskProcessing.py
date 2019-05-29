@@ -20,7 +20,7 @@ def processMasks(red, yellow, depth):
 
 	conesDepth = cv2.bitwise_and(depth, depth, mask=red+yellow)
 	planeDistance = findMin(conesDepth, 0.7)
-	print("First plane distance: ", planeDistance)
+	#print("First plane distance: ", planeDistance)
 
 	if planeDistance == 0:
 		return None
@@ -33,11 +33,12 @@ def processMasks(red, yellow, depth):
 			if abs(conesDepth[hz][px] - planeDistance) < 0.3:
 				markedPixels[hz][px] = 255
 				count+=1
-	print("Marked total: ", count)
 		#print()
 
 	firstRed = cv2.bitwise_and(red, red, mask=markedPixels)
-
+	firstYellow = cv2.bitwise_and(yellow, yellow, mask=markedPixels)
+	"""
+	print("Marked total: ", count)	
 	countAgain = 0 
 	for element in firstRed:
 		for pixel in element:
@@ -45,26 +46,20 @@ def processMasks(red, yellow, depth):
 				countAgain += 1 
 	print("Actual red: ", countAgain)
 
-	firstYellow = cv2.bitwise_and(yellow, yellow, mask=markedPixels)
 
 	countAgain = 0 
 	for element in firstRed:
 		for pixel in element:
 			if pixel != 0:
 				countAgain += 1 
-	print("Actual yellow: ", countAgain)
-
-	time.sleep(1)
+	print("Actual yellow: ", countAgain)"""
 	cv2.imshow("red", red)
 	cv2.imshow("yellow", yellow)
 	cv2.imshow("depth", conesDepth)
 	cv2.imshow("firstRed", firstRed)
 	cv2.imshow("firstYellow", firstYellow)
-	time.sleep(1)
-
 	cv2.waitKey(10)
-	input()
-	
+	#input()	
 
 if __name__ == "__main__":
 	pass

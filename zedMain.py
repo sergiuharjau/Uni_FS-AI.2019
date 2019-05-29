@@ -4,6 +4,7 @@ import pyzed.sl as sl
 import cv2
 import time
 from colourDetection import findColour
+from maskProcessing import processMasks
 
 def displayMeasure(measureMap):
 	"""Displays a 2d array onto the terminal based on measure data"""
@@ -39,8 +40,8 @@ def main(visual = False) :
 	runtime.sensing_mode = sl.SENSING_MODE.SENSING_MODE_STANDARD
 
 	image_size = zed.get_resolution()
-	width = image_size.width/2
-	height = image_size.height/2
+	width = image_size.width/3
+	height = image_size.height/3
 
 	# Declare sl.Mat matrices
 	image_zed = sl.Mat(width, height, sl.MAT_TYPE.MAT_TYPE_8U_C4)
@@ -49,7 +50,7 @@ def main(visual = False) :
 	depth_data_zed = sl.Mat(width, height, sl.MAT_TYPE.MAT_TYPE_32F_C1)
 	count = 0
 	startTime = time.time()
-	for amount in range(600):
+	for amount in range(200):
 		err = zed.grab(runtime)
 		if err == sl.ERROR_CODE.SUCCESS :
 			# Retrieve the left image, depth image in specified dimensions
@@ -57,15 +58,15 @@ def main(visual = False) :
 			zed.retrieve_measure(depth_data_zed, sl.MEASURE.MEASURE_DEPTH)
 
 			image_ocv = image_zed.get_data()
-			cv2.imwrite("normal.png", image_ocv)
+
 			depth_data_ocv = depth_data_zed.get_data()
 
 			resizedDepth = cv2.resize(depth_data_ocv, dsize=(int(width),int(height)), interpolation = cv2.INTER_CUBIC)
 			
-			maskRed, maskYellow = findColour(image_ocv)			
-			
-			combinedMask = maskRed + maskYellow
+			maskRed, maskYellow = findColour(image_ocv)
 
+			combinedMask = maskRed + maskYellow
+			processMasks(maskRed[230:300], maskYellow[230:300], resizedDepth[230:300])
 			print(amount)
 
 			if visual:
@@ -94,4 +95,4 @@ def main(visual = False) :
 	print("\nFINISH")
 
 if __name__ == "__main__":
-	main(True) 
+	main(False) 
