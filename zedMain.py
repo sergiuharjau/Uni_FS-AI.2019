@@ -4,7 +4,7 @@ import pyzed.sl as sl
 import cv2
 import time
 from colourDetection import findColour
-from maskProcessing import processMasks
+from maskProcessing import findFirstPlane, findLineMarkers
 
 def displayMeasure(measureMap):
 	"""Displays a 2d array onto the terminal based on measure data"""
@@ -64,9 +64,13 @@ def main(visual = False) :
 			resizedDepth = cv2.resize(depth_data_ocv, dsize=(int(width),int(height)), interpolation = cv2.INTER_CUBIC)
 			
 			maskRed, maskYellow = findColour(image_ocv)
-
+			
 			combinedMask = maskRed + maskYellow
-			processMasks(maskRed[230:300], maskYellow[230:300], resizedDepth[230:300])
+
+			fRed, fYellow = findFirstPlane(maskRed[230:300], maskYellow[230:300], resizedDepth[230:300])
+
+
+			cv2.waitKey(10)
 			print(amount)
 
 			if visual:
@@ -82,7 +86,13 @@ def main(visual = False) :
 				cv2.imshow('yellow', yellowImage)
 				cv2.imshow('combined', combinedImage)
 				cv2.imshow('conesDepth', conesDepth)
+
+				redLine, yellowLine = findLineMarkers(fRed, fYellow)
+				cv2.line(image_ocv[230:300], redLine, yellowLine, (0,255,0), 10)
+				cv2.imshow("line image", image_ocv)
+
 				cv2.waitKey(10)
+			
 
 		else:
 			count += 1
@@ -95,4 +105,4 @@ def main(visual = False) :
 	print("\nFINISH")
 
 if __name__ == "__main__":
-	main(False) 
+	main(True) 
