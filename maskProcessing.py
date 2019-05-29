@@ -74,7 +74,8 @@ def findLineMarkers(red, yellow):
 			break
 	if redMarker and yellowMarker: 
 		print("Both exist")
-	return redMarker, yellowMarker
+		return redMarker, yellowMarker
+	return (0,0), (0,0)
 if __name__ == "__main__":
 	pass
 	#image = cv2.imread("normal.png")

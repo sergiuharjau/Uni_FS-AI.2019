@@ -89,8 +89,10 @@ def main(visual = False) :
 
 				redLine, yellowLine = findLineMarkers(fRed, fYellow)
 				cv2.line(image_ocv[230:300], redLine, yellowLine, (0,255,0), 10)
-				cv2.imshow("line image", image_ocv)
-
+				target = (int((yellowLine[0] + redLine[0])/2), int((yellowLine[1] + redLine[1])/2))
+				cv2.circle(image_ocv[230:300], target, 5, (0,0,255), 4)
+				cv2.imshow("full image", image_ocv)
+				cv2.imshow("cropped", image_ocv[230:300])
 				cv2.waitKey(10)
 			
 
