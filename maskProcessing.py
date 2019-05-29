@@ -1,0 +1,64 @@
+
+import cv2
+from colourDetection import findColour
+import numpy as np
+import time
+from bisect import bisect_right
+import itertools
+
+def findMin(bigList, k):
+	flattened_list  = list(itertools.chain(*bigList))
+	flattened_list.sort()
+	try:
+		min_val = flattened_list[bisect_right(flattened_list,k)]
+	except:
+		min_val = 0	
+	return min_val
+
+def processMasks(red, yellow, depth):
+	"""Inputs are red, yellow and depth mask."""
+
+	conesDepth = cv2.bitwise_and(depth, depth, mask=red+yellow)
+	firstPlane = findMin(conesDepth, 0.7)
+
+	markedPixels = []
+	if firstPlane == 0:
+		return None
+
+	markedPixels = np.zeros((len(depth), len(depth[0])), dtype=np.int8) 	
+	count = 0
+	for hz in range(len(conesDepth)):
+		for px in range(len(conesDepth[hz])):
+			#print(conesDepth[hz][px], end=" ")
+			if abs(conesDepth[hz][px] - firstPlane) < 0.3:
+				markedPixels[hz][px] = 255
+				count+=1
+	print("Marked: ", count)
+		#print()
+
+	firstPlaneRed = cv2.bitwise_and(red, red, mask=markedPixels)
+	countAgain = 0 
+	for element in firstPlaneRed:
+		for pixel in element:
+			if pixel != 0:
+				countAgain += 1 
+	print("Actual: ", countAgain)
+
+	print("First plane distance: ", firstPlane)
+
+	time.sleep(1)
+	cv2.imshow("red", red)
+	cv2.imshow("yellow", yellow)
+	cv2.imshow("depth", conesDepth)
+	cv2.imshow("firstRed", firstPlaneRed)
+	time.sleep(1)
+
+	cv2.waitKey(10)
+	input()
+	
+
+if __name__ == "__main__":
+	pass
+	#image = cv2.imread("normal.png")
+	#red, yellow = findColour(image)
+	#processMasks(red, yellow, [])
