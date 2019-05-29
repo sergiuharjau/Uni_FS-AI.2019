@@ -13,7 +13,7 @@ def displayMeasure(measureMap):
 			print(pixel, end = ", ")
 		print()
 
-def main(output = False) :
+def main(visual = False) :
 	"""Output parameter determines whether we save to the filesystem or not."""
 
 	# Create a ZED camera object
@@ -39,8 +39,8 @@ def main(output = False) :
 	runtime.sensing_mode = sl.SENSING_MODE.SENSING_MODE_STANDARD
 
 	image_size = zed.get_resolution()
-	width = image_size.width
-	height = image_size.height
+	width = image_size.width/2
+	height = image_size.height/2
 
 	# Declare sl.Mat matrices
 	image_zed = sl.Mat(width, height, sl.MAT_TYPE.MAT_TYPE_8U_C4)
@@ -48,7 +48,8 @@ def main(output = False) :
 	# Create a sl.Mat with float type (32-bit)
 	depth_data_zed = sl.Mat(width, height, sl.MAT_TYPE.MAT_TYPE_32F_C1)
 	count = 0
-	for amount in range(5):
+	startTime = time.time()
+	for amount in range(600):
 		err = zed.grab(runtime)
 		if err == sl.ERROR_CODE.SUCCESS :
 			# Retrieve the left image, depth image in specified dimensions
@@ -56,9 +57,10 @@ def main(output = False) :
 			zed.retrieve_measure(depth_data_zed, sl.MEASURE.MEASURE_DEPTH)
 
 			image_ocv = image_zed.get_data()
+			cv2.imwrite("normal.png", image_ocv)
 			depth_data_ocv = depth_data_zed.get_data()
 
-			resizedDepth = cv2.resize(depth_data_ocv, dsize=(17,10), interpolation = cv2.INTER_CUBIC)
+			resizedDepth = cv2.resize(depth_data_ocv, dsize=(int(width),int(height)), interpolation = cv2.INTER_CUBIC)
 			
 			maskRed, maskYellow = findColour(image_ocv)			
 			
@@ -66,21 +68,20 @@ def main(output = False) :
 
 			print(amount)
 
-			if output:
-				#displayMeasure(resizedDepth)
+			if visual:
 				zed.retrieve_image(depth_image_zed, sl.VIEW.VIEW_DEPTH, sl.MEM.MEM_CPU, int(width), int(height))
 				depth_image_ocv = depth_image_zed.get_data()
-				cv2.imwrite("normal.png", image_ocv)
-				cv2.imwrite("depth.png", depth_image_ocv)
 
-				redImage = cv2.bitwise_and(image_ocv, image_ocv, mask=maskRed) 
+				combinedImage = cv2.bitwise_and(image_ocv, image_ocv, mask=combinedMask)
+				redImage = cv2.bitwise_and(image_ocv, image_ocv, mask=maskRed)
 				yellowImage = cv2.bitwise_and(image_ocv, image_ocv, mask=maskYellow)
 				combinedImage = cv2.bitwise_and(image_ocv, image_ocv, mask=combinedMask)
 				conesDepth = cv2.bitwise_and(depth_image_ocv, depth_image_ocv, mask=combinedMask)
-				cv2.imwrite('red.jpg', redImage)
-				cv2.imwrite('yellow.jpg', yellowImage)
-				cv2.imwrite('combined.jpg', combinedImage)
-				cv2.imwrite('conesDepth.jpg', conesDepth)
+				cv2.imshow('red', redImage)
+				cv2.imshow('yellow', yellowImage)
+				cv2.imshow('combined', combinedImage)
+				cv2.imshow('conesDepth', conesDepth)
+				cv2.waitKey(10)
 
 		else:
 			count += 1
@@ -88,7 +89,8 @@ def main(output = False) :
 			time.sleep(0.1)
 
 	zed.close()
-	print("Amount of skipped frames:", count)
+	print("Amount of skipped frames: ", count)
+	print("Seconds it took: ", time.time()-startTime )
 	print("\nFINISH")
 
 if __name__ == "__main__":
