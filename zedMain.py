@@ -51,7 +51,7 @@ def main(visual = False) :
 	depth_data_zed = sl.Mat(width, height, sl.MAT_TYPE.MAT_TYPE_32F_C1)
 	count = 0
 	startTime = time.time()
-	framesToDo = 1000
+	framesToDo = 300
 	for amount in range(framesToDo):
 		err = zed.grab(runtime)
 		if err == sl.ERROR_CODE.SUCCESS :
@@ -84,10 +84,10 @@ def main(visual = False) :
 				yellowImage = cv2.bitwise_and(image_ocv, image_ocv, mask=maskYellow)
 				combinedImage = cv2.bitwise_and(image_ocv, image_ocv, mask=combinedMask)
 				conesDepth = cv2.bitwise_and(depth_image_ocv, depth_image_ocv, mask=combinedMask)
-				cv2.imshow('red', redImage)
-				cv2.imshow('yellow', yellowImage)
-				cv2.imshow('combined', combinedImage)
-				cv2.imshow('conesDepth', conesDepth)
+				#cv2.imshow('red', redImage)
+				#cv2.imshow('yellow', yellowImage)
+				#cv2.imshow('combined', combinedImage)
+				#cv2.imshow('conesDepth', conesDepth)
 
 				redLine, yellowLine = findLineMarkers(fRed, fYellow)
 				cv2.line(image_ocv[230:300], redLine, yellowLine, (0,255,0), 10)
