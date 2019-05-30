@@ -22,7 +22,8 @@ def main(visual = False) :
 
 	# Set configuration parameters
 	init = sl.InitParameters()
-	init.camera_resolution = sl.RESOLUTION.RESOLUTION_HD1080
+	init.camera_resolution = sl.RESOLUTION.RESOLUTION_HD720
+	init.camera_fps = 60 # Set fps at 30
 	init.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_PERFORMANCE
 	init.coordinate_units = sl.UNIT.UNIT_METER
 	if len(sys.argv) >= 2 :
@@ -40,8 +41,8 @@ def main(visual = False) :
 	runtime.sensing_mode = sl.SENSING_MODE.SENSING_MODE_STANDARD
 
 	image_size = zed.get_resolution()
-	width = image_size.width/3
-	height = image_size.height/3
+	width = image_size.width/2
+	height = image_size.height/2
 
 	# Declare sl.Mat matrices
 	image_zed = sl.Mat(width, height, sl.MAT_TYPE.MAT_TYPE_8U_C4)
@@ -102,7 +103,7 @@ def main(visual = False) :
 		else:
 			count += 1
 			print(err)
-			time.sleep(0.02)
+			time.sleep(0.001)
 
 	zed.close()
 	print("Amount of skipped frames: ", count)
