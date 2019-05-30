@@ -6,6 +6,18 @@ import time
 from bisect import bisect_right
 import itertools
 
+def thresh(a, threshmin=None, threshmax=None, newval=0):
+	a = np.ma.array(a, copy=True)
+	mask = np.zeros(a.shape, dtype=bool)
+	if threshmin is not None:
+		mask |= (a < threshmin).filled(False)
+
+	if threshmax is not None:
+		mask |= (a > threshmax).filled(False)
+
+	a[mask] = newval
+	return a
+
 def findMin(bigList, k):
 	flattened_list  = list(itertools.chain(*bigList))
 	flattened_list.sort()
@@ -17,46 +29,48 @@ def findMin(bigList, k):
 
 def findFirstPlane(red, yellow, depth):
 	"""Inputs are red, yellow and depth mask."""
-
+	
 	conesDepth = cv2.bitwise_and(depth, depth, mask=red+yellow)
 	planeDistance = findMin(conesDepth, 0.7)
-	#print("First plane distance: ", planeDistance)
+	
 
 	if planeDistance == 0:
-		return np.zeros((len(depth), len(depth[0])), dtype=np.int8), np.zeros((len(depth), len(depth[0])), dtype=np.int8) 
+		return np.zeros((len(depth), len(depth[0])), dtype=np.int8), np.zeros((len(depth), len(depth[0])), dtype=np.int8) #empty array 
+	#print("First plane distance: ", planeDistance)
 
-	markedPixels = np.zeros((len(depth), len(depth[0])), dtype=np.int8) 	
-	count = 0
-	for hz in range(len(conesDepth)):
-		for px in range(len(conesDepth[hz])):
-			#print(conesDepth[hz][px], end=" ")
-			if abs(conesDepth[hz][px] - planeDistance) < 0.3:
-				markedPixels[hz][px] = 255
-				count+=1
-		#print()
-
+	#markedPixels = np.zeros((len(depth), len(depth[0])), dtype=np.int8)
+	#for hz in range(len(conesDepth)):
+	#	for px in range(len(conesDepth[hz])):
+	#		#print(conesDepth[hz][px], end=" ")
+	#		if conesDepth[hz][px]: #ignore 0's
+	#			if conesDepth[hz][px] - planeDistance < 0.5:
+	#				markedPixels[hz][px] = 255
+	#	#print()
+	#start = time.time()
+	a1 = thresh(conesDepth, threshmin=planeDistance, threshmax=planeDistance+0.5, newval=0)
+	markedPixels = a1.astype(np.int8)
+	#for i in range(len(a1)):
+	#	print(a1[i])
+	#input()
+	#print("Took: ", time.time() - start)
 	firstRed = cv2.bitwise_and(red, red, mask=markedPixels)
 	firstYellow = cv2.bitwise_and(yellow, yellow, mask=markedPixels)
 
-	return firstRed, firstYellow
-
-	#cv2.imshow("red", red)
-	#cv2.imshow("yellow", yellow)
-	#cv2.imshow("depth", conesDepth)
 	#cv2.imshow("firstRed", firstRed)
 	#cv2.imshow("firstYellow", firstYellow)
-	#cv2.waitKey(10)
+
+	return firstRed, firstYellow
+
 
 def findLineMarkers(red, yellow):
 	redMarker=None
 	exitLoop = False
 	for hz in range(len(red)):
 		for px in range(len(red[hz])):
-			if red[hz][px] == 255:
+			if red[hz][px]:
 				redMarker = (px,hz)
-				print("Red exists ", redMarker)
+				#print("Red exists ", redMarker)
 				exitLoop = True
-			if exitLoop:
 				break
 		if exitLoop:
 			break
@@ -64,20 +78,23 @@ def findLineMarkers(red, yellow):
 	yellowMarker=None
 	for hz in range(len(yellow)):
 		for px in reversed(range(len(yellow[hz]))):
-			if yellow[hz][px] == 255:
+			if yellow[hz][px]:
 				yellowMarker = (px,hz)
-				print("Yellow exists", yellowMarker)
+				#print("Yellow exists", yellowMarker)
 				exitLoop = True
 			if exitLoop:
 				break
 		if exitLoop:
 			break
+
 	if redMarker and yellowMarker: 
-		print("Both exist")
+		#print("Both exist")
 		return redMarker, yellowMarker
 	return (0,0), (0,0)
 if __name__ == "__main__":
 	pass
+	#a = [0.7,0.8,0.9, 0, 3, 5, 0.75]
+	#print(threshold(a, 0.7, 1, int(0))) 
 	#image = cv2.imread("normal.png")
 	#red, yellow = findColour(image)
 	#processMasks(red, yellow, [])
