@@ -44,8 +44,8 @@ def main(visual = False) :
 
 	# Set configuration parameters
 	init = sl.InitParameters()
-	init.camera_resolution = sl.RESOLUTION.RESOLUTION_HD720
-	init.camera_fps = 60 # Set max fps at 60
+	init.camera_resolution = sl.RESOLUTION.RESOLUTION_VGA
+	init.camera_fps = 100 # Set max fps at 60
 
 	init.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_PERFORMANCE
 	init.coordinate_units = sl.UNIT.UNIT_METER
@@ -64,17 +64,19 @@ def main(visual = False) :
 	runtime.sensing_mode = sl.SENSING_MODE.SENSING_MODE_STANDARD
 
 	image_size = zed.get_resolution()
-	width = image_size.width/2
-	height = image_size.height/2
+	width = 640
+	height = 360
 
 	# Declare sl.Mat matrices
 	image_zed = sl.Mat(width, height, sl.MAT_TYPE.MAT_TYPE_8U_C4)
 	depth_image_zed = sl.Mat(width, height, sl.MAT_TYPE.MAT_TYPE_8U_C4)
 	# Create a sl.Mat with float type (32-bit)
 	depth_data_zed = sl.Mat(width, height, sl.MAT_TYPE.MAT_TYPE_32F_C1)
+
 	count = 0
 	startTime = time.time()
 	framesToDo = 1000
+
 	for amount in range(framesToDo):
 		err = zed.grab(runtime)
 		if err == sl.ERROR_CODE.SUCCESS :
@@ -90,13 +92,13 @@ def main(visual = False) :
 			combinedMask = maskRed + maskYellow
 
 			fRed, fYellow = findFirstPlane(maskRed[230:300], maskYellow[230:300], resizedDepth[230:300]) #finds the masks for the first red/yellow cones
-
+			
 			redLine, yellowLine = findLineMarkers(fRed, fYellow) #find first red/yellow pixel
 			target = (int((yellowLine[0] + redLine[0])/2), int((yellowLine[1] + redLine[1])/2))
 				#the center of the two cones
-
+			
 			reading = targetProcessing(target) #averages a reading every 15 frames
-
+			
 			if reading:
 				print(reading)
 
@@ -114,8 +116,11 @@ def main(visual = False) :
 
 				#cv2.imshow('red', redImage)
 				#cv2.imshow('yellow', yellowImage)
-				#cv2.imshow('combined', combinedImage)
-				#cv2.imshow('conesDepth', conesDepth)
+				cv2.imshow("firstRed", fRed)
+				cv2.imshow("firstYellow", fYellow)
+
+				cv2.imshow('combined', combinedImage)
+				cv2.imshow('conesDepth', conesDepth)
 
 				cv2.line(image_ocv[230:300], redLine, yellowLine, (0,255,0), 10)
 				cv2.circle(image_ocv[230:300], target, 5, (0,0,255), 4)
@@ -140,4 +145,4 @@ def main(visual = False) :
 	print("\nFINISH")
 
 if __name__ == "__main__":
-	main(False) 
+	main(True) 
