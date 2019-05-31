@@ -32,13 +32,13 @@ def findFirstPlane(red, yellow, depth):
 	
 	conesDepth = cv2.bitwise_and(depth, depth, mask=red+yellow)
 	planeDistance = findMin(conesDepth, 0.7)
-	
 
-	if planeDistance == 0:
-		return np.zeros((len(depth), len(depth[0])), dtype=np.int8), np.zeros((len(depth), len(depth[0])), dtype=np.int8) #empty array 
-	#print("First plane distance: ", planeDistance)
-	start = time.time()
 	markedPixels = np.zeros((len(depth), len(depth[0])), dtype=np.int8)
+	
+	if planeDistance == 0:
+		return markedPixels #empty array 
+	#print("First plane distance: ", planeDistance)
+
 	for hz in range(len(conesDepth)):
 		for px in range(len(conesDepth[hz])):
 			#print(conesDepth[hz][px], end=" ")
@@ -47,7 +47,6 @@ def findFirstPlane(red, yellow, depth):
 					markedPixels[hz][px] = 255
 	#	#print()
 
-	print("Took: ", time.time() - start)
 	firstRed = cv2.bitwise_and(red, red, mask=markedPixels)
 	firstYellow = cv2.bitwise_and(yellow, yellow, mask=markedPixels)
 
