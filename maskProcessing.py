@@ -29,11 +29,9 @@ def findFirstPlane(red, yellow, depth):
 
 	for hz in range(len(conesDepth)):
 		for px in range(len(conesDepth[hz])):
-			#print(conesDepth[hz][px], end=" ")
 			if conesDepth[hz][px]: #ignore 0's
 				if conesDepth[hz][px] - planeDistance < 0.5:
 					markedPixels[hz][px] = 255
-	#	#print()
 
 	firstRed = cv2.bitwise_and(red, red, mask=markedPixels)
 	firstYellow = cv2.bitwise_and(yellow, yellow, mask=markedPixels)
@@ -70,6 +68,8 @@ def findLineMarkers(red, yellow):
 	if redMarker and yellowMarker: 
 		return redMarker, yellowMarker #only returns if it finds both colours
 	return (0,0), (0,0)
+
+
 if __name__ == "__main__":
 	pass
 	#a = [0.7,0.8,0.9, 0, 3, 5, 0.75]

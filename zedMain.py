@@ -14,6 +14,28 @@ def displayMeasure(measureMap):
 			print(pixel, end = ", ")
 		print()
 
+def targetProcessing(target):
+	"""Deals with calculations based on target. Returns an average once every 15 frames."""
+
+	if 'total' not in targetProcessing.__dict__:
+		targetProcessing.total = 0
+	if 'frameCounter' not in targetProcessing.__dict__:
+		targetProcessing.frameCounter = 0
+
+	offset = target[0] - 330 #offset from center of image
+
+	if offset != -330: #when we have a correct reading
+		targetProcessing.total += offset
+		targetProcessing.frameCounter +=1
+
+	if targetProcessing.frameCounter == 15:
+		average = int(targetProcessing.total / targetProcessing.frameCounter)
+		targetProcessing.total = 0
+		targetProcessing.frameCounter = 0
+
+		return average
+	return None
+
 def main(visual = False) :
 	"""Output parameter determines whether we save to the filesystem or not."""
 
@@ -52,7 +74,7 @@ def main(visual = False) :
 	depth_data_zed = sl.Mat(width, height, sl.MAT_TYPE.MAT_TYPE_32F_C1)
 	count = 0
 	startTime = time.time()
-	framesToDo = 200
+	framesToDo = 1000
 	for amount in range(framesToDo):
 		err = zed.grab(runtime)
 		if err == sl.ERROR_CODE.SUCCESS :
@@ -68,11 +90,18 @@ def main(visual = False) :
 			maskRed, maskYellow = findColour(image_ocv)
 			combinedMask = maskRed + maskYellow
 			
-			fRed, fYellow = findFirstPlane(maskRed[230:300], maskYellow[230:300], resizedDepth[230:300])
-			redLine, yellowLine = findLineMarkers(fRed, fYellow)
-			target = (int((yellowLine[0] + redLine[0])/2), int((yellowLine[1] + redLine[1])/2))
+			fRed, fYellow = findFirstPlane(maskRed[230:300], maskYellow[230:300], resizedDepth[230:300]) #finds the masks for the first red/yellow cones
 
-			print(amount)
+			redLine, yellowLine = findLineMarkers(fRed, fYellow) #find first red/yellow pixel
+			target = (int((yellowLine[0] + redLine[0])/2), int((yellowLine[1] + redLine[1])/2))
+				#the center of the two cones
+
+			reading = targetProcessing(target) #averages a reading every 15 frames
+
+			if reading:
+				print(reading)
+
+			#print(amount)
 
 			if visual:
 				zed.retrieve_image(depth_image_zed, sl.VIEW.VIEW_DEPTH, sl.MEM.MEM_CPU, int(width), int(height))
@@ -83,6 +112,7 @@ def main(visual = False) :
 				yellowImage = cv2.bitwise_and(image_ocv, image_ocv, mask=maskYellow)
 				combinedImage = cv2.bitwise_and(image_ocv, image_ocv, mask=combinedMask)
 				conesDepth = cv2.bitwise_and(depth_image_ocv, depth_image_ocv, mask=combinedMask)
+
 				#cv2.imshow('red', redImage)
 				#cv2.imshow('yellow', yellowImage)
 				#cv2.imshow('combined', combinedImage)
@@ -111,4 +141,4 @@ def main(visual = False) :
 	print("\nFINISH")
 
 if __name__ == "__main__":
-	main(True) 
+	main(False) 
