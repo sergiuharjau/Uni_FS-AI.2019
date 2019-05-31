@@ -24,7 +24,7 @@ def findFirstPlane(red, yellow, depth):
 	markedPixels = np.zeros((len(depth), len(depth[0])), dtype=np.int8)
 	
 	if planeDistance == 0:
-		return markedPixels #empty array 
+		return markedPixels, markedPixels #empty array 
 	#print("First plane distance: ", planeDistance)
 
 	for hz in range(len(conesDepth)):
@@ -45,13 +45,13 @@ def findFirstPlane(red, yellow, depth):
 
 
 def findLineMarkers(red, yellow):
+
 	redMarker=None
 	exitLoop = False
 	for hz in range(len(red)):
 		for px in range(len(red[hz])):
 			if red[hz][px]:
 				redMarker = (px,hz)
-				#print("Red exists ", redMarker)
 				exitLoop = True
 				break
 		if exitLoop:
@@ -62,16 +62,13 @@ def findLineMarkers(red, yellow):
 		for px in reversed(range(len(yellow[hz]))):
 			if yellow[hz][px]:
 				yellowMarker = (px,hz)
-				#print("Yellow exists", yellowMarker)
 				exitLoop = True
-			if exitLoop:
 				break
 		if exitLoop:
 			break
 
 	if redMarker and yellowMarker: 
-		#print("Both exist")
-		return redMarker, yellowMarker
+		return redMarker, yellowMarker #only returns if it finds both colours
 	return (0,0), (0,0)
 if __name__ == "__main__":
 	pass
