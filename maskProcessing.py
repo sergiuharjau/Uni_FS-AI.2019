@@ -7,6 +7,7 @@ from bisect import bisect_right
 import itertools
 
 def threshold(a, threshmin=None, threshmax=None, newval=0):
+
     a = np.ma.array(a, copy=True)
     mask = np.zeros(a.shape, dtype=bool)
     if threshmin is not None:
@@ -19,6 +20,7 @@ def threshold(a, threshmin=None, threshmax=None, newval=0):
     return a
 
 def findMin(bigList, k):
+
 	flattened_list  = list(itertools.chain(*bigList))
 	flattened_list.sort()
 	try:
@@ -31,13 +33,15 @@ def findFirstPlane(red, yellow, depth):
 	"""Inputs are red, yellow and depth mask."""
 
 	conesDepth = cv2.bitwise_and(depth, depth, mask=red+yellow)
+		#depth info just where the cones are
+
 	planeDistance = findMin(conesDepth, 0.7)
 
 	markedPixels = np.zeros((len(depth), len(depth[0])), dtype=np.int8)
 
 	if planeDistance == 0: #no object in sight
 		return markedPixels, markedPixels #empty arrays
-	#print("First plane: ", planeDistance)
+
 	markedPixels = threshold(conesDepth, planeDistance, planeDistance+1, 0)
 		#only keep pixels in the desired threshold
 
@@ -53,9 +57,6 @@ def findFirstPlane(red, yellow, depth):
 
 def findLineMarkers(red, yellow):
 
-	redMarker=None
-
-	#start = time.time()
 	try:
 
 		redIndex = np.where(red==255)
@@ -66,15 +67,8 @@ def findLineMarkers(red, yellow):
 	except:
 		return(0,0), (0,0)
 
-	#print("Took: ", time.time()-start)
-
-	return redMarker, yellowMarker #only returns if it finds both colours
+	return redMarker, yellowMarker
 
 
 if __name__ == "__main__":
 	pass
-	#a = [0.7,0.8,0.9, 0, 3, 5, 0.75]
-	#print(threshold(a, 0.7, 1, int(0))) 
-	#image = cv2.imread("normal.png")
-	#red, yellow = findColour(image)
-	#processMasks(red, yellow, [])
