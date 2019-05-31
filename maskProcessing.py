@@ -37,9 +37,10 @@ def findFirstPlane(red, yellow, depth):
 
 	if planeDistance == 0: #no object in sight
 		return markedPixels, markedPixels #empty arrays
-
-	markedPixels = threshold(conesDepth, planeDistance, planeDistance+0.5, 0)
+	print("First plane: ", planeDistance)
+	markedPixels = threshold(conesDepth, planeDistance, planeDistance+1, 0)
 		#only keep pixels in the desired threshold
+
 	markedPixels[markedPixels>1] = 1 #if ever an element is bigger than 1, make it 1
 
 	markedPixels = (markedPixels.round()* 255).astype(np.uint8) #transform to desired format
