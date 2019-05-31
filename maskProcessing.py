@@ -6,18 +6,6 @@ import time
 from bisect import bisect_right
 import itertools
 
-def thresh(a, threshmin=None, threshmax=None, newval=0):
-	a = np.ma.array(a, copy=True)
-	mask = np.zeros(a.shape, dtype=bool)
-	if threshmin is not None:
-		mask |= (a < threshmin).filled(False)
-
-	if threshmax is not None:
-		mask |= (a > threshmax).filled(False)
-
-	a[mask] = newval
-	return a
-
 def findMin(bigList, k):
 	flattened_list  = list(itertools.chain(*bigList))
 	flattened_list.sort()
