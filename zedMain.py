@@ -78,7 +78,6 @@ def main(visual = False) :
 	for amount in range(framesToDo):
 		err = zed.grab(runtime)
 		if err == sl.ERROR_CODE.SUCCESS :
-			
 			# Retrieve the left image, depth image in specified dimensions
 			zed.retrieve_image(image_zed, sl.VIEW.VIEW_LEFT, sl.MEM.MEM_CPU, int(width), int(height))
 			zed.retrieve_measure(depth_data_zed, sl.MEASURE.MEASURE_DEPTH)
@@ -89,7 +88,7 @@ def main(visual = False) :
 			
 			maskRed, maskYellow = findColour(image_ocv)
 			combinedMask = maskRed + maskYellow
-			
+
 			fRed, fYellow = findFirstPlane(maskRed[230:300], maskYellow[230:300], resizedDepth[230:300]) #finds the masks for the first red/yellow cones
 
 			redLine, yellowLine = findLineMarkers(fRed, fYellow) #find first red/yellow pixel
@@ -101,7 +100,7 @@ def main(visual = False) :
 			if reading:
 				print(reading)
 
-			#print(amount)
+			print("Frames left: ", framesToDo-amount)
 
 			if visual:
 				zed.retrieve_image(depth_image_zed, sl.VIEW.VIEW_DEPTH, sl.MEM.MEM_CPU, int(width), int(height))
