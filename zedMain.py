@@ -23,7 +23,8 @@ def main(visual = False) :
 	# Set configuration parameters
 	init = sl.InitParameters()
 	init.camera_resolution = sl.RESOLUTION.RESOLUTION_HD720
-	init.camera_fps = 60 # Set fps at 30
+	init.camera_fps = 60 # Set max fps at 60
+
 	init.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_PERFORMANCE
 	init.coordinate_units = sl.UNIT.UNIT_METER
 	if len(sys.argv) >= 2 :
@@ -51,7 +52,7 @@ def main(visual = False) :
 	depth_data_zed = sl.Mat(width, height, sl.MAT_TYPE.MAT_TYPE_32F_C1)
 	count = 0
 	startTime = time.time()
-	framesToDo = 1000
+	framesToDo = 200
 	for amount in range(framesToDo):
 		err = zed.grab(runtime)
 		if err == sl.ERROR_CODE.SUCCESS :
@@ -60,19 +61,17 @@ def main(visual = False) :
 			zed.retrieve_image(image_zed, sl.VIEW.VIEW_LEFT, sl.MEM.MEM_CPU, int(width), int(height))
 			zed.retrieve_measure(depth_data_zed, sl.MEASURE.MEASURE_DEPTH)
 			
-			
 			image_ocv = image_zed.get_data()
-
 			depth_data_ocv = depth_data_zed.get_data()
-			
 			resizedDepth = cv2.resize(depth_data_ocv, dsize=(int(width),int(height)), interpolation = cv2.INTER_CUBIC)
 			
 			maskRed, maskYellow = findColour(image_ocv)
-
 			combinedMask = maskRed + maskYellow
 			
 			fRed, fYellow = findFirstPlane(maskRed[230:300], maskYellow[230:300], resizedDepth[230:300])
-			
+			redLine, yellowLine = findLineMarkers(fRed, fYellow)
+			target = (int((yellowLine[0] + redLine[0])/2), int((yellowLine[1] + redLine[1])/2))
+
 			print(amount)
 
 			if visual:
@@ -89,14 +88,15 @@ def main(visual = False) :
 				#cv2.imshow('combined', combinedImage)
 				#cv2.imshow('conesDepth', conesDepth)
 
-				redLine, yellowLine = findLineMarkers(fRed, fYellow)
 				cv2.line(image_ocv[230:300], redLine, yellowLine, (0,255,0), 10)
-				target = (int((yellowLine[0] + redLine[0])/2), int((yellowLine[1] + redLine[1])/2))
-				center = (int(width/2), 0)
 				cv2.circle(image_ocv[230:300], target, 5, (0,0,255), 4)
+
+				center = (int(width/2), 0)
 				cv2.line(image_ocv[230:300], target, center, (255,0,0), 2)
+
 				cv2.imshow("full image", image_ocv)
 				cv2.imshow("cropped", image_ocv[230:300])
+
 				cv2.waitKey(10)
 			
 		else:
