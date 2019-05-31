@@ -44,7 +44,7 @@ def main(visual = False) :
 	# Set configuration parameters
 	init = sl.InitParameters()
 	init.camera_resolution = sl.RESOLUTION.RESOLUTION_VGA
-	init.camera_fps = 100 # Set max fps at 60
+	init.camera_fps = 100 # Set max fps at 100
 
 	init.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_PERFORMANCE
 	init.coordinate_units = sl.UNIT.UNIT_METER
@@ -62,7 +62,6 @@ def main(visual = False) :
 	runtime = sl.RuntimeParameters()
 	runtime.sensing_mode = sl.SENSING_MODE.SENSING_MODE_STANDARD
 
-	image_size = zed.get_resolution()
 	width = 640
 	height = 360
 
