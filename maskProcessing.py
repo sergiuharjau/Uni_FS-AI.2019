@@ -6,6 +6,18 @@ import time
 from bisect import bisect_right
 import itertools
 
+def threshold(a, threshmin=None, threshmax=None, newval=0):
+    a = np.ma.array(a, copy=True)
+    mask = np.zeros(a.shape, dtype=bool)
+    if threshmin is not None:
+        mask |= (a < threshmin).filled(False)
+
+    if threshmax is not None:
+        mask |= (a > threshmax).filled(False)
+
+    a[mask] = newval
+    return a
+
 def findMin(bigList, k):
 	flattened_list  = list(itertools.chain(*bigList))
 	flattened_list.sort()
@@ -22,16 +34,15 @@ def findFirstPlane(red, yellow, depth):
 	planeDistance = findMin(conesDepth, 0.7)
 
 	markedPixels = np.zeros((len(depth), len(depth[0])), dtype=np.int8)
-	
-	if planeDistance == 0:
-		return markedPixels, markedPixels #empty array 
-	#print("First plane distance: ", planeDistance)
 
-	for hz in range(len(conesDepth)):
-		for px in range(len(conesDepth[hz])):
-			if conesDepth[hz][px]: #ignore 0's
-				if conesDepth[hz][px] - planeDistance < 0.5:
-					markedPixels[hz][px] = 255
+	if planeDistance == 0: #no object in sight
+		return markedPixels, markedPixels #empty arrays
+
+	markedPixels = threshold(conesDepth, planeDistance, planeDistance+0.5, 0)
+		#only keep pixels in the desired threshold
+	markedPixels[markedPixels>1] = 1 #if ever an element is bigger than 1, make it 1
+
+	markedPixels = (markedPixels.round()* 255).astype(np.uint8) #transform to desired format
 
 	firstRed = cv2.bitwise_and(red, red, mask=markedPixels)
 	firstYellow = cv2.bitwise_and(yellow, yellow, mask=markedPixels)
