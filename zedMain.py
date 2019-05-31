@@ -34,7 +34,6 @@ def targetProcessing(target):
 		targetProcessing.frameCounter = 0
 
 		return average
-	return None
 
 def main(visual = False) :
 	"""Output parameter determines whether we save to the filesystem or not."""
@@ -73,7 +72,7 @@ def main(visual = False) :
 	# Create a sl.Mat with float type (32-bit)
 	depth_data_zed = sl.Mat(width, height, sl.MAT_TYPE.MAT_TYPE_32F_C1)
 
-	count = 0
+	skipped = 0
 	startTime = time.time()
 	framesToDo = 1000
 
@@ -82,27 +81,25 @@ def main(visual = False) :
 		if err == sl.ERROR_CODE.SUCCESS :
 			# Retrieve the left image, depth image in specified dimensions
 			zed.retrieve_image(image_zed, sl.VIEW.VIEW_LEFT, sl.MEM.MEM_CPU, int(width), int(height))
-			zed.retrieve_measure(depth_data_zed, sl.MEASURE.MEASURE_DEPTH)
+			zed.retrieve_measure(depth_data_zed, sl.MEASURE.MEASURE_DEPTH, sl.MEM.MEM_CPU, int(width), int(height))
 			
 			image_ocv = image_zed.get_data()
 			depth_data_ocv = depth_data_zed.get_data()
-			resizedDepth = cv2.resize(depth_data_ocv, dsize=(int(width),int(height)), interpolation = cv2.INTER_CUBIC)
 			
 			maskRed, maskYellow = findColour(image_ocv)
 			combinedMask = maskRed + maskYellow
 
-			fRed, fYellow = findFirstPlane(maskRed[230:300], maskYellow[230:300], resizedDepth[230:300]) #finds the masks for the first red/yellow cones
+			fRed, fYellow = findFirstPlane(maskRed[230:300], maskYellow[230:300], depth_data_ocv[230:300]) #finds the masks for the first red/yellow cones
 			
 			redLine, yellowLine = findLineMarkers(fRed, fYellow) #find first red/yellow pixel
 			target = (int((yellowLine[0] + redLine[0])/2), int((yellowLine[1] + redLine[1])/2))
 				#the center of the two cones
 			
 			reading = targetProcessing(target) #averages a reading every 15 frames
-			
 			if reading:
 				print(reading)
 
-			print("Frames left: ", framesToDo-amount)
+			#print("Frames left: ", framesToDo-amount)
 
 			if visual:
 				zed.retrieve_image(depth_image_zed, sl.VIEW.VIEW_DEPTH, sl.MEM.MEM_CPU, int(width), int(height))
@@ -116,11 +113,11 @@ def main(visual = False) :
 
 				#cv2.imshow('red', redImage)
 				#cv2.imshow('yellow', yellowImage)
-				cv2.imshow("firstRed", fRed)
-				cv2.imshow("firstYellow", fYellow)
+				cv2.imshow("firstRed, firstYellow", fRed + fYellow)
 
 				cv2.imshow('combined', combinedImage)
 				cv2.imshow('conesDepth', conesDepth)
+				cv2.imshow('full depth', depth_image_ocv)
 
 				cv2.line(image_ocv[230:300], redLine, yellowLine, (0,255,0), 10)
 				cv2.circle(image_ocv[230:300], target, 5, (0,0,255), 4)
@@ -134,15 +131,15 @@ def main(visual = False) :
 				cv2.waitKey(10)
 			
 		else:
-			count += 1
+			skipped += 1
 			print(err)
 			time.sleep(0.001)
 
 	zed.close()
-	print("Amount of skipped frames: ", count)
+	print("Amount of skipped frames: ", skipped)
 	print("Seconds it took: ", time.time()-startTime )
-	print("Actual framerate: ", (framesToDo-count)/(time.time()-startTime))
+	print("Actual framerate: ", (framesToDo-skipped)/(time.time()-startTime))
 	print("\nFINISH")
 
 if __name__ == "__main__":
-	main(True) 
+	main(False) 
