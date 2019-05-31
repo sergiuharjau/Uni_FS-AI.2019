@@ -29,7 +29,7 @@ def findMin(bigList, k):
 
 def findFirstPlane(red, yellow, depth):
 	"""Inputs are red, yellow and depth mask."""
-	
+
 	conesDepth = cv2.bitwise_and(depth, depth, mask=red+yellow)
 	planeDistance = findMin(conesDepth, 0.7)
 
@@ -37,7 +37,7 @@ def findFirstPlane(red, yellow, depth):
 
 	if planeDistance == 0: #no object in sight
 		return markedPixels, markedPixels #empty arrays
-	print("First plane: ", planeDistance)
+	#print("First plane: ", planeDistance)
 	markedPixels = threshold(conesDepth, planeDistance, planeDistance+1, 0)
 		#only keep pixels in the desired threshold
 
@@ -48,38 +48,27 @@ def findFirstPlane(red, yellow, depth):
 	firstRed = cv2.bitwise_and(red, red, mask=markedPixels)
 	firstYellow = cv2.bitwise_and(yellow, yellow, mask=markedPixels)
 
-	#cv2.imshow("firstRed", firstRed)
-	#cv2.imshow("firstYellow", firstYellow)
-
 	return firstRed, firstYellow
 
 
 def findLineMarkers(red, yellow):
 
 	redMarker=None
-	exitLoop = False
-	for hz in range(len(red)):
-		for px in range(len(red[hz])):
-			if red[hz][px]:
-				redMarker = (px,hz)
-				exitLoop = True
-				break
-		if exitLoop:
-			break
-	exitLoop = False
-	yellowMarker=None
-	for hz in range(len(yellow)):
-		for px in reversed(range(len(yellow[hz]))):
-			if yellow[hz][px]:
-				yellowMarker = (px,hz)
-				exitLoop = True
-				break
-		if exitLoop:
-			break
 
-	if redMarker and yellowMarker: 
-		return redMarker, yellowMarker #only returns if it finds both colours
-	return (0,0), (0,0)
+	#start = time.time()
+	try:
+
+		redIndex = np.where(red==255)
+		redMarker = (redIndex[1][0], redIndex[0][0])
+
+		yellowIndex = np.where(yellow==255)
+		yellowMarker = (yellowIndex[1][0], yellowIndex[0][0])
+	except:
+		return(0,0), (0,0)
+
+	#print("Took: ", time.time()-start)
+
+	return redMarker, yellowMarker #only returns if it finds both colours
 
 
 if __name__ == "__main__":
