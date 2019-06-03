@@ -4,7 +4,7 @@ import pyzed.sl as sl
 import cv2
 import time
 from colourDetection import findColour
-from maskProcessing import findFirstPlane, findLineMarkers
+from maskProcessing import findGates, findLineMarkers
 
 def displayMeasure(measureMap):
 	"""Displays a 2d array onto the terminal based on measure data"""
@@ -36,17 +36,16 @@ def targetProcessing(target):
 		return average
 
 def main(visual = False) :
-	"""Output parameter determines whether we save to the filesystem or not."""
 
 	# Create a ZED camera object
 	zed = sl.Camera()
 
 	# Set configuration parameters
 	init = sl.InitParameters()
-	init.camera_resolution = sl.RESOLUTION.RESOLUTION_VGA
-	init.camera_fps = 100 # Set max fps at 100
+	init.camera_resolution = sl.RESOLUTION.RESOLUTION_HD720
+	init.camera_fps = 60 # Set max fps at 100
 
-	init.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_PERFORMANCE
+	init.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_ULTRA
 	init.coordinate_units = sl.UNIT.UNIT_METER
 	if len(sys.argv) >= 2 :
 		init.svo_input_filename = sys.argv[1]
@@ -62,8 +61,8 @@ def main(visual = False) :
 	runtime = sl.RuntimeParameters()
 	runtime.sensing_mode = sl.SENSING_MODE.SENSING_MODE_STANDARD
 
-	width = 640
-	height = 360
+	width = 1280
+	height = 720
 
 	# Declare sl.Mat matrices
 	image_zed = sl.Mat(width, height, sl.MAT_TYPE.MAT_TYPE_8U_C4)
@@ -73,7 +72,7 @@ def main(visual = False) :
 
 	skipped = 0
 	startTime = time.time()
-	framesToDo = 1000
+	framesToDo = 500
 
 	for amount in range(framesToDo):
 		err = zed.grab(runtime)
@@ -88,13 +87,17 @@ def main(visual = False) :
 			maskRed, maskYellow = findColour(image_ocv)
 			combinedMask = maskRed + maskYellow
 
-			fRed, fYellow = findFirstPlane(maskRed[230:300], maskYellow[230:300], depth_data_ocv[230:300]) #finds the masks for the first red/yellow cones
+			fRed, fYellow, secRed, secYellow = findGates(maskRed[230:300], maskYellow[230:300], depth_data_ocv[230:300]) #finds the masks for the first red/yellow cones
 			
-			redLine, yellowLine = findLineMarkers(fRed, fYellow) #find first red/yellow pixel
-			target = (int((yellowLine[0] + redLine[0])/2), int((yellowLine[1] + redLine[1])/2))
-				#the center of the two cones
-			
-			reading = targetProcessing(target) #averages a reading every 15 frames
+			#FirstGate
+			redLine1, yellowLine1 = findLineMarkers(fRed, fYellow) 
+			target1 = (int((yellowLine1[0] + redLine1[0])/2), int((yellowLine1[1] + redLine1[1])/2))
+				#the center of the first gate
+			#SecondGate
+			redLine2, yellowLine2 = findLineMarkers(secRed, secYellow)			
+			target2 = (int((yellowLine2[0] + redLine2[0])/2), int((yellowLine2[1] + redLine2[1])/2))
+
+			reading = targetProcessing(target1) #averages a reading every 15 frames
 			if reading:
 				print(reading)
 
@@ -112,17 +115,22 @@ def main(visual = False) :
 
 				#cv2.imshow('red', redImage)
 				#cv2.imshow('yellow', yellowImage)
-				cv2.imshow("firstRed, firstYellow", fRed + fYellow)
-
+				cv2.imshow("firstGate", fRed + fYellow)
+				cv2.imshow("secondGate", secRed + secYellow)
 				cv2.imshow('combined', combinedImage)
 				cv2.imshow('conesDepth', conesDepth)
 				cv2.imshow('full depth', depth_image_ocv)
 
-				cv2.line(image_ocv[230:300], redLine, yellowLine, (0,255,0), 10)
-				cv2.circle(image_ocv[230:300], target, 5, (0,0,255), 4)
 
+			#FirstGate
+				cv2.line(image_ocv[230:300], redLine1, yellowLine1, (0,255,0), 10)
+				cv2.circle(image_ocv[230:300], target1, 5, (0,0,255), 4)
 				center = (int(width/2), 0)
-				cv2.line(image_ocv[230:300], target, center, (255,0,0), 2)
+				cv2.line(image_ocv[230:300], target1, center, (255,0,0), 2)
+			#SecondGate
+				cv2.line(image_ocv[230:300], redLine2, yellowLine2, (255,0,0), 5)
+				cv2.circle(image_ocv[230:300], target2, 5, (255,0,255), 2)
+				center = (int(width/2), 0)
 
 				cv2.imshow("full image", image_ocv)
 				cv2.imshow("cropped", image_ocv[230:300])
