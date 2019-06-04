@@ -78,17 +78,17 @@ def main(visual = False) :
 		err = zed.grab(runtime)
 		if err == sl.ERROR_CODE.SUCCESS :
 			# Retrieve the left image, depth image in specified dimensions
-			start = time.time()
+
 			zed.retrieve_image(image_zed, sl.VIEW.VIEW_LEFT, sl.MEM.MEM_CPU, int(width), int(height))
 			zed.retrieve_measure(depth_data_zed, sl.MEASURE.MEASURE_DEPTH, sl.MEM.MEM_CPU, int(width), int(height))
-			
-			image_ocv = image_zed.get_data()
-			depth_data_ocv = depth_data_zed.get_data()
-			print("Took: ", time.time()-start)
+			original_image = image_zed.get_data()
+			image_ocv = original_image[280:300]
+			depth_data_ocv = depth_data_zed.get_data()[280:300]
+
 			maskRed, maskYellow = findColour(image_ocv)
 			combinedMask = maskRed + maskYellow
 
-			fRed, fYellow, secRed, secYellow = findGates(maskRed[280:300], maskYellow[280:300], depth_data_ocv[280:300]) #finds the masks for the first red/yellow cones
+			fRed, fYellow, secRed, secYellow = findGates(maskRed, maskYellow, depth_data_ocv) #finds the masks for the first red/yellow cones
 
 			#FirstGate
 			redLine1, yellowLine1 = findLineMarkers(fRed, fYellow) 
@@ -112,31 +112,31 @@ def main(visual = False) :
 				redImage = cv2.bitwise_and(image_ocv, image_ocv, mask=maskRed)
 				yellowImage = cv2.bitwise_and(image_ocv, image_ocv, mask=maskYellow)
 				combinedImage = cv2.bitwise_and(image_ocv, image_ocv, mask=combinedMask)
-				conesDepth = cv2.bitwise_and(depth_image_ocv, depth_image_ocv, mask=combinedMask)
+				#conesDepth = cv2.bitwise_and(depth_image_ocv, depth_image_ocv, mask=combinedMask)
 
 				#cv2.imshow('red', redImage)
 				#cv2.imshow('yellow', yellowImage)
 				cv2.imshow("firstGate", fRed + fYellow)
 				cv2.imshow("secondGate", secRed + secYellow)
 				cv2.imshow('combined', combinedImage)
-				cv2.imshow('conesDepth', conesDepth)
+				#cv2.imshow('conesDepth', conesDepth)
 				cv2.imshow('full depth', depth_image_ocv)
 
 
 			#FirstGate
 				if redLine1[0]:
-					cv2.line(image_ocv[280:300], redLine1, yellowLine1, (0,255,0), 10)
-					cv2.circle(image_ocv[280:300], target1, 5, (0,0,255), 4)
+					cv2.line(original_image[280:300], redLine1, yellowLine1, (0,255,0), 10)
+					cv2.circle(original_image[280:300], target1, 5, (0,0,255), 4)
 					center = (int(width/2), 0)
-					cv2.line(image_ocv[280:300], target1, center, (255,0,0), 2)
+					cv2.line(original_image[280:300], target1, center, (255,0,0), 2)
 			#SecondGate
 				if redLine2[0]:
-					cv2.line(image_ocv[280:300], redLine2, yellowLine2, (255,0,0), 5)
-					cv2.circle(image_ocv[280:300], target2, 5, (255,0,255), 2)
+					cv2.line(original_image[280:300], redLine2, yellowLine2, (255,0,0), 5)
+					cv2.circle(original_image[280:300], target2, 5, (255,0,255), 2)
 					center = (int(width/2), 0)
 
-				cv2.imshow("full image", image_ocv)
-				cv2.imshow("cropped", image_ocv[280:300])
+				cv2.imshow("full image", original_image)
+				cv2.imshow("cropped", image_ocv)
 
 				cv2.waitKey(10)
 			
