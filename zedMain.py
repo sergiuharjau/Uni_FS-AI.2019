@@ -78,17 +78,18 @@ def main(visual = False) :
 		err = zed.grab(runtime)
 		if err == sl.ERROR_CODE.SUCCESS :
 			# Retrieve the left image, depth image in specified dimensions
+			start = time.time()
 			zed.retrieve_image(image_zed, sl.VIEW.VIEW_LEFT, sl.MEM.MEM_CPU, int(width), int(height))
 			zed.retrieve_measure(depth_data_zed, sl.MEASURE.MEASURE_DEPTH, sl.MEM.MEM_CPU, int(width), int(height))
 			
 			image_ocv = image_zed.get_data()
 			depth_data_ocv = depth_data_zed.get_data()
-			
+			print("Took: ", time.time()-start)
 			maskRed, maskYellow = findColour(image_ocv)
 			combinedMask = maskRed + maskYellow
 
-			fRed, fYellow, secRed, secYellow = findGates(maskRed[230:300], maskYellow[230:300], depth_data_ocv[230:300]) #finds the masks for the first red/yellow cones
-			
+			fRed, fYellow, secRed, secYellow = findGates(maskRed[280:300], maskYellow[280:300], depth_data_ocv[280:300]) #finds the masks for the first red/yellow cones
+
 			#FirstGate
 			redLine1, yellowLine1 = findLineMarkers(fRed, fYellow) 
 			target1 = (int((yellowLine1[0] + redLine1[0])/2), int((yellowLine1[1] + redLine1[1])/2))
@@ -101,7 +102,7 @@ def main(visual = False) :
 			if reading:
 				print(reading)
 
-			#print("Frames left: ", framesToDo-amount)
+			print("Frames left: ", framesToDo-amount)
 
 			if visual:
 				zed.retrieve_image(depth_image_zed, sl.VIEW.VIEW_DEPTH, sl.MEM.MEM_CPU, int(width), int(height))
@@ -123,17 +124,19 @@ def main(visual = False) :
 
 
 			#FirstGate
-				cv2.line(image_ocv[230:300], redLine1, yellowLine1, (0,255,0), 10)
-				cv2.circle(image_ocv[230:300], target1, 5, (0,0,255), 4)
-				center = (int(width/2), 0)
-				cv2.line(image_ocv[230:300], target1, center, (255,0,0), 2)
+				if redLine1[0]:
+					cv2.line(image_ocv[280:300], redLine1, yellowLine1, (0,255,0), 10)
+					cv2.circle(image_ocv[280:300], target1, 5, (0,0,255), 4)
+					center = (int(width/2), 0)
+					cv2.line(image_ocv[280:300], target1, center, (255,0,0), 2)
 			#SecondGate
-				cv2.line(image_ocv[230:300], redLine2, yellowLine2, (255,0,0), 5)
-				cv2.circle(image_ocv[230:300], target2, 5, (255,0,255), 2)
-				center = (int(width/2), 0)
+				if redLine2[0]:
+					cv2.line(image_ocv[280:300], redLine2, yellowLine2, (255,0,0), 5)
+					cv2.circle(image_ocv[280:300], target2, 5, (255,0,255), 2)
+					center = (int(width/2), 0)
 
 				cv2.imshow("full image", image_ocv)
-				cv2.imshow("cropped", image_ocv[230:300])
+				cv2.imshow("cropped", image_ocv[280:300])
 
 				cv2.waitKey(10)
 			
@@ -149,4 +152,4 @@ def main(visual = False) :
 	print("\nFINISH")
 
 if __name__ == "__main__":
-	main(False) 
+	main(True) 
