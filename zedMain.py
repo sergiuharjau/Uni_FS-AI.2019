@@ -6,14 +6,6 @@ import time
 from colourDetection import findColour
 from maskProcessing import findGates, findLineMarkers
 
-def displayMeasure(measureMap):
-	"""Displays a 2d array onto the terminal based on measure data"""
-	for hz in range(len(measureMap)):
-		for vt in measureMap[hz]:
-			pixel = str(round(vt,3)) + " "*(6-len(str(round(vt,3))))
-			print(pixel, end = ", ")
-		print()
-
 def targetProcessing(target):
 	"""Deals with calculations based on target. Returns an average once every 15 frames."""
 
@@ -115,7 +107,7 @@ def main(visual = False) :
 
 				cv2.imshow("firstGate", fRed + fYellow)
 				cv2.imshow("secondGate", secRed + secYellow)
-				cv2.imshow('combined', combinedImage)
+				cv2.imshow('colour data', combinedImage)
 				cv2.imshow('full depth', depth_image_ocv)
 
 
@@ -130,7 +122,7 @@ def main(visual = False) :
 					cv2.line(original_image[270:300], redLine2, yellowLine2, (255,0,0), 5)
 					cv2.circle(original_image[270:300], target2, 5, (255,0,255), 2)
 
-				cv2.imshow("full image", original_image)
+				cv2.imshow("image", original_image)
 				cv2.imshow("cropped", image_ocv)
 
 				cv2.waitKey(10)
@@ -147,4 +139,4 @@ def main(visual = False) :
 	print("\nFINISH")
 
 if __name__ == "__main__":
-	main(True) 
+	main(False) 
