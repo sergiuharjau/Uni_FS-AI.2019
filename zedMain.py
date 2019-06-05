@@ -6,6 +6,15 @@ import time
 from colourDetection import findColour
 from maskProcessing import findGates, findLineMarkers
 
+sys.path.insert(0, '../fspycan/lib/')
+import fspycan_ext
+
+def issueCommands(steering, velocity):
+	if 'car' not in issueCommands.__dict__:
+		issueCommands.car = fspycan_ext.Car("can0")
+	issueCommands.car.set_steering_velocity(int(steering), int(velocity))
+	issueCommands.car.loop()
+	
 def targetProcessing(target):
 	"""Deals with calculations based on target. Returns an average once every 15 frames."""
 
@@ -64,7 +73,7 @@ def main(visual = False) :
 
 	skipped = 0
 	startTime = time.time()
-	framesToDo = 500
+	framesToDo = 50000
 
 	for amount in range(framesToDo):
 		err = zed.grab(runtime)
@@ -92,7 +101,8 @@ def main(visual = False) :
 
 			reading = targetProcessing(target1) #averages a reading every 15 frames
 			if reading:
-				print(reading)
+				print("Camera: ", reading)
+				issueCommands((reading/20)*-1,50)
 
 			#print("Frames left: ", framesToDo-amount)
 
@@ -139,4 +149,4 @@ def main(visual = False) :
 	print("\nFINISH")
 
 if __name__ == "__main__":
-	main(False) 
+	main(True) 
