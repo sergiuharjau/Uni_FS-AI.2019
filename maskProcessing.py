@@ -8,27 +8,27 @@ import itertools
 
 def threshold(a, threshmin=None, threshmax=None, newval=0):
 
-    a = np.ma.array(a, copy=True)
-    mask = np.zeros(a.shape, dtype=bool)
-    if threshmin is not None:
-        mask |= (a < threshmin).filled(False)
+	a = np.ma.array(a, copy=True)
+	mask = np.zeros(a.shape, dtype=bool)
+	if threshmin is not None:
+		mask |= (a < threshmin).filled(False)
 
-    if threshmax is not None:
-        mask |= (a > threshmax).filled(False)
+	if threshmax is not None:
+		mask |= (a > threshmax).filled(False)
 
-    a[mask] = newval
-    return a
+	a[mask] = newval
+
+	return a
 
 def findMin(bigList, k, firstPass=False):
 	if 'flattened_list' not in findMin.__dict__ or firstPass:
 		findMin.flattened_list  = list(itertools.chain(*bigList))	
 		findMin.flattened_list.sort()
-		#print("New frame, changing sorted list")
 	try:
 		min_val = findMin.flattened_list[bisect_right(findMin.flattened_list,k)]
 	except:
 		min_val = 0	
-	#print("Min_val: ",min_val)
+
 	return min_val
 
 def findGates(red, yellow, depth):
@@ -37,15 +37,10 @@ def findGates(red, yellow, depth):
 	conesDepth = cv2.bitwise_and(depth, depth, mask=red+yellow)
 		#depth info just where the cones are
 #First Gate
-	start = time.time()
 	planeDistance = findMin(conesDepth, 0.7, True)
-	#print("First findMin: ", time.time()-start)
 	markedPixels = np.zeros((len(depth), len(depth[0])), dtype=np.int8)
-	#print("Looking for first gate")
 
 	if planeDistance == 0: #no object in sight
-		#print("Didn't find first gate")
-		#print("Total: ", time.time() - start)
 		return markedPixels, markedPixels, markedPixels, markedPixels
 			#empty pixels
 	maxFirstGate = planeDistance + 0.5
@@ -60,15 +55,10 @@ def findGates(red, yellow, depth):
 	#print("Found first gate in: ", time.time() - start)
 	
 #Second Gate
-	#print("Looking for second gate")
-	second = time.time()
 	secondGate = findMin(conesDepth, maxFirstGate + 1, False)
-	#print("Second findMin took: ", time.time()-second)
 	markedPixels = np.zeros((len(depth), len(depth[0])), dtype=np.int8)
 
 	if secondGate == 0:
-		#print("Didnt find secondGate")
-		#print("Total: ", time.time()-start)
 		return firstRed, firstYellow, markedPixels, markedPixels
 		#return what we have so far
 
@@ -82,9 +72,6 @@ def findGates(red, yellow, depth):
 	secondRed = cv2.bitwise_and(red, red, mask=markedPixels)
 	secondYellow = cv2.bitwise_and(yellow, yellow, mask=markedPixels)
 
-	#print("Found second gate: ", time.time()-second)
-	#print("Total: ", time.time()-start)
-	#input()
 	return firstRed, firstYellow, secondRed, secondYellow
 
 
