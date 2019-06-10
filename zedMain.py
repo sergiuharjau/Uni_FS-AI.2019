@@ -17,24 +17,24 @@ def issueCommands(steering, velocity):
 	issueCommands.car.loop()
 
 	
-def targetProcessing(target):
+def calculateCenter(target):
 	"""Deals with calculations based on target. Returns an average once every 15 frames."""
 
-	if 'total' not in targetProcessing.__dict__:
-		targetProcessing.total = 0
-	if 'frameCounter' not in targetProcessing.__dict__:
-		targetProcessing.frameCounter = 0
+	if 'total' not in calculateCenter.__dict__:
+		calculateCenter.total = 0
+	if 'frameCounter' not in calculateCenter.__dict__:
+		calculateCenter.frameCounter = 0
 
 	offset = target[0] - 640 #offset from center of image
 
 	if offset != -640: #when we have a correct reading
-		targetProcessing.total += offset
-		targetProcessing.frameCounter +=1
+		calculateCenter.total += offset
+		calculateCenter.frameCounter +=1
 
-	if targetProcessing.frameCounter == 15:
-		average = int(targetProcessing.total / targetProcessing.frameCounter)
-		targetProcessing.total = 0
-		targetProcessing.frameCounter = 0
+	if calculateCenter.frameCounter == 15:
+		average = int(calculateCenter.total / calculateCenter.frameCounter)
+		calculateCenter.total = 0
+		calculateCenter.frameCounter = 0
 
 		return average
 
@@ -67,7 +67,7 @@ def imProcessing(image_ocv, depth_data_ocv, visual, zed, original_image):
 	redLine2, yellowLine2 = findLineMarkers(secRed, secYellow)			
 	target2 = (int((yellowLine2[0] + redLine2[0])/2), int((yellowLine2[1] + redLine2[1])/2))
 	print("Processed line markers")
-	reading = targetProcessing(target1) #averages a reading every 15 frames
+	reading = calculateCenter(target1) #averages a reading every 15 frames
 
 	print("All of processing took: ", time.time()-processing)
 		
@@ -169,15 +169,13 @@ def main(visual = False) :
 				print("Camera: ", reading)
 				issueCommands((reading/20)*-1,50)
 
-			#print("Frames left: ", framesToDo-amount)
-			
+			print("Frames left: ", framesToDo-amount)
+
 			join = time.time()
 			t.join()
 			print("Joining took:", time.time()-join)
 			print("Whole frame took: ", time.time() - start)
-
-
-			
+	
 		else:
 			skipped += 1
 			print(err)
