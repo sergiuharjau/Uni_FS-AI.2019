@@ -44,8 +44,6 @@ def findGates(red, yellow, depth, firstPass, gateDistance):
 	markedPixels = np.zeros((len(depth), len(depth[0])), dtype=np.int8)
 
 	if planeDistance == 0: #no object in sight
-		print("Returned empty arrays")
-		findGates.result.append((markedPixels, markedPixels))
 		return 
 			#empty pixels
 	maxFirstGate = planeDistance + 0.5
@@ -75,10 +73,10 @@ def findLineMarkers(red, yellow, i, visual):
 		return(0,0), (0,0)
 
 	if visual:
-		for x in range(i+1):
+		for x in range(i):
 			cv2.imshow("gate " + str(i), red+yellow)
 	
-		for x in range(i+1, 5):
+		for x in range(i, 5):
 			cv2.destroyWindow("gate " + str(x))
 			
 	return redMarker, yellowMarker
