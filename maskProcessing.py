@@ -31,17 +31,22 @@ def findMin(bigList, k, firstPass=False):
 
 	return min_val
 
-def findGates(red, yellow, depth):
+def findGates(red, yellow, depth, firstPass, gateDistance):
 	"""Inputs are red, yellow and depth mask."""
+	
+	if firstPass:
+		findGates.result = []
 
 	conesDepth = cv2.bitwise_and(depth, depth, mask=red+yellow)
 		#depth info just where the cones are
 #First Gate
-	planeDistance = findMin(conesDepth, 0.7, True)
+	planeDistance = findMin(conesDepth, gateDistance, firstPass)
 	markedPixels = np.zeros((len(depth), len(depth[0])), dtype=np.int8)
 
 	if planeDistance == 0: #no object in sight
-		return markedPixels, markedPixels, markedPixels, markedPixels
+		print("Returned empty arrays")
+		findGates.result.append((markedPixels, markedPixels))
+		return 
 			#empty pixels
 	maxFirstGate = planeDistance + 0.5
 	markedPixels = threshold(conesDepth, planeDistance, maxFirstGate, 0)
@@ -52,30 +57,13 @@ def findGates(red, yellow, depth):
 
 	firstRed = cv2.bitwise_and(red, red, mask=markedPixels)
 	firstYellow = cv2.bitwise_and(yellow, yellow, mask=markedPixels)
-	#print("Found first gate in: ", time.time() - start)
 	
-#Second Gate
-	secondGate = findMin(conesDepth, maxFirstGate + 1, False)
-	markedPixels = np.zeros((len(depth), len(depth[0])), dtype=np.int8)
-
-	if secondGate == 0:
-		return firstRed, firstYellow, markedPixels, markedPixels
-		#return what we have so far
-
-	maxSecondGate = secondGate + 0.5
-	markedPixels = threshold(conesDepth, secondGate, maxSecondGate, 0)
-			#only keep pixels in the desired threshold
-
-	markedPixels[markedPixels>1] = 1 #if ever an element is bigger than 1, make it 1
-	markedPixels = (markedPixels.round()* 255).astype(np.uint8) #transform to desired format
+	findGates.result.append((firstRed,firstYellow))
 	
-	secondRed = cv2.bitwise_and(red, red, mask=markedPixels)
-	secondYellow = cv2.bitwise_and(yellow, yellow, mask=markedPixels)
-
-	return firstRed, firstYellow, secondRed, secondYellow
+	return findGates(red, yellow, depth, False, maxFirstGate+1)
 
 
-def findLineMarkers(red, yellow):
+def findLineMarkers(red, yellow, i, visual):
 
 	try:
 		redIndex = np.where(red==255)
@@ -86,6 +74,13 @@ def findLineMarkers(red, yellow):
 	except:
 		return(0,0), (0,0)
 
+	if visual:
+		for x in range(i+1):
+			cv2.imshow("gate " + str(i), red+yellow)
+	
+		for x in range(i+1, 5):
+			cv2.destroyWindow("gate " + str(x))
+			
 	return redMarker, yellowMarker
 
 

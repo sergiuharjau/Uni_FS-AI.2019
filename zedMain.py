@@ -25,7 +25,7 @@ def calculateCenter(target):
 	if 'frameCounter' not in calculateCenter.__dict__:
 		calculateCenter.frameCounter = 0
 
-	offset = target[0] - 640 #offset from center of image
+	offset = target - 640 #offset from center of image
 
 	if offset != -640: #when we have a correct reading
 		calculateCenter.total += offset
@@ -49,28 +49,42 @@ def imCapt(zed, lock):
 
 	print("Different thread took: ", time.time()-start)
 
-def imProcessing(image_ocv, depth_data_ocv, visual, zed, original_image):
+def imProcessing(image_ocv, depth_data_ocv, visual=False, zed=None, original_image=None):
 	print("Started processing")
 	processing = time.time()
 
 	maskRed, maskYellow = findColour(image_ocv)
 	combinedMask = maskRed + maskYellow
 	print("Processed colour")
-	fRed, fYellow, secRed, secYellow = findGates(maskRed, maskYellow, depth_data_ocv)
+	findGates(maskRed, maskYellow, depth_data_ocv, True, 0.7)
 			 #finds the masks for the first red/yellow cones
+	targetTotal = 0
+	i = 0
+	for gate in findGates.result:
+		fRed = gate[0]
+		fYellow = gate[1]
+		redLine1, yellowLine1 = findLineMarkers(fRed, fYellow, i, visual)
+		target1 = (int((yellowLine1[0] + redLine1[0])/2), int((yellowLine1[1] + redLine1[1])/2)) 
+
+		targetTotal += target1[0]*(len(findGates.result)-1-i)
+		i+=1
+
+		if visual:
+			cv2.line(original_image[270:300], redLine1, yellowLine1, (0,255,0), 10)
+			cv2.circle(original_image[270:300], target1, 5, (0,0,255), 4)
+			center = (int(1280/2), 0)
+			cv2.line(original_image[270:300], target1, center, (255,0,0), 2)
+
+
 	print("Processed gate depth")
-	#FirstGate
-	redLine1, yellowLine1 = findLineMarkers(fRed, fYellow) 
-	target1 = (int((yellowLine1[0] + redLine1[0])/2), int((yellowLine1[1] + redLine1[1])/2))
-		#the center of the first gate
-	#SecondGate
-	redLine2, yellowLine2 = findLineMarkers(secRed, secYellow)			
-	target2 = (int((yellowLine2[0] + redLine2[0])/2), int((yellowLine2[1] + redLine2[1])/2))
+
 	print("Processed line markers")
-	reading = calculateCenter(target1) #averages a reading every 15 frames
+	reading = calculateCenter(targetTotal) #averages a reading every 15 frames
 
 	print("All of processing took: ", time.time()-processing)
-		
+	
+	#print("\n\n\nGates seen: ", i-1)
+	
 	if visual:
 		depth_image_zed = sl.Mat(1280, 720, sl.MAT_TYPE.MAT_TYPE_8U_C4)
 		zed.retrieve_image(depth_image_zed, sl.VIEW.VIEW_DEPTH, sl.MEM.MEM_CPU)
@@ -81,22 +95,8 @@ def imProcessing(image_ocv, depth_data_ocv, visual, zed, original_image):
 		yellowImage = cv2.bitwise_and(image_ocv, image_ocv, mask=maskYellow)
 		combinedImage = cv2.bitwise_and(image_ocv, image_ocv, mask=combinedMask)
 
-		cv2.imshow("firstGate", fRed + fYellow)
-		cv2.imshow("secondGate", secRed + secYellow)
 		cv2.imshow('colour data', combinedImage)
 		cv2.imshow('full depth', depth_image_ocv)
-
-
-	#FirstGate
-		if redLine1[0]:
-			cv2.line(original_image[270:300], redLine1, yellowLine1, (0,255,0), 10)
-			cv2.circle(original_image[270:300], target1, 5, (0,0,255), 4)
-			center = (int(1280/2), 0)
-			cv2.line(original_image[270:300], target1, center, (255,0,0), 2)
-	#SecondGate
-		if redLine2[0]:
-			cv2.line(original_image[270:300], redLine2, yellowLine2, (255,0,0), 5)
-			cv2.circle(original_image[270:300], target2, 5, (255,0,255), 2)
 
 		cv2.imshow("image", original_image)
 		cv2.imshow("cropped", image_ocv)
@@ -188,4 +188,4 @@ def main(visual = False) :
 	print("\nFINISH")
 
 if __name__ == "__main__":
-	main(False) 
+	main(True) 
