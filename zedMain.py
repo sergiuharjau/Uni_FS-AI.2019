@@ -58,7 +58,7 @@ def imProcessing(image_ocv, depth_data_ocv, visual=False, zed=None, original_ima
 	processing = time.time()
 
 	maskRed, maskYellow = findColour(image_ocv)
-	combinedMask = maskRed + maskYellow
+
 	print("Processed colour")
 	findGates(maskRed, maskYellow, depth_data_ocv, True, 0.7)
 			 #finds the masks for the first red/yellow cones
@@ -94,10 +94,9 @@ def imProcessing(image_ocv, depth_data_ocv, visual=False, zed=None, original_ima
 		zed.retrieve_image(depth_image_zed, sl.VIEW.VIEW_DEPTH, sl.MEM.MEM_CPU)
 		depth_image_ocv = depth_image_zed.get_data()
 
-		combinedImage = cv2.bitwise_and(image_ocv, image_ocv, mask=combinedMask)
 		redImage = cv2.bitwise_and(image_ocv, image_ocv, mask=maskRed)
 		yellowImage = cv2.bitwise_and(image_ocv, image_ocv, mask=maskYellow)
-		combinedImage = cv2.bitwise_and(image_ocv, image_ocv, mask=combinedMask)
+		combinedImage = cv2.bitwise_and(image_ocv, image_ocv, mask=maskRed+maskYellow)
 
 		cv2.imshow('colour data', combinedImage)
 		cv2.imshow('full depth', depth_image_ocv)
