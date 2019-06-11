@@ -1,7 +1,6 @@
 import pyzed.sl as sl
 import threading
-import cv2
-import time
+import cv2; import time
 
 class ImageCap:
 
@@ -27,7 +26,6 @@ class ImageCap:
 		self.__running = True
 		self.__thread = threading.Thread( target=ImageCap.capture, args=(self,) )
 		self.__thread.start()
-
 
 	def stop(self):
 		if self.__running:
@@ -66,8 +64,6 @@ class ImageCap:
 		
 	def clear(self):
 		self.frame = None
-		
-		
 
 if __name__ == "__main__":
 	ic = ImageCap()
