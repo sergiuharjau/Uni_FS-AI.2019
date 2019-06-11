@@ -54,12 +54,9 @@ def imCapt(zed, lock):
 	print("Different thread took: ", time.time()-start)
 
 def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None):
-	print("Started processing")
-	processing = time.time()
 
 	maskRed, maskYellow = findColour(image_ocv)
 
-	print("Processed colour")
 	findGates(maskRed, maskYellow, depth_data_ocv, True, 0.7)
 			 #finds the masks for the first red/yellow cones
 	targetTotal = 0
@@ -79,16 +76,8 @@ def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None):
 			center = (int(1280/2), 0)
 			cv2.line(original_image[270:300], target1, center, (255,0,0), 2)
 
-
-	print("Processed gate depth")
-
-	print("Processed line markers")
 	reading = calculateCenter(targetTotal) #averages a reading every 15 frames
 
-	print("All of processing took: ", time.time()-processing)
-	
-	#print("\n\n\nGates seen: ", i-1)
-	
 	if visual:
 
 		redImage = cv2.bitwise_and(image_ocv, image_ocv, mask=maskRed)
