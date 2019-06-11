@@ -154,7 +154,7 @@ def main(visual = False) :
 	zed.close()
 	print("Amount of skipped frames: ", skipped)
 	print("Seconds it took: ", time.time()-startTime )
-	print("Actual framerate: ", (framesToDo-skipped)/(time.time()-startTime))
+	print("Actual framerate: ", (framesToDo-skipped)/(time.time()-startTime-(skipped*0.001)))
 	print("\nFINISH")
 
 if __name__ == "__main__":
