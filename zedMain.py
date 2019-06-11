@@ -53,7 +53,7 @@ def imCapt(zed, lock):
 
 	print("Different thread took: ", time.time()-start)
 
-def imProcessing(image_ocv, depth_data_ocv, visual=False, zed=None, original_image=None):
+def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None):
 	print("Started processing")
 	processing = time.time()
 
@@ -90,16 +90,13 @@ def imProcessing(image_ocv, depth_data_ocv, visual=False, zed=None, original_ima
 	#print("\n\n\nGates seen: ", i-1)
 	
 	if visual:
-		depth_image_zed = sl.Mat(1280, 720, sl.MAT_TYPE.MAT_TYPE_8U_C4)
-		zed.retrieve_image(depth_image_zed, sl.VIEW.VIEW_DEPTH, sl.MEM.MEM_CPU)
-		depth_image_ocv = depth_image_zed.get_data()
 
 		redImage = cv2.bitwise_and(image_ocv, image_ocv, mask=maskRed)
 		yellowImage = cv2.bitwise_and(image_ocv, image_ocv, mask=maskYellow)
 		combinedImage = cv2.bitwise_and(image_ocv, image_ocv, mask=maskRed+maskYellow)
 
 		cv2.imshow('colour data', combinedImage)
-		cv2.imshow('full depth', depth_image_ocv)
+		cv2.imshow('full depth', depth_data_ocv)
 
 		cv2.imshow("image", original_image)
 		cv2.imshow("cropped", image_ocv)
@@ -163,7 +160,7 @@ def main(visual = False) :
 			t.start()
 			print("Thread started, time elapsed from start: ", time.time()-start)
 
-			reading = imProcessing(image_ocv, depth_data_ocv, visual, zed, original_image)
+			reading = imProcessing(image_ocv, depth_data_ocv, visual, original_image)
 
 			if reading:
 				print("Camera: ", reading)
