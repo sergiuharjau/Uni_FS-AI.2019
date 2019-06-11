@@ -20,7 +20,6 @@ def issueCommands(steering, velocity):
 		issueCommands.car = fspycan_ext.Car("can0")
 	issueCommands.car.set_steering_velocity(int(steering), int(velocity))
 	issueCommands.car.loop()
-
 	
 def calculateCenter(target):
 	"""Deals with calculations based on target. Returns an average once every 15 frames."""
@@ -30,9 +29,9 @@ def calculateCenter(target):
 	if 'frameCounter' not in calculateCenter.__dict__:
 		calculateCenter.frameCounter = 0
 
-	offset = target - 640 #offset from center of image
+	offset = target - int(width/2) #offset from center of image
 
-	if offset != -640: #when we have a correct reading
+	if offset != -int(width/2): #when we have a correct reading
 		calculateCenter.total += offset
 		calculateCenter.frameCounter +=1
 
