@@ -10,6 +10,11 @@ import threading
 sys.path.insert(0, '../fspycan/lib/')
 import fspycan_ext
 
+global width
+width = 1280
+global height
+height = 720
+
 def issueCommands(steering, velocity):
 	if 'car' not in issueCommands.__dict__:
 		issueCommands.car = fspycan_ext.Car("can0")
@@ -130,9 +135,6 @@ def main(visual = False) :
 	# Set runtime parameters after opening the camera
 	runtime = sl.RuntimeParameters()
 	runtime.sensing_mode = sl.SENSING_MODE.SENSING_MODE_STANDARD
-
-	width = 1280
-	height = 720
 
 	# Declare sl.Mat matrices
 	imCapt.image_zed = sl.Mat(width, height, sl.MAT_TYPE.MAT_TYPE_8U_C4)
