@@ -42,16 +42,12 @@ def calculateCenter(target):
 
 		return average
 
-def imCapt(zed, lock):
+def imCapt(zed):
 	"""Used for parallelised image and depth campturing."""
-
-	print("Different thread started")
-	start = time.time()
 
 	zed.retrieve_image(imCapt.image_zed, sl.VIEW.VIEW_LEFT, sl.MEM.MEM_CPU)
 	zed.retrieve_measure(imCapt.depth_data_zed, sl.MEASURE.MEASURE_DEPTH, sl.MEM.MEM_CPU)
 
-	print("Different thread took: ", time.time()-start)
 
 def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None):
 
@@ -128,39 +124,28 @@ def main(visual = False) :
 	skipped = 0
 	startTime = time.time()
 	framesToDo = 500
-	lock = threading.Lock()
 
 	for amount in range(framesToDo):
-		start = time.time()
 		err = zed.grab(runtime)
 		if err == sl.ERROR_CODE.SUCCESS:
 			# Retrieve the left image, depth image in specified dimensions
-			print("New frame")
 
-			transcribing = time.time()
 			original_image = imCapt.image_zed.get_data()
 			depth_data_ocv = imCapt.depth_data_zed.get_data()[270:300]
 			image_ocv = original_image[270:300]
 
-			print("Transcribing took: ", time.time()-transcribing)
-
-			print("Starting threading")
-			t = threading.Thread(target=imCapt, args=(zed,lock))
-			t.start()
-			print("Thread started, time elapsed from start: ", time.time()-start)
+			t = threading.Thread(target=imCapt, args=(zed,))
 
 			reading = imProcessing(image_ocv, depth_data_ocv, visual, original_image)
+			t.start()
 
 			if reading:
 				print("Camera: ", reading)
 				issueCommands((reading/20)*-1,50)
 
-			print("Frames left: ", framesToDo-amount)
-
 			join = time.time()
 			t.join()
-			print("Joining took:", time.time()-join)
-			print("Whole frame took: ", time.time() - start)
+			print("Frames left: ", framesToDo-amount)
 	
 		else:
 			skipped += 1
