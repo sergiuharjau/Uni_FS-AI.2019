@@ -137,13 +137,12 @@ def main(visual = False) :
 			t = threading.Thread(target=imCapt, args=(zed,))
 
 			reading = imProcessing(image_ocv, depth_data_ocv, visual, original_image)
-			t.start()
+			t.start() #works faster for performance reasons
 
 			if reading:
 				print("Camera: ", reading)
 				issueCommands((reading/20)*-1,50)
 
-			join = time.time()
 			t.join()
 			print("Frames left: ", framesToDo-amount)
 	
@@ -159,4 +158,4 @@ def main(visual = False) :
 	print("\nFINISH")
 
 if __name__ == "__main__":
-	main(True) 
+	main(False) 
