@@ -47,7 +47,7 @@ def findGates(red, yellow, depth, firstPass, gateDistance):
 	if planeDistance == 0: #no object in sight
 		return None
 			#empty pixels
-	maxFirstGate = planeDistance + 0.5
+	maxFirstGate = planeDistance + 0.2
 	markedPixels = threshold(conesDepth, planeDistance, maxFirstGate, 0)
 		#only keep pixels in the desired threshold
 
@@ -74,10 +74,10 @@ def findLineMarkers(red, yellow, i, visual):
 		return(0,0), (0,0)
 
 	if visual:
-		for x in range(i):
+		for x in range(i+1):
 			cv2.imshow("gate " + str(i), red+yellow)
 	
-		for x in range(i, 5):
+		for x in range(i+1, 5):
 			cv2.destroyWindow("gate " + str(x))
 			
 	return redMarker, yellowMarker
