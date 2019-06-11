@@ -4,7 +4,6 @@ import cv2
 import time
 
 class ImageCap:
-	__running = False
 
 	def capture(self):
 		image_zed = sl.Mat(1280, 720, sl.MAT_TYPE.MAT_TYPE_8U_C4)
@@ -33,8 +32,10 @@ class ImageCap:
 	def stop(self):
 		if self.__running:
 			self.__running = False
-			self.__thread.join()
 			self.zed.close()
+			print("Closed camera")
+			self.__thread.join()
+			
 		
 	def __del__(self):
 		if self.__running:
@@ -84,14 +85,14 @@ if __name__ == "__main__":
 		depth_data_ocv = latest[1].get_data()[270:300]
 		image_ocv = original_image[270:300]
 		
-		reading = imProcessing(image_ocv, depth_data_ocv)
+		#reading = imProcessing(image_ocv, depth_data_ocv)
 		
 		cv2.imshow("image", original_image)
 		cv2.imshow("depth", depth_data_ocv)
 		cv2.waitKey(10)
-		if reading:
-			print()
-			print(reading)
+		#if reading:
+			#print()
+			#print(reading)
 		
 		
 	ic.stop()
