@@ -7,7 +7,7 @@ from bisect import bisect_right
 import itertools
 
 def threshold(a, threshmin=None, threshmax=None, newval=0):
-
+	"""Returns an array with values bound between threshmin and threshmax """
 	a = np.ma.array(a, copy=True)
 	mask = np.zeros(a.shape, dtype=bool)
 	if threshmin is not None:
@@ -21,9 +21,11 @@ def threshold(a, threshmin=None, threshmax=None, newval=0):
 	return a
 
 def findMin(bigList, k, firstPass=False):
+	"""Returns the smallest value bigger than k in the array"""
 	if 'flattened_list' not in findMin.__dict__ or firstPass:
 		findMin.flattened_list  = list(itertools.chain(*bigList))	
 		findMin.flattened_list.sort()
+
 	try:
 		min_val = findMin.flattened_list[bisect_right(findMin.flattened_list,k)]
 	except:
@@ -39,12 +41,11 @@ def findGates(red, yellow, depth, firstPass, gateDistance):
 
 	conesDepth = cv2.bitwise_and(depth, depth, mask=red+yellow)
 		#depth info just where the cones are
-#First Gate
+
 	planeDistance = findMin(conesDepth, gateDistance, firstPass)
-	markedPixels = np.zeros((len(depth), len(depth[0])), dtype=np.int8)
 
 	if planeDistance == 0: #no object in sight
-		return 
+		return None
 			#empty pixels
 	maxFirstGate = planeDistance + 0.5
 	markedPixels = threshold(conesDepth, planeDistance, maxFirstGate, 0)
@@ -58,7 +59,7 @@ def findGates(red, yellow, depth, firstPass, gateDistance):
 	
 	findGates.result.append((firstRed,firstYellow))
 	
-	return findGates(red, yellow, depth, False, maxFirstGate+1)
+	findGates(red, yellow, depth, False, maxFirstGate+1)
 
 
 def findLineMarkers(red, yellow, i, visual):
