@@ -73,8 +73,6 @@ def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None):
 		if visual:
 			cv2.line(original_image[270:300], redLine1, yellowLine1, (0,255,0), 10)
 			cv2.circle(original_image[270:300], target1, 5, (0,0,255), 4)
-			center = (int(1280/2), 0)
-			cv2.line(original_image[270:300], target1, center, (255,0,0), 2)
 
 	reading = calculateCenter(targetTotal) #averages a reading every 15 frames
 
