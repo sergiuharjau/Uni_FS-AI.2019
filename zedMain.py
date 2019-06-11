@@ -117,8 +117,8 @@ def main(visual = False) :
 
 	init.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_ULTRA
 	init.coordinate_units = sl.UNIT.UNIT_METER
-	if len(sys.argv) >= 2 :
-		init.svo_input_filename = sys.argv[1]
+	if len(sys.argv) > 2 :
+		visual = True
 
 	# Open the camera
 	err = zed.open(init)
@@ -188,4 +188,4 @@ def main(visual = False) :
 	print("\nFINISH")
 
 if __name__ == "__main__":
-	main(True) 
+	main(False) 
