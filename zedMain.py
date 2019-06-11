@@ -64,17 +64,22 @@ def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None):
 		target = (int((yellowLine[0] + redLine[0])/2), int((yellowLine[1] + redLine[1])/2)) 
 
 		targetList.append(target)
+		targetList.append(redLine)
+		targetList.append(yellowLine)
 		i+=1
 
-		if visual:
-			cv2.line(original_image[270:300], redLine, yellowLine, (0,255,0), 10)
-			cv2.circle(original_image[270:300], target, 5, (0,0,255), 4)
-	
 	reading = None
 	if len(targetList):
 		reading = calculateCenter(targetList[0][0]) #averages a reading every 15 frames
 
 	if visual:
+		
+		if len(targetList):
+			cv2.circle(original_image[270:300], targetList[0], 5, (255,0,0), 4)
+			cv2.line(original_image[270:300], targetList[1], targetList[2], (0,255,0), 10)
+			if len(targetList)>3:
+				cv2.circle(original_image[270:300], targetList[3], 5, (0,0,255), 4)
+				cv2.line(original_image[270:300], targetList[4], targetList[5], (0,0,0), 10)
 
 		redImage = cv2.bitwise_and(image_ocv, image_ocv, mask=maskRed)
 		yellowImage = cv2.bitwise_and(image_ocv, image_ocv, mask=maskYellow)
