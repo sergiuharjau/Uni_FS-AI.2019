@@ -24,23 +24,16 @@ def issueCommands(steering, velocity):
 def calculateCenter(target):
 	"""Deals with calculations based on target. Returns an average once every 15 frames."""
 
-	if 'total' not in calculateCenter.__dict__:
-		calculateCenter.total = 0
-	if 'frameCounter' not in calculateCenter.__dict__:
-		calculateCenter.frameCounter = 0
+	if 'pastCom' not in calculateCenter.__dict__:
+		calculateCenter.pastCom = 0
 
-	offset = target - int(width/2) #offset from center of image
+	newCom = target - int(width/2) #offset from center of image
 
-	if offset != -int(width/2): #when we have a correct reading
-		calculateCenter.total += offset
-		calculateCenter.frameCounter +=1
-
-	if calculateCenter.frameCounter == 15:
-		average = int(calculateCenter.total / calculateCenter.frameCounter)
-		calculateCenter.total = 0
-		calculateCenter.frameCounter = 0
-
-		return average
+	if newCom != -int(width/2): #when we have a correct reading
+		
+		final =  calculateCenter.pastCom + (newCom-calculateCenter.pastCom) / 2
+		calculateCenter.pastCom = final
+		return round(final)
 
 def imCapt(zed):
 	"""Used for parallelised image and depth campturing."""
@@ -146,7 +139,7 @@ def main(visual = False) :
 
 			if reading:
 				print("Camera: ", reading)
-				issueCommands((reading/20)*-1,50)
+				issueCommands((reading/15)*-1,50)
 
 			t.join()
 			print("Frames left: ", framesToDo-amount)
@@ -163,4 +156,4 @@ def main(visual = False) :
 	print("\nFINISH")
 
 if __name__ == "__main__":
-	main(False) 
+	main(False) 	
