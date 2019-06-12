@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 
-def findColour(openCVobject, output = False) -> object:
+def findColour(openCVobject, greenDetection) -> object:
 	"""Function that takes path of an image and outputs a new file highlighting said colour.
 	:param openCVobject: variable pointing to an openCVobject 
 	:param output: whether you want it saved to the file system as well or not 
@@ -20,7 +20,7 @@ def findColour(openCVobject, output = False) -> object:
 
 	# YELLOW COLOUR BOUNDARIES
 	yellow_lower = np.array([20, 100, 100])
-	yellow_upper = np.array([30, 255, 255])
+	yellow_upper = np.array([35, 255, 255])
 	
 	#red detection
 	maskRed = cv2.inRange(hsv, red_lower, red_upper)
@@ -30,9 +30,26 @@ def findColour(openCVobject, output = False) -> object:
 	#yellow detection 
 	maskYellow = cv2.inRange(hsv, yellow_lower, yellow_upper)
 
-	return maskRed, maskYellow
+	#green detection
+	stopFlag = False
+	if greenDetection:
+		green = cv2.inRange(hsv, np.array([45, 100, 60]), np.array([65, 255, 255]))
+		print(len(np.where(green==255)[0]))
+		#input()
+		if len(np.where(green==255)[0]) > 500:
+			stopFlag = True
+
+	return maskRed, maskYellow, stopFlag
 
 if __name__ == "__main__":
 	
-	image = cv2.imread("./Assets/conetest.jpg", 1)
-	findColour(image, True)
+	image = cv2.imread("hsv.jpg")
+	cv2.imshow("image", image)
+	#input()
+	r, y, stop = findColour(image, True)
+	print(stop)
+	if stop:
+		print("Attention, pedestrian!")
+	cv2.imshow("red", cv2.bitwise_and(image, image, mask=r))
+	cv2.imshow("yellow", cv2.bitwise_and(image, image, mask=y))
+	cv2.waitKey(0)
