@@ -49,9 +49,13 @@ def imCapt(zed):
 	zed.retrieve_measure(imCapt.depth_data_zed, sl.MEASURE.MEASURE_DEPTH, sl.MEM.MEM_CPU)
 
 
-def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None):
+def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None, green=False):
 
-	maskRed, maskYellow = findColour(image_ocv)
+	maskRed, maskYellow, stop = findColour(image_ocv, green)
+
+	if stop:
+		print("Attention, pedestrian!")
+		quit()
 
 	findGates(maskRed, maskYellow, depth_data_ocv, True, 0.7)
 			 #finds the masks for the first red/yellow cones
@@ -107,8 +111,11 @@ def main(visual = False) :
 
 	init.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_ULTRA
 	init.coordinate_units = sl.UNIT.UNIT_METER
-	if len(sys.argv) >= 2 :
+	green=False
+	if len(sys.argv) > 1 :
 		visual = True
+		if len(sys.argv) > 2:
+			green = True
 
 	# Open the camera
 	err = zed.open(init)
@@ -141,7 +148,7 @@ def main(visual = False) :
 
 			t = threading.Thread(target=imCapt, args=(zed,))
 
-			reading = imProcessing(image_ocv, depth_data_ocv, visual, original_image)
+			reading = imProcessing(image_ocv, depth_data_ocv, visual, original_image, green)
 			t.start() #works faster for performance reasons
 
 			if reading:
