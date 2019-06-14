@@ -22,7 +22,6 @@ def issueCommands(steering, velocity):
 	issueCommands.car.loop()
 	
 def calculateCenter(target):
-	"""Deals with calculations based on target. Returns an average once every 15 frames."""
 
 	if 'pastCom' not in calculateCenter.__dict__:
 		calculateCenter.pastCom = 0
@@ -128,7 +127,7 @@ def main(visual = False) :
 
 	skipped = 0
 	startTime = time.time()
-	framesToDo = 500
+	framesToDo = 20000000000
 
 	for amount in range(framesToDo):
 		err = zed.grab(runtime)
@@ -149,11 +148,11 @@ def main(visual = False) :
 				issueCommands((reading/15)*-1,50)
 
 			t.join()
-			print("Frames left: ", framesToDo-amount)
+			#print("Frames left: ", framesToDo-amount)
 	
 		else:
 			skipped += 1
-			print(err)
+			#print(err)
 			time.sleep(0.001)
 
 	zed.close()
