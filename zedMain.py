@@ -18,6 +18,8 @@ global pixelStrip
 pixelStrip = 30
 global startFrom
 startFrom = 270
+global steeringFactor
+steeringFactor = 30
 
 
 def issueCommands(steering, velocity, exit, lastCommandTime=0.025):
@@ -169,7 +171,7 @@ def main(visual=False, green=False) :
 
 				if reading:
 					print("Camera: ", reading)
-					issueCommands((reading/15)*-1, 60, False, time.time()-lastCommand)
+					issueCommands((reading/steeringFactor)*-1, 60, False, time.time()-lastCommand)
 					lastCommand = time.time()
 
 				t.join()
