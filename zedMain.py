@@ -15,11 +15,30 @@ width = 1280
 global height
 height = 720
 
-def issueCommands(steering, velocity):
+def issueCommands(steering, velocity, exit, lastCommandTime=0.025):
 	if 'car' not in issueCommands.__dict__:
 		issueCommands.car = fspycan_ext.Car("can0")
+		issueCommands.setup = True
+		print("Initiating CAN setup.")
+		
+	while issueCommands.setup: #can setup protocol
+		setup = not issueCommands.car.setupCAN()
+		time.sleep(0.025) # >=5ms, <50ms
+
 	issueCommands.car.set_steering_velocity(int(steering), int(velocity))
-	issueCommands.car.loop()
+	issueCommands.car.commandsLoop()
+
+	if lastCommandTime < 0.005:
+		print("Sending commands too fast. Waiting 10ms")
+		time.sleep(0.01)
+	elif lastCommandTime > 0.05:
+		print("Sent command too late.\n Stop the program.")
+		#issueCommands.setup = True
+
+	if exit: #can exit protocol
+		print("Initiating CAN exit.")
+		while not issueCommands.car.exitCAN():
+			time.sleep(0.025)
 	
 def calculateCenter(target):
 
@@ -127,34 +146,39 @@ def main(visual = False) :
 
 	skipped = 0
 	startTime = time.time()
-	framesToDo = 20000000000
+	#framesToDo = 200
+	try: 
+		while True:   #for amount in range(framesToDo):
+			err = zed.grab(runtime)
+			if err == sl.ERROR_CODE.SUCCESS:
+				# Retrieve the left image, depth image in specified dimensions
 
-	for amount in range(framesToDo):
-		err = zed.grab(runtime)
-		if err == sl.ERROR_CODE.SUCCESS:
-			# Retrieve the left image, depth image in specified dimensions
+				original_image = imCapt.image_zed.get_data()
+				depth_data_ocv = imCapt.depth_data_zed.get_data()[270:300]
+				image_ocv = original_image[270:300]
 
-			original_image = imCapt.image_zed.get_data()
-			depth_data_ocv = imCapt.depth_data_zed.get_data()[270:300]
-			image_ocv = original_image[270:300]
+				t = threading.Thread(target=imCapt, args=(zed,))
 
-			t = threading.Thread(target=imCapt, args=(zed,))
+				reading = imProcessing(image_ocv, depth_data_ocv, visual, original_image, green)
+				t.start() #works faster for performance reasons
 
-			reading = imProcessing(image_ocv, depth_data_ocv, visual, original_image, green)
-			t.start() #works faster for performance reasons
+				if reading:
+					print("Camera: ", reading)
+					issueCommands((reading/15)*-1, 60, False, time.time()-lastCommand)
+					lastCommand = time.time()
 
-			if reading:
-				print("Camera: ", reading)
-				issueCommands((reading/15)*-1,50)
+				t.join()
+				#print("Frames left: ", framesToDo-amount)
+		
+			else:
+				skipped += 1
+				#print(err)
+				time.sleep(0.001)
+	except KeyboardInterrupt:
+		issueCommands(0,0,True) #initiates the exit protocol
+		zed.close()
 
-			t.join()
-			#print("Frames left: ", framesToDo-amount)
-	
-		else:
-			skipped += 1
-			#print(err)
-			time.sleep(0.001)
-
+	issueCommands(0,0,True)
 	zed.close()
 	print("Amount of skipped frames: ", skipped)
 	print("Seconds it took: ", time.time()-startTime )
