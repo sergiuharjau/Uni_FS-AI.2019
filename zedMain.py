@@ -13,7 +13,7 @@ import fspycan_ext
 global width
 width = 1280
 global height
-height = 720
+height = 720 #consider dropping camera res as well
 global pixelStrip
 pixelStrip = 30
 global startFrom
@@ -129,9 +129,9 @@ def main(visual=False, green=False) :
 	init.coordinate_units = sl.UNIT.UNIT_METER
 
 	if len(sys.argv) > 1 :
-		visual = True
+		visual = sys.argv[1]
 		if len(sys.argv) > 2:
-			green = True
+			green = sys.argv[2]
 
 	# Open the camera
 	err = zed.open(init)
