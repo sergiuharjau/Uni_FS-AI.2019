@@ -22,7 +22,7 @@ def issueCommands(steering, velocity, exit, lastCommandTime=0.025):
 		print("Initiating CAN setup.")
 		
 	while issueCommands.setup: #can setup protocol
-		setup = not issueCommands.car.setupCAN()
+		setup = issueCommands.car.setupCAN()
 		time.sleep(0.025) # >=5ms, <50ms
 
 	issueCommands.car.set_steering_velocity(int(steering), int(velocity))
@@ -37,7 +37,7 @@ def issueCommands(steering, velocity, exit, lastCommandTime=0.025):
 
 	if exit: #can exit protocol
 		print("Initiating CAN exit.")
-		while not issueCommands.car.exitCAN():
+		while issueCommands.car.exitCAN():
 			time.sleep(0.025)
 	
 def calculateCenter(target):
