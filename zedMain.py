@@ -14,6 +14,11 @@ global width
 width = 1280
 global height
 height = 720
+global pixelStrip
+pixelStrip = 30
+global startFrom
+startFrom = 270
+
 
 def issueCommands(steering, velocity, exit, lastCommandTime=0.025):
 	if 'car' not in issueCommands.__dict__:
@@ -90,11 +95,11 @@ def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None, g
 	if visual:
 		
 		if len(targetList):
-			cv2.circle(original_image[270:300], targetList[0], 5, (255,0,0), 4)
-			cv2.line(original_image[270:300], targetList[1], targetList[2], (0,255,0), 10)
+			cv2.circle(original_image[startFrom:startFrom+pixelStrip], targetList[0], 5, (255,0,0), 4)
+			cv2.line(original_image[startFrom:startFrom+pixelStrip], targetList[1], targetList[2], (0,255,0), 10)
 			if len(targetList)>3:
-				cv2.circle(original_image[270:300], targetList[3], 5, (0,0,255), 4)
-				cv2.line(original_image[270:300], targetList[4], targetList[5], (0,0,0), 10)
+				cv2.circle(original_image[startFrom:startFrom+pixelStrip], targetList[3], 5, (0,0,255), 4)
+				cv2.line(original_image[startFrom:startFrom+pixelStrip], targetList[4], targetList[5], (0,0,0), 10)
 
 		redImage = cv2.bitwise_and(image_ocv, image_ocv, mask=maskRed)
 		yellowImage = cv2.bitwise_and(image_ocv, image_ocv, mask=maskYellow)
@@ -110,7 +115,7 @@ def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None, g
 
 	return reading
 
-def main(visual = False) :
+def main(visual=False, green=False) :
 
 	# Create a ZED camera object
 	zed = sl.Camera()
@@ -122,7 +127,7 @@ def main(visual = False) :
 
 	init.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_ULTRA
 	init.coordinate_units = sl.UNIT.UNIT_METER
-	green=False
+
 	if len(sys.argv) > 1 :
 		visual = True
 		if len(sys.argv) > 2:
@@ -154,8 +159,8 @@ def main(visual = False) :
 				# Retrieve the left image, depth image in specified dimensions
 
 				original_image = imCapt.image_zed.get_data()
-				depth_data_ocv = imCapt.depth_data_zed.get_data()[270:300]
-				image_ocv = original_image[270:300]
+				depth_data_ocv = imCapt.depth_data_zed.get_data()[startFrom:startFrom+pixelStrip]
+				image_ocv = original_image[startFrom:startFrom+pixelStrip]
 
 				t = threading.Thread(target=imCapt, args=(zed,))
 
@@ -186,4 +191,4 @@ def main(visual = False) :
 	print("\nFINISH")
 
 if __name__ == "__main__":
-	main(False) 	
+	main() 	
