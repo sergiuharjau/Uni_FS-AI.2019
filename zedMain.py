@@ -25,13 +25,14 @@ steeringFactor = 30
 def issueCommands(steering, velocity, exit, lastCommandTime=0.025):
 	if 'car' not in issueCommands.__dict__:
 		issueCommands.car = fspycan_ext.Car("can0")
+		issueCommands.car.init()
 		issueCommands.setup = True
 		print("Initiating CAN setup.")
 		
 	while issueCommands.setup: #can setup protocol
-		setup = issueCommands.car.setupCAN()
-		time.sleep(0.025) # >=5ms, <50ms
-
+		issueCommands.setup = issueCommands.car.setupCAN()
+		time.sleep(0.006) # >=5ms, <50ms
+	#input("finished setup")
 	issueCommands.car.set_steering_velocity(int(steering), int(velocity))
 	issueCommands.car.commandsLoop()
 
@@ -46,11 +47,7 @@ def issueCommands(steering, velocity, exit, lastCommandTime=0.025):
 		print("Initiating CAN exit.")
 		while issueCommands.car.exitCAN():
 			time.sleep(0.025)
-	
 def calculateCenter(target):
-
-	if 'pastCom' not in calculateCenter.__dict__:
-		calculateCenter.pastCom = 0
 
 	newCom = target - int(width/2) #offset from center of image
 
@@ -59,6 +56,7 @@ def calculateCenter(target):
 		final =  calculateCenter.pastCom + (newCom-calculateCenter.pastCom) / 2
 		calculateCenter.pastCom = final
 		return round(final)
+calculateCenter.pastCom = 0
 
 def imCapt(zed):
 	"""Used for parallelised image and depth campturing."""
@@ -121,7 +119,7 @@ def main(visual=False, green=False) :
 
 	# Create a ZED camera object
 	zed = sl.Camera()
-
+	lastCommand = 0
 	# Set configuration parameters
 	init = sl.InitParameters()
 	init.camera_resolution = sl.RESOLUTION.RESOLUTION_HD720
@@ -172,8 +170,9 @@ def main(visual=False, green=False) :
 				if reading:
 					print("Camera: ", reading)
 					issueCommands((reading/steeringFactor)*-1, 60, False, time.time()-lastCommand)
-					lastCommand = time.time()
-
+				else:
+					issueCommands((calculateCenter.pastCom/steeringFactor)*-1, 60, False, time.time()-lastCommand)
+				lastCommand = time.time()
 				t.join()
 				#print("Frames left: ", framesToDo-amount)
 		
