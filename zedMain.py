@@ -20,43 +20,35 @@ global startFrom
 startFrom = 270
 global steeringFactor
 steeringFactor = 30
+global carVelocity
+carVelocity = 60
+
 
 
 def issueCommands(steering, velocity, exit, lastCommandTime=0.025):
-	if 'car' not in issueCommands.__dict__:
+	if 'car' not in issueCommands.__dict__: #only runs once
 		issueCommands.car = fspycan_ext.Car("can0")
 		issueCommands.car.init()
-		issueCommands.setup = True
 		print("Initiating CAN setup.")
-		
-	while issueCommands.setup: #can setup protocol
-		issueCommands.setup = issueCommands.car.setupCAN()
-		time.sleep(0.006) # >=5ms, <50ms
-	#input("finished setup")
-	issueCommands.car.set_steering_velocity(int(steering), int(velocity))
-	issueCommands.car.commandsLoop()
+		issueCommands.car.setupCAN() #function runs until we finish setup
+		print("Setup finished gracefully") 
 
-	if lastCommandTime < 0.005:
-		print("Sending commands too fast. Waiting 10ms")
-		time.sleep(0.01)
-	elif lastCommandTime > 0.05:
-		print("Sent command too late.\n Stop the program.")
-		#issueCommands.setup = True
+	issueCommands.car.set_steering_velocity(int(steering), int(velocity))
+			#we only set the steering here, the loop runs on a different c++ thread
 
 	if exit: #can exit protocol
 		print("Initiating CAN exit.")
-		while issueCommands.car.exitCAN():
-			time.sleep(0.025)
+		issueCommands.car.exitCAN() #runs until we exit gracefully
+
 def calculateCenter(target):
 
 	newCom = target - int(width/2) #offset from center of image
 
 	if newCom != -int(width/2): #when we have a correct reading
-		
 		final =  calculateCenter.pastCom + (newCom-calculateCenter.pastCom) / 2
 		calculateCenter.pastCom = final
+
 		return round(final)
-calculateCenter.pastCom = 0
 
 def imCapt(zed):
 	"""Used for parallelised image and depth campturing."""
@@ -119,7 +111,7 @@ def main(visual=False, green=False) :
 
 	# Create a ZED camera object
 	zed = sl.Camera()
-	lastCommand = 0
+	
 	# Set configuration parameters
 	init = sl.InitParameters()
 	init.camera_resolution = sl.RESOLUTION.RESOLUTION_HD720
@@ -127,6 +119,9 @@ def main(visual=False, green=False) :
 
 	init.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_ULTRA
 	init.coordinate_units = sl.UNIT.UNIT_METER
+	
+	calculateCenter.pastCom = 0
+	lastCommand = 0
 
 	if len(sys.argv) > 1 :
 		visual = sys.argv[1]
@@ -169,9 +164,9 @@ def main(visual=False, green=False) :
 
 				if reading:
 					print("Camera: ", reading)
-					issueCommands((reading/steeringFactor)*-1, 60, False, time.time()-lastCommand)
+					issueCommands((reading/steeringFactor)*-1, carVelocity, False, time.time()-lastCommand)
 				else:
-					issueCommands((calculateCenter.pastCom/steeringFactor)*-1, 60, False, time.time()-lastCommand)
+					issueCommands((calculateCenter.pastCom/steeringFactor)*-1, carVelocity, False, time.time()-lastCommand)
 				lastCommand = time.time()
 				t.join()
 				#print("Frames left: ", framesToDo-amount)
@@ -183,6 +178,7 @@ def main(visual=False, green=False) :
 	except KeyboardInterrupt:
 		issueCommands(0,0,True) #initiates the exit protocol
 		zed.close()
+		quit()
 
 	issueCommands(0,0,True)
 	zed.close()
