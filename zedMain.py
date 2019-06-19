@@ -19,9 +19,9 @@ pixelStrip = 30
 global startFrom
 startFrom = 270
 global steeringFactor
-steeringFactor = 30
+steeringFactor = 10
 global carVelocity
-carVelocity = 60
+carVelocity = 70
 
 
 
@@ -38,6 +38,8 @@ def issueCommands(steering, velocity, exit, lastCommandTime=0.025):
 
 	if exit: #can exit protocol
 		print("Initiating CAN exit.")
+		issueCommands.car.set_steering_velocity(0,0)
+		time.sleep(0.5)
 		issueCommands.car.exitCAN() #runs until we exit gracefully
 
 def calculateCenter(target):
@@ -45,7 +47,7 @@ def calculateCenter(target):
 	newCom = target - int(width/2) #offset from center of image
 
 	if newCom != -int(width/2): #when we have a correct reading
-		final =  calculateCenter.pastCom + (newCom-calculateCenter.pastCom) / 2
+		final =  calculateCenter.pastCom + (newCom-calculateCenter.pastCom) / 20
 		calculateCenter.pastCom = final
 
 		return round(final)
