@@ -39,7 +39,7 @@ def issueCommands(steering, velocity, exit, lastCommandTime=0.025):
 	if exit: #can exit protocol
 		print("Initiating CAN exit.")
 		issueCommands.car.set_steering_velocity(0,0)
-		time.sleep(0.5)
+		time.sleep(2)
 		issueCommands.car.exitCAN() #runs until we exit gracefully
 
 def calculateCenter(target):
