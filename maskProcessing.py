@@ -71,6 +71,8 @@ def findLineMarkers(red, yellow, i, visual):
 		missedRed +=1
 		if missedRed > 15:
 			redMarker = (-500,0)
+		else:
+			redMarker = False
 	else:
 		missedRed = 0
 		redMarker = (redIndex[1][0], redIndex[0][0])
@@ -80,6 +82,8 @@ def findLineMarkers(red, yellow, i, visual):
 		missedYellow +=1
 		if missedYellow > 15:
 			yellowMarker = (1280+500,0)
+		else
+			yellowMarker = False
 	else:
 		missedYellow = 0
 		yellowMarker = (yellowIndex[1][0], yellowIndex[0][0])
