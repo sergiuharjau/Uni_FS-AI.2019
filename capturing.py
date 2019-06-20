@@ -20,7 +20,10 @@ class ImageCap:
 					#print("Stopped running")
 					self.frame = (image_zed, depth_data_zed)
 				else:
+					print(err)
 					time.sleep(0.001)
+			else:
+				time.sleep(0.001)
 
 	def start(self):
 		self.__running = True
@@ -33,8 +36,8 @@ class ImageCap:
 			self.zed.close()
 			print("Closed camera")
 			self.__thread.join()
+			print("Joined thread")
 			
-		
 	def __del__(self):
 		if self.__running:
 			self.stop()
@@ -81,17 +84,7 @@ if __name__ == "__main__":
 		depth_data_ocv = latest[1].get_data()[270:300]
 		image_ocv = original_image[270:300]
 		
-		#reading = imProcessing(image_ocv, depth_data_ocv)
-		
 		cv2.imshow("image", original_image)
 		cv2.imshow("depth", depth_data_ocv)
 		cv2.waitKey(10)
-		#if reading:
-			#print()
-			#print(reading)
-		
-		
-	ic.stop()
-	
-
 
