@@ -162,10 +162,9 @@ def main(visual=False, green=False) :
 
 				if reading:
 					print("Camera: ", reading)
-					issueCommands((reading/steeringFactor)*-1, carVelocity, False, time.time()-lastCommand)
-				else:
-					issueCommands((calculateCenter.pastCom/steeringFactor)*-1, carVelocity, False, time.time()-lastCommand)
-				
+					if not visual:
+						issueCommands((reading/steeringFactor)*-1, carVelocity, False, time.time()-lastCommand)
+
 				lastCommand = time.time()
 				t.join()
 				#print("Frames left: ", framesToDo-amount)
@@ -175,7 +174,8 @@ def main(visual=False, green=False) :
 				#print(err)
 				time.sleep(0.001)
 	except KeyboardInterrupt:
-		issueCommands(0,0,True) #initiates the exit protocol
+		if not visual:
+			issueCommands(0,0,True) #initiates the exit protocol
 		zed.close()
 		quit()
 
