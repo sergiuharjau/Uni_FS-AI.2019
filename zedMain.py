@@ -12,8 +12,8 @@ import fspycan_ext
 global width; width = 1280
 global height; height = 720 #consider dropping camera res as well
 
-global pixelStrip; pixelStrip = 30
-global startFrom; startFrom = 290
+global pixelStrip; pixelStrip = 100
+global startFrom; startFrom = 300
 
 global steeringFactor; steeringFactor = 10 #divide PixelValue by this number
 global newComOffset; newComOffset = 15 #divide newCom by this number=======global width
@@ -29,8 +29,11 @@ def issueCommands(steering, velocity, exit, lastCommandTime=0.025):
 		issueCommands.car.setupCAN() #function runs until we finish setup
 		print("Setup finished gracefully") 
 
+	#sorted((-24, steering, 24))[1]
+
 	issueCommands.car.set_steering_velocity(int(steering), int(velocity))
 			#we only set the steering here, the loop runs on a different c++ thread
+
 
 	if exit: #can exit protocol
 		print("Initiating CAN exit.")
@@ -166,7 +169,7 @@ def main(visual=False, green=False) :
 				else:
 					print("No camera reading.")
 					if not visual:
-						issueCommands((calculateCenter.pastcom/steeringFactor*-1, carVelocity, False, time.time()-lastCommand  ) )
+						issueCommands((calculateCenter.pastCom/steeringFactor)*-1, carVelocity, False, time.time()-lastCommand  )
 				lastCommand = time.time()
 				t.join()
 				#print("Frames left: ", framesToDo-amount)
@@ -177,11 +180,11 @@ def main(visual=False, green=False) :
 				time.sleep(0.001)
 	except KeyboardInterrupt:
 		if not visual:
-			issueCommands(0,0,True) #initiates the exit protocol
+			issueCommands(0,0,True, 0) #initiates the exit protocol
 		zed.close()
 		quit()
 
-	issueCommands(0,0,True)
+	issueCommands(0,0,True, 0)
 	zed.close()
 	print("Amount of skipped frames: ", skipped)
 	print("Seconds it took: ", time.time()-startTime )

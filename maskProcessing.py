@@ -69,8 +69,9 @@ def findLineMarkers(red, yellow, i, visual):
 	redIndex = np.where(red==255)
 	if len(redIndex) == 0:
 		missedRed +=1
-		if missedRed > 15:
-			redMarker = (-500,0)
+		if missedRed > 10:
+			#redMarker = (-900,0)
+			return (-10000,0), (640,0) # turn left
 		else:
 			redMarker = False
 	else:
@@ -82,8 +83,9 @@ def findLineMarkers(red, yellow, i, visual):
 	yellowIndex = np.where(yellow==255)
 	if len(yellowIndex) == 0:
 		missedYellow +=1
-		if missedYellow > 15:
-			yellowMarker = (1280+500,0)
+		if missedYellow > 10:
+			#yellowMarker = (1280+900,0)
+			return (640,0), (4280,0) # turn right
 		else:
 			yellowMarker = False
 	else:
