@@ -15,13 +15,13 @@ width = 1280
 global height
 height = 720 #consider dropping camera res as well
 global pixelStrip
-pixelStrip = 70
+pixelStrip = 100
 global startFrom
-startFrom = 320
+startFrom = 270
 global steeringFactor
 steeringFactor = 10
 global carVelocity
-carVelocity = 70
+carVelocity = 80
 
 
 
