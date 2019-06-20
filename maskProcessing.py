@@ -67,33 +67,33 @@ missedRed=0;missedYellow=0
 def findLineMarkers(red, yellow, i, visual):
 
 	redIndex = np.where(red==255)
-	if len(redIndex) == 0:
-		missedRed +=1
-		if missedRed > 10:
-			#redMarker = (-900,0)
-			return (-10000,0), (640,0) # turn left
-		else:
-			redMarker = False
-	else:
+	try: 
+		redMarker = (redIndex[1][0], redIndex[0][0])
 		missedRed = 0
-		try:
-			redMarker = (redIndex[1][0], redIndex[0][0])
-		except:
-			redMarker = False
-	yellowIndex = np.where(yellow==255)
-	if len(yellowIndex) == 0:
-		missedYellow +=1
-		if missedYellow > 10:
-			#yellowMarker = (1280+900,0)
-			return (640,0), (4280,0) # turn right
+	except:
+		missed += 1
+		if missedRed > 10:
+			print("Can't see blue, turning left", (-100*missedRed+640)/2-640)
+			return (-100 * missedRed, 0), (640, 0)
+			#very far left red, middle yellow, turns left
 		else:
-			yellowMarker = False
-	else:
+			print("Missed Red: ", missedRed)
+			redMarker = False
+
+	yellowIndex = np.where(yellow==255)
+	try:
+		yellowMarker = (yellowIndex[1][0], yellowIndex[0][0])
 		missedYellow = 0
-		try:
- 			yellowMarker = (yellowIndex[1][0], yellowIndex[0][0])
-		except:
+	except:
+		missedYellow += 1
+		if missedYellow > 10:
+			print("Can't see yellow, turning right", ((1280+100*missedYellow)-640)/2-640)
+			return (640,0),(1280 + 100*missedYellow, 0)
+				#middle red, very far right Yellow, turns right
+		else:
+			print("Missed Yellow: ", missedYellow)
 			yellowMarker = False
+
 	if visual:
 		for x in range(i+1):
 			cv2.imshow("gate " + str(i), red+yellow)
