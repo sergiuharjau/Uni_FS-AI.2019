@@ -66,13 +66,13 @@ def findLineMarkers(red, yellow, i, visual):
 
 	redIndex = np.where(red==255)
 	if len(redIndex) == 0:
-		redMarker = -200
+		redMarker = (-250,0)
 	else:
 		redMarker = (redIndex[1][0], redIndex[0][0])
 
 	yellowIndex = np.where(yellow==255)
 	if len(yellowIndex) == 0:
-		yellowMarker = -200
+		yellowMarker = (1280+250,0)
 	else:
 		yellowMarker = (yellowIndex[1][0], yellowIndex[0][0])
 
