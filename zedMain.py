@@ -72,10 +72,10 @@ def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None, g
 		fYellow = gate[1]
 		redLine, yellowLine = findLineMarkers(fRed, fYellow, i, visual)
 		target = (int((yellowLine[0] + redLine[0])/2), int((yellowLine[1] + redLine[1])/2)) 
-
-		targetList.append(target)
-		targetList.append(redLine)
-		targetList.append(yellowLine)
+		if target[0] and target[1]: #only on correct readings
+			targetList.append(target)
+			targetList.append(redLine)
+			targetList.append(yellowLine)
 		i+=1
 
 	reading = None
@@ -83,7 +83,6 @@ def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None, g
 		reading = calculateCenter(targetList[0][0]) #averages a reading every 15 frames
 
 	if visual:
-		
 		if len(targetList):
 			cv2.circle(original_image[startFrom:startFrom+pixelStrip], targetList[0], 5, (255,0,0), 4)
 			cv2.line(original_image[startFrom:startFrom+pixelStrip], targetList[1], targetList[2], (0,255,0), 10)
@@ -164,7 +163,10 @@ def main(visual=False, green=False) :
 					print("Camera: ", reading)
 					if not visual:
 						issueCommands((reading/steeringFactor)*-1, carVelocity, False, time.time()-lastCommand)
-
+				else:
+					print("No camera reading.")
+					if not visual:
+						issueCommands((calculateCenter.pastcom/steeringFactor*-1, carVelocity, False, time.time()-lastCommand  ) )
 				lastCommand = time.time()
 				t.join()
 				#print("Frames left: ", framesToDo-amount)
