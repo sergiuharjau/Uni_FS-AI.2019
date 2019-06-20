@@ -6,23 +6,19 @@ import time
 from colourDetection import findColour
 from maskProcessing import findGates, findLineMarkers
 import threading
-
 sys.path.insert(0, '../fspycan/lib/')
 import fspycan_ext
 
-global width
-width = 1280
-global height
-height = 720 #consider dropping camera res as well
-global pixelStrip
-pixelStrip = 30
-global startFrom
-startFrom = 270
-global steeringFactor
-steeringFactor = 10
-global carVelocity
-carVelocity = 70
+global width; width = 1280
+global height; height = 720 #consider dropping camera res as well
 
+global pixelStrip; pixelStrip = 30
+global startFrom; startFrom = 270
+
+global steeringFactor; steeringFactor = 10 #divide PixelValue by this number
+global newComOffset; newComOffset = 15 #divide newCom by this number
+
+global carVelocity; carVelocity = 70
 
 
 def issueCommands(steering, velocity, exit, lastCommandTime=0.025):
@@ -47,7 +43,7 @@ def calculateCenter(target):
 	newCom = target - int(width/2) #offset from center of image
 
 	if newCom != -int(width/2): #when we have a correct reading
-		final =  calculateCenter.pastCom + (newCom-calculateCenter.pastCom) / 20
+		final =  calculateCenter.pastCom + (newCom-calculateCenter.pastCom) / newComOffset
 		calculateCenter.pastCom = final
 
 		return round(final)
@@ -149,7 +145,7 @@ def main(visual=False, green=False) :
 	skipped = 0
 	startTime = time.time()
 	#framesToDo = 200
-	try: 
+	try:
 		while True:   #for amount in range(framesToDo):
 			err = zed.grab(runtime)
 			if err == sl.ERROR_CODE.SUCCESS:
@@ -172,7 +168,7 @@ def main(visual=False, green=False) :
 				lastCommand = time.time()
 				t.join()
 				#print("Frames left: ", framesToDo-amount)
-		
+
 			else:
 				skipped += 1
 				#print(err)
