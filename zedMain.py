@@ -15,9 +15,9 @@ width = 1280
 global height
 height = 720 #consider dropping camera res as well
 global pixelStrip
-pixelStrip = 30
+pixelStrip = 70
 global startFrom
-startFrom = 270
+startFrom = 320
 global steeringFactor
 steeringFactor = 10
 global carVelocity
@@ -148,9 +148,9 @@ def main(visual=False, green=False) :
 
 	skipped = 0
 	startTime = time.time()
-	#framesToDo = 200
+	framesToDo = 200
 	try: 
-		while True:   #for amount in range(framesToDo):
+		while True: #for amount in range(framesToDo):
 			err = zed.grab(runtime)
 			if err == sl.ERROR_CODE.SUCCESS:
 				# Retrieve the left image, depth image in specified dimensions
@@ -169,6 +169,7 @@ def main(visual=False, green=False) :
 					issueCommands((reading/steeringFactor)*-1, carVelocity, False, time.time()-lastCommand)
 				else:
 					issueCommands((calculateCenter.pastCom/steeringFactor)*-1, carVelocity, False, time.time()-lastCommand)
+				
 				lastCommand = time.time()
 				t.join()
 				#print("Frames left: ", framesToDo-amount)
