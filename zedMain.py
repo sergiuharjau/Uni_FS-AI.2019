@@ -16,7 +16,7 @@ global pixelStrip; pixelStrip = 30
 global startFrom; startFrom = 270
 
 global steeringFactor; steeringFactor = 10 #divide PixelValue by this number
-global newComOffset; newComOffset = 15 #divide newCom by this number
+global newComOffset; newComOffset = 15 #divide newCom by this number=======global width
 
 global carVelocity; carVelocity = 70
 
@@ -146,7 +146,7 @@ def main(visual=False, green=False) :
 	startTime = time.time()
 	#framesToDo = 200
 	try:
-		while True:   #for amount in range(framesToDo):
+		while True: #for amount in range(framesToDo):
 			err = zed.grab(runtime)
 			if err == sl.ERROR_CODE.SUCCESS:
 				# Retrieve the left image, depth image in specified dimensions
@@ -165,6 +165,7 @@ def main(visual=False, green=False) :
 					issueCommands((reading/steeringFactor)*-1, carVelocity, False, time.time()-lastCommand)
 				else:
 					issueCommands((calculateCenter.pastCom/steeringFactor)*-1, carVelocity, False, time.time()-lastCommand)
+				
 				lastCommand = time.time()
 				t.join()
 				#print("Frames left: ", framesToDo-amount)
