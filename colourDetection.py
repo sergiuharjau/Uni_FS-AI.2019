@@ -19,9 +19,14 @@ def findColour(openCVobject, greenDetection) -> object:
 	wrap_around_upper = np.array([180, 255, 359])  # Could draw box around item to remedy this?
 
 	# YELLOW COLOUR BOUNDARIES
-	yellow_lower = np.array([20, 100, 100])
-	yellow_upper = np.array([35, 255, 255])
+	#yellow_lower = np.array([20, 100, 100])
+	#yellow_upper = np.array([35, 255, 255])
 	
+	yellow_lower = np.array([0,100,100]) #actually blue
+	yellow_upper = np.array([0,255,255]) #actually blue
+	
+	
+
 	#red detection
 	maskRed = cv2.inRange(hsv, red_lower, red_upper)
 	additional_mask = cv2.inRange(hsv, wrap_around_lower, wrap_around_upper)
@@ -46,7 +51,7 @@ if __name__ == "__main__":
 	image = cv2.imread("hsv.jpg")
 	cv2.imshow("image", image)
 	#input()
-	r, y, stop = findColour(image, True)
+	r, y, stop = findColour(image, False)
 	print(stop)
 	if stop:
 		print("Attention, pedestrian!")

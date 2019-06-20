@@ -56,30 +56,33 @@ def findGates(red, yellow, depth, firstPass, gateDistance):
 
 	firstRed = cv2.bitwise_and(red, red, mask=markedPixels)
 	firstYellow = cv2.bitwise_and(yellow, yellow, mask=markedPixels)
-	
+
 	findGates.result.append((firstRed,firstYellow))
-	
+
 	#findGates(red, yellow, depth, False, maxFirstGate+1)
 	#re-Add in the future to allow multiple gate processing
 
 def findLineMarkers(red, yellow, i, visual):
 
-	try:
-		redIndex = np.where(red==255)
+	redIndex = np.where(red==255)
+	if len(redIndex) == 0:
+		redMarker = -200
+	else:
 		redMarker = (redIndex[1][0], redIndex[0][0])
 
-		yellowIndex = np.where(yellow==255)
+	yellowIndex = np.where(yellow==255)
+	if len(yellowIndex) == 0:
+		yellowMarker = -200
+	else:
 		yellowMarker = (yellowIndex[1][0], yellowIndex[0][0])
-	except:
-		return(0,0), (0,0)
 
 	if visual:
 		for x in range(i+1):
 			cv2.imshow("gate " + str(i), red+yellow)
-	
+
 		for x in range(i+1, 5):
 			cv2.destroyWindow("gate " + str(x))
-			
+
 	return redMarker, yellowMarker
 
 
