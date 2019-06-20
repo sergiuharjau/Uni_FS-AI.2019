@@ -75,19 +75,23 @@ def findLineMarkers(red, yellow, i, visual):
 			redMarker = False
 	else:
 		missedRed = 0
-		redMarker = (redIndex[1][0], redIndex[0][0])
-
+		try:
+			redMarker = (redIndex[1][0], redIndex[0][0])
+		except:
+			redMarker = False
 	yellowIndex = np.where(yellow==255)
 	if len(yellowIndex) == 0:
 		missedYellow +=1
 		if missedYellow > 15:
 			yellowMarker = (1280+500,0)
-		else
+		else:
 			yellowMarker = False
 	else:
 		missedYellow = 0
-		yellowMarker = (yellowIndex[1][0], yellowIndex[0][0])
-
+		try:
+ 			yellowMarker = (yellowIndex[1][0], yellowIndex[0][0])
+		except:
+			yellowMarker = False
 	if visual:
 		for x in range(i+1):
 			cv2.imshow("gate " + str(i), red+yellow)

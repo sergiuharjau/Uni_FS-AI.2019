@@ -13,7 +13,7 @@ global width; width = 1280
 global height; height = 720 #consider dropping camera res as well
 
 global pixelStrip; pixelStrip = 30
-global startFrom; startFrom = 270
+global startFrom; startFrom = 290
 
 global steeringFactor; steeringFactor = 10 #divide PixelValue by this number
 global newComOffset; newComOffset = 15 #divide newCom by this number=======global width
@@ -70,9 +70,9 @@ def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None, g
 	for gate in findGates.result:
 		fRed = gate[0]
 		fYellow = gate[1]
-		redLine, yellowLine = findLineMarkers(fRed, fYellow, i, visual)
-		target = (int((yellowLine[0] + redLine[0])/2), int((yellowLine[1] + redLine[1])/2)) 
-		if target[0] and target[1]: #only on correct readings
+		redLine, yellowLine = findLineMarkers(fRed, fYellow, i, visual) 
+		if redLine and yellowLine: #only on correct readings
+			target = (int((yellowLine[0] + redLine[0])/2), int((yellowLine[1] + redLine[1])/2))
 			targetList.append(target)
 			targetList.append(redLine)
 			targetList.append(yellowLine)
