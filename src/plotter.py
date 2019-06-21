@@ -8,7 +8,9 @@ commands = [0]
 for com in rawComs:
     if com == "None" or com == "":
         com = commands[-1]
-    commands.append(int(com)/10) #offset from last one
+    commands.append(int(com)) #offset from last one
+
+commands[:] = [x / 100 for x in commands]
 
 frames = range(len(commands))
 
