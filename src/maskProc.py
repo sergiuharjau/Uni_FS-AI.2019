@@ -52,6 +52,7 @@ def findMin(bigList, k, firstPass=False):
 	"""Returns the smallest value bigger than k in the array"""
 	if 'flattened_list' not in findMin.__dict__ or firstPass:
 		findMin.flattened_list  = list(itertools.chain(*bigList))	
+		print(findMin.flattened_list.sort())
 		findMin.flattened_list.sort()
 
 	try:

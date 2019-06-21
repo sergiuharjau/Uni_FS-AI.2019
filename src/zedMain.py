@@ -1,15 +1,12 @@
 import sys
+import time
+import threading
 from imProc import imProcessing
 from capturing import ImageCap
-from cmds import issueCommands
+from cmds import issueCommands, calculateReading
+from globals import *
 
-width = 1280
-height = 720 #consider dropping camera res as well
-
-pixelStrip = 100
-startFrom = 300
-
-def main(visual=False, green=False, record=False) :
+def main(visual=False, green=False, record=False, replay=False):
 
 	calculateReading.pastCom = 0 #in case we don't see cones straight away
 	if len(sys.argv) > 1:
@@ -17,44 +14,59 @@ def main(visual=False, green=False, record=False) :
 		if len(sys.argv) > 2:
 			green = sys.argv[2]
 	
-	ic = ImageCap() #ImCapt() #initializes zed object
+	ic = ImageCap(False, replay) #ImCapt() #initializes zed object
 
 	startTime = time.time()
-	#framesToDo = 200
+
+	listReadings = []
+
+	framesToDo = 200
 
 	try:
 		while True: #for amount in range(framesToDo):
 
 			image, depth = ic.latest(record) 
 
-			original_image = image.get_data()
-			depth_data_ocv = depth.get_data()[startFrom:startFrom+pixelStrip]
+			t = threading.Thread( target=ImageCap.capture, args=(ic, replay) )			
+
+			original_image = image
+			depth_data_ocv = depth[startFrom:startFrom+pixelStrip]
 			image_ocv = original_image[startFrom:startFrom+pixelStrip]
 
 			reading = imProcessing(image_ocv, depth_data_ocv, visual, original_image, green)
-			ic.clear() #works faster for performance reasons
+			t.start() #works faster for performance reasons
+
+			if ic.exit: #when we replay tests
+				raise(KeyboardInterrupt)
 
 			if reading:
 				print("Camera: ", reading)
-				issueCommands((reading/steeringFactor)*-1, carVelocity, False, visual)
+				#issueCommands((reading/steeringFactor)*-1, carVelocity, False, visual)
 			else:
 				print("No camera reading.")
-				issueCommands((calculateCenter.pastCom/steeringFactor)*-1, carVelocity, False, visual)
+				#issueCommands((calculateReading.pastCom/steeringFactor)*-1, carVelocity, False, visual)
+
+			listReadings.append(reading)
 			#print("Frames left: ", framesToDo-amount)
 
 	except KeyboardInterrupt:
-		issueCommands(0,0,True, visual) #initiates the exit protocol
-		ic.stop()
-		zed.close()
+		#issueCommands(0, 0, True, visual) #initiates the exit protocol
+		ic.zed.close()
+		if record:
+			f1 = open(ic.newMission + "benchmarkCmds.txt", "w")
+			for element in listReadings:
+				f1.write(str(element) + ",")
+			f1.close()
+		f2 = open("Frames/pastMission.txt", "w")
+		for element in listReadings:
+			f2.write(str(element) + ",")
+		f2.close()
 		quit()
-
-	issueCommands(0,0,True, visual)
-	ic.stop()
-	zed.close()
-	print("Amount of skipped frames: ", skipped)
+		
+	ic.zed.close()
 	print("Seconds it took: ", time.time()-startTime )
-	print("Actual framerate: ", (framesToDo-skipped)/(time.time()-startTime-(skipped*0.001)))
+	print("Actual framerate: ", framesToDo/(time.time()-startTime))
 	print("\nFINISH")
 
 if __name__ == "__main__":
-	main(record=False) 	
+	main(record=False, replay=5) 	

@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 
-
 def findColour(openCVobject, greenDetection) -> object:
 	"""Function that takes path of an image and outputs a new file highlighting said colour.
 	:param openCVobject: variable pointing to an openCVobject 

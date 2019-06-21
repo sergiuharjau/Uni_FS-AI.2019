@@ -1,15 +1,15 @@
-import numpy as np
+import time
 import sys
+import numpy as np
+import cv2
 
-sys.path.insert(0, '../fspycan/lib/')
-#import fspycan_ext
+from globals import width, newComOffset
 
-steeringFactor = 10 #divide PixelValue by this number
-newComOffset = 15 #divide newCom by this number
 
-carVelocity = 70
+sys.path.insert(0, '../../fspycan/lib/')
+import fspycan_ext
 
-missedRed=0;missedYellow=0
+missedRed= 0;missedYellow= 0
 
 def findLineMarkers(red, yellow, i, visual):
 
@@ -57,7 +57,7 @@ def calculateReading(target):
 	newCom = target - int(width/2) #offset from center of image
 
 	if newCom != -int(width/2): #when we have a correct reading
-		final =  calculateReading.pastCom + (newCom-calculateReading.pastCom) / newComOffset
+		final = calculateReading.pastCom + (newCom-calculateReading.pastCom) / newComOffset
 		calculateReading.pastCom = final
 
 		return round(final)

@@ -1,94 +1,93 @@
 import pyzed.sl as sl
-import threading
-import cv2; import time
+import time
+import cv2
+import os
+import numpy as np
 
 class ImageCap:
 
-	def capture(self):
-		image_zed = sl.Mat(1280, 720, sl.MAT_TYPE.MAT_TYPE_8U_C4)
-		depth_data_zed = sl.Mat(1280, 720, sl.MAT_TYPE.MAT_TYPE_32F_C1)
-		
-		runtime = sl.RuntimeParameters()
-		runtime.sensing_mode = sl.SENSING_MODE.SENSING_MODE_STANDARD
-		while self.__running:
-			if self.frame == None:
-				err = self.zed.grab(runtime)
-				if err == sl.ERROR_CODE.SUCCESS:
-					#print("We're running now!")
-					self.zed.retrieve_image(image_zed, sl.VIEW.VIEW_LEFT, sl.MEM.MEM_CPU)
-					self.zed.retrieve_measure(depth_data_zed, sl.MEASURE.MEASURE_DEPTH, sl.MEM.MEM_CPU)
-					#print("Stopped running")
-					self.frame = (image_zed, depth_data_zed)
-				else:
-					print(err)
-					time.sleep(0.001)
-			else:
-				time.sleep(0.001)
+	def capture(self, replay):
+		if replay:
+			self.replay(replay)
+			return
 
-	def start(self):
-		self.__running = True
-		self.__thread = threading.Thread( target=ImageCap.capture, args=(self,) )
-		self.__thread.start()
-
-	def stop(self):
-		if self.__running:
-			self.__running = False
-			self.zed.close()
-			print("Closed camera")
-			self.__thread.join()
-			print("Joined thread")
-			
-	def __del__(self):
-		if self.__running:
-			self.stop()
-
-	def __init__(self, record):
-		self.zed = sl.Camera()
-		
-		init = sl.InitParameters()
-		init.camera_resolution = sl.RESOLUTION.RESOLUTION_HD720
-		init.camera_fps = 60 # Set max fps at 100
-
-		init.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_ULTRA
-		init.coordinate_units = sl.UNIT.UNIT_METER
-		
-		err = self.zed.open(init)
-		if err != sl.ERROR_CODE.SUCCESS :
-			print(repr(err))
-			self.zed.close()
-			exit(1)
-
-		self.frame = None
-		self.__running = False
-		self.__thread = None
+		err = self.zed.grab(self.runtime)
+		if err == sl.ERROR_CODE.SUCCESS:
+			self.zed.retrieve_image(self.image_zed, sl.VIEW.VIEW_LEFT, sl.MEM.MEM_CPU)
+			self.zed.retrieve_measure(self.depth_data_zed, sl.MEASURE.MEASURE_DEPTH, sl.MEM.MEM_CPU)
+			self.frame = (self.image_zed.get_data(), self.depth_data_zed.get_data())
+		else:
+			print(err)
+			time.sleep(0.01)
 
 	def latest(self, record):
 		if record:
-			cv2.imwrite("/Frames/image" + str(frame), self.frame[0])
-			cv2.imwrite("/Frames/depth" + str(frame), self.frame[1])
-			
+			self.record()
 		return self.frame
+
+	def __init__(self, record, replay):
+
+		if replay == 0:
+			self.zed = sl.Camera()
+			
+			init = sl.InitParameters()
+			init.camera_resolution = sl.RESOLUTION.RESOLUTION_HD720
+			init.camera_fps = 60 # Set max fps at 100
+
+			init.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_ULTRA
+			init.coordinate_units = sl.UNIT.UNIT_METER
+			
+			err = self.zed.open(init)
+			if err != sl.ERROR_CODE.SUCCESS :
+				print(repr(err))
+				self.zed.close()
+				exit(1)
+				
+			self.runtime = sl.RuntimeParameters()
+			self.runtime.sensing_mode = sl.SENSING_MODE.SENSING_MODE_STANDARD
+
+		self.image_zed = sl.Mat(1280, 720, sl.MAT_TYPE.MAT_TYPE_8U_C4)
+		self.depth_data_zed = sl.Mat(1280, 720, sl.MAT_TYPE.MAT_TYPE_32F_C1)
 		
-	def clear(self):
-		self.frame = None
+
+		self.frame = (self.image_zed.get_data(), self.depth_data_zed.get_data())
+		self.frames = 0
+
+		self.makeFolder = True
+		self.i = 1
+		self.exit = False	
+
+	def record(self):
+
+		if self.makeFolder:
+			for r, d, f in os.walk("Frames/"):
+				missions = sorted(d)
+				break
+			self.newMission = "Frames/mission" + str(int(missions[-1][7:])+1) +"/"
+			os.mkdir(self.newMission)
+			self.makeFolder = False
+		
+		np.save(self.newMission + "image" + str(self.frames), self.frame[0], allow_pickle=True)
+		np.save(self.newMission + "depth" + str(self.frames), self.frame[1], allow_pickle=True)
+		self.frames+=1
+
+
+	def replay(self, mission):
+		try:
+			a = np.load("Frames/mission" + str(mission) + "/image" + str(self.i) + ".npy")
+			b = np.load("Frames/mission" + str(mission) + "/depth" + str(self.i) + ".npy")
+				
+			self.frame = (a,b) 
+		except FileNotFoundError:
+			print("No more files to go")
+			self.exit = True
+
+		self.i+=1
 
 if __name__ == "__main__":
-	ic = ImageCap()
-	ic.start()
-	
-	
+	ic = ImageCap(False)
 	while True:
-		latest = ic.latest()
-		ic.clear()
-		
-		if latest == None: continue
-
-			
-		original_image = latest[0].get_data()
-		depth_data_ocv = latest[1].get_data()[270:300]
-		image_ocv = original_image[270:300]
-		
-		cv2.imshow("image", original_image)
-		cv2.imshow("depth", depth_data_ocv)
+		ic.replay()
+		cv2.imshow("image", ic.frame[0])
+		cv2.imshow("depth", ic.frame[1])
 		cv2.waitKey(10)
-

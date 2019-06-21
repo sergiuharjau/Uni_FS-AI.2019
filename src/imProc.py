@@ -1,6 +1,8 @@
+import cv2
 from maskProc import findGates
 from cmds import findLineMarkers, calculateReading
 from colour import findColour
+from globals import *
 
 def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None, green=False):
 
@@ -24,6 +26,8 @@ def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None, g
 		if redLine and yellowLine: #only on correct readings
 			target = (int((yellowLine[0] + redLine[0])/2), int((yellowLine[1] + redLine[1])/2))
 			targetList.append(target)
+			targetList.append(redLine)
+			targetList.append(yellowLine)
 		i+=1
 
 	reading = None
@@ -34,7 +38,7 @@ def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None, g
 		if len(targetList):
 			cv2.circle(original_image[startFrom:startFrom+pixelStrip], targetList[0], 5, (255,0,0), 4)
 			cv2.line(original_image[startFrom:startFrom+pixelStrip], targetList[1], targetList[2], (0,255,0), 10)
-			if len(targetList)>1:
+			if len(targetList)>3:
 				cv2.circle(original_image[startFrom:startFrom+pixelStrip], targetList[3], 5, (0,0,255), 4)
 				cv2.line(original_image[startFrom:startFrom+pixelStrip], targetList[4], targetList[5], (0,0,0), 10)
 
