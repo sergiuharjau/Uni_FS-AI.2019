@@ -24,8 +24,7 @@ def findLineMarkers(red, yellow, i, visual):
     except:
         missedRed += 1
         if missedRed > 10:
-            print("Can't see blue, turning left",
-                  (-100 * missedRed + 640) / 2 - 640)
+            print("Can't see blue, turning left", (-100 * missedRed + 640) / 2 - 640)
             return (-100 * missedRed, 0), (640, 0)
             # very far left red, middle yellow, turns left
         else:
@@ -39,8 +38,7 @@ def findLineMarkers(red, yellow, i, visual):
     except:
         missedYellow += 1
         if missedYellow > 10:
-            print("Can't see yellow, turning right",
-                  ((1280 + 100 * missedYellow) - 640) / 2 - 640)
+            print("Can't see yellow, turning right", ((1280 + 100 * missedYellow) - 640) / 2 - 640)
             return (640, 0), (1280 + 100 * missedYellow, 0)
             # middle red, very far right Yellow, turns right
         else:

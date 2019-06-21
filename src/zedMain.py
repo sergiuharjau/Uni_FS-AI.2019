@@ -28,14 +28,13 @@ def main(visual=False, green=False, record=False, replay=False):
 
             image, depth = ic.latest(record)
 
-            t = threading.Thread(target=ImageCap.capture, args=(ic, replay))
+            t = threading.Thread(target=ImageCap.capture, args=(ic, ))
 
             original_image = image
             depth_data_ocv = depth[startFrom:startFrom + pixelStrip]
             image_ocv = original_image[startFrom:startFrom + pixelStrip]
 
-            reading = imProcessing(
-                image_ocv, depth_data_ocv, visual, original_image, green)
+            reading = imProcessing(image_ocv, depth_data_ocv, visual, original_image, green)
             t.start()  # works faster for performance reasons
 
             if ic.exit:  # when we replay tests
@@ -45,7 +44,7 @@ def main(visual=False, green=False, record=False, replay=False):
                 print("Camera: ", reading)
                 #issueCommands((reading/steeringFactor)*-1, carVelocity, False, visual)
             else:
-                print("No camera reading.")
+                print("No camera reading, pastCom: ", calculateReading.pastCom)
                 #issueCommands((calculateReading.pastCom/steeringFactor)*-1, carVelocity, False, visual)
 
             listReadings.append(reading)
@@ -53,13 +52,14 @@ def main(visual=False, green=False, record=False, replay=False):
 
     except KeyboardInterrupt:
         # issueCommands(0, 0, True, visual) #initiates the exit protocol
-        ic.zed.close()
+        if not replay:
+            ic.zed.close()
         if record:
             f1 = open(ic.newMission + "benchmarkCmds.txt", "w")
             for element in listReadings:
                 f1.write(str(element) + ",")
             f1.close()
-        f2 = open("Frames/pastMission.txt", "w")
+        f2 = open("../test/pastMission.txt", "w")
         for element in listReadings:
             f2.write(str(element) + ",")
         f2.close()
