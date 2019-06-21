@@ -3,8 +3,8 @@ import numpy as np
 
 def findColour(openCVobject, greenDetection) -> object:
 	"""Function that takes path of an image and outputs a new file highlighting said colour.
-	:param openCVobject: variable pointing to an openCVobject 
-	:param output: whether you want it saved to the file system as well or not 
+	:param openCVobject: variable pointing to an openCVobject
+	:param output: whether you want it saved to the file system as well or not
 	"""
 
 	image = openCVobject  # gcolour
@@ -20,7 +20,7 @@ def findColour(openCVobject, greenDetection) -> object:
 	# YELLOW COLOUR BOUNDARIES
 	yellow_lower = np.array([20, 100, 100])
 	yellow_upper = np.array([35, 255, 255])
-	
+
 
 	red_lower = np.array([100, 100, 100]) #actually blue now
 	red_upper = np.array([140, 255, 255]) #actually blue now
@@ -30,7 +30,7 @@ def findColour(openCVobject, greenDetection) -> object:
 	#additional_mask = cv2.inRange(hsv, wrap_around_lower, wrap_around_upper)
 	#maskRed += additional_mask
 
-	#yellow detection 
+	#yellow detection
 	maskYellow = cv2.inRange(hsv, yellow_lower, yellow_upper)
 
 	#green detection
@@ -45,7 +45,7 @@ def findColour(openCVobject, greenDetection) -> object:
 	return maskRed, maskYellow, stopFlag
 
 if __name__ == "__main__":
-	
+
 	image = cv2.imread("hsv.jpg")
 
 	#input()

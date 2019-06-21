@@ -4,63 +4,69 @@ import time
 from bisect import bisect_right
 import itertools
 
+
 def findGates(red, yellow, depth, firstPass, gateDistance):
-	"""Inputs are red, yellow and depth mask."""
-	
-	if firstPass:
-		findGates.result = []
+    """Inputs are red, yellow and depth mask."""
 
-	conesDepth = cv2.bitwise_and(depth, depth, mask=red+yellow)
-		#depth info just where the cones are
+    if firstPass:
+        findGates.result = []
 
-	planeDistance = findMin(conesDepth, gateDistance, firstPass)
+    conesDepth = cv2.bitwise_and(depth, depth, mask=red + yellow)
+    # depth info just where the cones are
 
-	if planeDistance == 0: #no object in sight
-		return None
-			#empty pixels
-	maxFirstGate = planeDistance + 1
-	markedPixels = threshold(conesDepth, planeDistance, maxFirstGate, 0)
-		#only keep pixels in the desired threshold
+    planeDistance = findMin(conesDepth, gateDistance, firstPass)
 
-	markedPixels[markedPixels>1] = 1 #if ever an element is bigger than 1, make it 1
-	markedPixels = (markedPixels.round()* 255).astype(np.uint8) #transform to desired format
+    if planeDistance == 0:  # no object in sight
+        return None
+        # empty pixels
+    maxFirstGate = planeDistance + 1
+    markedPixels = threshold(conesDepth, planeDistance, maxFirstGate, 0)
+    # only keep pixels in the desired threshold
 
-	firstRed = cv2.bitwise_and(red, red, mask=markedPixels)
-	firstYellow = cv2.bitwise_and(yellow, yellow, mask=markedPixels)
+    # if ever an element is bigger than 1, make it 1
+    markedPixels[markedPixels > 1] = 1
+    # transform to desired format
+    markedPixels = (markedPixels.round() * 255).astype(np.uint8)
 
-	findGates.result.append((firstRed,firstYellow))
+    firstRed = cv2.bitwise_and(red, red, mask=markedPixels)
+    firstYellow = cv2.bitwise_and(yellow, yellow, mask=markedPixels)
 
-	#findGates(red, yellow, depth, False, maxFirstGate+1)
-	#re-Add in the future to allow multiple gate processing
+    findGates.result.append((firstRed, firstYellow))
+
+    ##findGates(red, yellow, depth, False, maxFirstGate+1)
+    # re-Add in the future to allow multiple gate processing
 
 
 def threshold(a, threshmin=None, threshmax=None, newval=0):
-	"""Returns an array with values bound between threshmin and threshmax """
-	a = np.ma.array(a, copy=True)
-	mask = np.zeros(a.shape, dtype=bool)
-	if threshmin is not None:
-		mask |= (a < threshmin).filled(False)
+    """Returns an array with values bound between threshmin and threshmax """
+    a = np.ma.array(a, copy=True)
+    mask = np.zeros(a.shape, dtype=bool)
+    if threshmin is not None:
+        mask |= (a < threshmin).filled(False)
 
-	if threshmax is not None:
-		mask |= (a > threshmax).filled(False)
+    if threshmax is not None:
+        mask |= (a > threshmax).filled(False)
 
-	a[mask] = newval
+    a[mask] = newval
 
-	return a
+    return a
+
 
 def findMin(bigList, k, firstPass=False):
-	"""Returns the smallest value bigger than k in the array"""
-	if 'flattened_list' not in findMin.__dict__ or firstPass:
-		findMin.flattened_list  = list(itertools.chain(*bigList))	
-		print(findMin.flattened_list.sort())
-		findMin.flattened_list.sort()
+    """Returns the smallest value bigger than k in the array"""
+    if 'flattened_list' not in findMin.__dict__ or firstPass:
+        findMin.flattened_list = list(itertools.chain(*bigList))
+        print(findMin.flattened_list.sort())
+        findMin.flattened_list.sort()
 
-	try:
-		min_val = findMin.flattened_list[bisect_right(findMin.flattened_list,k)]
-	except:
-		min_val = 0	
+    try:
+        min_val = findMin.flattened_list[bisect_right(
+            findMin.flattened_list, k)]
+    except:
+        min_val = 0
 
-	return min_val
+    return min_val
+
 
 if __name__ == "__main__":
-	pass
+    pass
