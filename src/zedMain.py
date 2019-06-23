@@ -7,13 +7,9 @@ from cmds import issueCommands, calculateReading
 from globals import *
 
 
-def main(visual=False, green=False, record=False, replay=False):
+def main(visual=False, green=False, record=False, replay=False, loop=True):
 
     calculateReading.pastCom = 0  # in case we don't see cones straight away
-    if len(sys.argv) > 1:
-        visual = sys.argv[1]
-        if len(sys.argv) > 2:
-            green = sys.argv[2]
 
     ic = ImageCap(False, replay)  # ImCapt() #initializes zed object
 
@@ -21,10 +17,8 @@ def main(visual=False, green=False, record=False, replay=False):
 
     listReadings = []
 
-    framesToDo = 200
-
     try:
-        while True:  # for amount in range(framesToDo):
+        while loop:  # for amount in range(framesToDo):
 
             image, depth = ic.latest(record)
 
@@ -38,7 +32,7 @@ def main(visual=False, green=False, record=False, replay=False):
             t.start()  # works faster for performance reasons
 
             if ic.exit:  # when we replay tests
-                raise(KeyboardInterrupt)
+                raise KeyboardInterrupt
 
             if reading:
                 print("Camera: ", reading)
@@ -48,6 +42,11 @@ def main(visual=False, green=False, record=False, replay=False):
                 #issueCommands((calculateReading.pastCom/steeringFactor)*-1, carVelocity, False, visual)
 
             listReadings.append(reading)
+
+            if type(loop) != bool :
+                loop -= 1
+                if loop == 0:
+                    raise KeyboardInterrupt
             #print("Frames left: ", framesToDo-amount)
 
     except KeyboardInterrupt:
@@ -63,13 +62,20 @@ def main(visual=False, green=False, record=False, replay=False):
         for element in listReadings:
             f2.write(str(element) + ",")
         f2.close()
-        quit()
 
-    ic.zed.close()
-    print("Seconds it took: ", time.time() - startTime)
-    print("Actual framerate: ", framesToDo / (time.time() - startTime))
-    print("\nFINISH")
+        print("Seconds it took: ", time.time() - startTime)
+        print("Total frames: ", len(listReadings))
+        print("Actual framerate: ", len(listReadings) / (time.time() - startTime))
+        print("\nFINISH")
+
+        quit()
 
 
 if __name__ == "__main__":
-    main(record=False, replay=5)
+
+    visual=False; green=False; record=False; replay=False; loop=True
+
+    for argument in sys.argv[1:]:
+        exec(argument)
+
+    main(visual, green, record, replay, loop)
