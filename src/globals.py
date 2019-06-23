@@ -1,5 +1,4 @@
 
-
 width = 1280
 height = 720  # consider dropping camera res as well
 

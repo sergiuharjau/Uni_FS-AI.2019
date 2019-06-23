@@ -55,10 +55,10 @@ class ImageCap:
             self.depth_data_zed = sl.Mat(1280, 720, sl.MAT_TYPE.MAT_TYPE_32F_C1)
 
             self.frame = (self.image_zed.get_data(), self.depth_data_zed.get_data())
+            self.makeFolder = True
 
         else:
             self.missionNo = replay
-            self.makeFolder = True
             self.exit = False
             self.replay(self.missionNo)
 

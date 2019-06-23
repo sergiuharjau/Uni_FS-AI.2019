@@ -1,5 +1,5 @@
-import matplotlib.pyplot as plt
 import sys
+import matplotlib.pyplot as plt
 
 def plotCommands(path1, path2=None):
 
@@ -21,7 +21,7 @@ def plotCommands(path1, path2=None):
     plt.ylabel("Frames")
 
     if path2:
-        f2= open(path2, "r")
+        f2 = open(path2, "r")
         rawComs2 = f2.read().split(",")
 
         commands = [0]

@@ -6,7 +6,7 @@ import cv2
 from globals import width, newComOffset
 
 sys.path.insert(0, '../../fspycan/lib/')
-import fspycan_ext
+#import fspycan_ext
 
 missedRed = 0
 missedYellow = 0
