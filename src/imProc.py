@@ -11,10 +11,7 @@ def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None, g
 
     if stop:
         print("Attention, pedestrian!")
-        issueCommands(0, 0, True, visual)
-        sleep(2)
-        zed.close()
-        quit()
+        raise KeyboardInterrupt
 
     findGates(maskRed, maskYellow, depth_data_ocv, True, 0.7)
     # finds the masks for the first red/yellow cones
