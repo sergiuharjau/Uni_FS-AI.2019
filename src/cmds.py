@@ -6,7 +6,7 @@ import cv2
 from globals import width, newComOffset
 
 sys.path.insert(0, '../../fspycan/lib/')
-#import fspycan_ext
+import fspycan_ext
 
 missedRed = 0
 missedYellow = 0
@@ -67,9 +67,9 @@ def calculateReading(target):
         return round(final)
 
 
-def issueCommands(steering, velocity, exit, visual):
+def issueCommands(steering, velocity, exit, visual, replay):
 
-    if not visual:
+    if not visual or not replay:
         if 'car' not in issueCommands.__dict__:  # only runs once
             issueCommands.car = fspycan_ext.Car("can0")
             issueCommands.car.init()

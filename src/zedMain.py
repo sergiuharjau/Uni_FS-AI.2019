@@ -36,10 +36,10 @@ def main(visual=False, green=False, record=False, replay=False, loop=True):
 
             if reading:
                 print("Camera: ", reading)
-                #issueCommands((reading/steeringFactor)*-1, carVelocity, False, visual)
+                #issueCommands((reading/steeringFactor)*-1, carVelocity, False, visual, replay)
             else:
                 print("No camera reading, pastCom: ", calculateReading.pastCom)
-                #issueCommands((calculateReading.pastCom/steeringFactor)*-1, carVelocity, False, visual)
+                #issueCommands((calculateReading.pastCom/steeringFactor)*-1, carVelocity, False, visual, replay)
 
             listReadings.append(reading)
 
