@@ -40,7 +40,7 @@ def main(visual, green, record, replay, loop):
             print("Camera value: ", reading)
             #issueCommands( (reading or calculateReading.pastCom) /steeringFactor*-1, carVelocity, False, visual, replay)
                                     #pastCom if reading=None
-            listReadings.append(reading)
+            listReadings.append(reading/steeringFactor)
 
             if not isinstance(loop, bool):
                 loop -= 1
