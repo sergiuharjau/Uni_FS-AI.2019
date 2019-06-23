@@ -13,7 +13,7 @@ def plotCommands(path1, path2=None):
             com = commands[-1]
         commands.append(int(com)) #offset from last one
 
-    commands[:] = [x / or x in commands]
+    commands[:] = [x for x in commands]
     frames = range(len(commands))
 
     plt.plot(commands, frames, "blue") #green for benchmark
