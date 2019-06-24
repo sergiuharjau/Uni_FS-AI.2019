@@ -77,4 +77,4 @@ if __name__ == "__main__":
     for argument in sys.argv[1:]:
         exec(argument)
 
-    main(vis, green, record, replay, loop)
+    main(vis, green, rec, replay, loop)
