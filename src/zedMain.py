@@ -72,9 +72,9 @@ def main(visual, green, record, replay, loop):
 
 if __name__ == "__main__":
 
-    visual= False; green= False; record= False; replay= False; loop= True
+    vis= False; green= False; rec= False; replay= False; loop= True
 
     for argument in sys.argv[1:]:
         exec(argument)
 
-    main(visual, green, record, replay, loop)
+    main(vis, green, record, replay, loop)
