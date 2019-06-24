@@ -67,9 +67,9 @@ def calculateReading(target):
         return round(final)
 
 
-def issueCommands(steering, velocity, exit, visual, replay):
+def issueCommands(steering, velocity, exit, visual, replay, record):
 
-    if not visual or not replay:
+    if not visual and not replay and not record:
         if 'car' not in issueCommands.__dict__:  # only runs once
             issueCommands.car = fspycan_ext.Car("can0")
             issueCommands.car.init()

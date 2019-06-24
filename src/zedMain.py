@@ -4,8 +4,8 @@ import threading
 from imProc import imProcessing
 from capturing import ImageCap
 from cmds import issueCommands, calculateReading
-from globals import pixelStrip, startFrom
-
+from globals import pixelStrip, startFrom, steeringFactor, carVelocity
+import cv2
 
 def main(visual, green, record, replay, loop):
 
@@ -31,6 +31,10 @@ def main(visual, green, record, replay, loop):
                 image_ocv = original_image[startFrom:startFrom + pixelStrip]
 
                 reading = imProcessing(image_ocv, depth_data_ocv, visual, original_image, green)
+            else:
+                cv2.imshow("image", image)
+                cv2.waitKey(10)
+                time.sleep(0.010) #decides frames per second we save
 
             t.start()  # works faster here for performance reasons
 
@@ -38,9 +42,9 @@ def main(visual, green, record, replay, loop):
                 raise KeyboardInterrupt
 
             print("Camera value: ", reading)
-            #issueCommands( (reading or calculateReading.pastCom) /steeringFactor*-1, carVelocity, False, visual, replay)
+            issueCommands( (reading or calculateReading.pastCom) /steeringFactor*-1, carVelocity, False, visual, replay, record)
                                     #pastCom if reading=None
-            listReadings.append(reading/steeringFactor)
+            listReadings.append(int((reading or calculateReading.pastCom)/steeringFactor))
 
             if not isinstance(loop, bool):
                 loop -= 1

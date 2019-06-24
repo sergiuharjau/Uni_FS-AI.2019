@@ -10,13 +10,18 @@ def plotCommands(path1, path2=None):
 
     for com in rawComs:
         if com == "None" or com == "":
-            com = commands[-1]
-        commands.append(int(com)) #offset from last one
+            com = int(commands[-1])
+        com = int(com)
+        if com > 24:
+            com = 24
+        if com < -24:
+            com = -24
+        commands.append(com) #offset from last one
 
     commands[:] = [x for x in commands]
     frames = range(len(commands))
 
-    plt.plot(commands, frames, "blue") #green for benchmark
+    plt.plot(commands, frames, "blue") #blue for benchmark
     plt.xlabel("Commands")
     plt.ylabel("Frames")
 
@@ -28,13 +33,18 @@ def plotCommands(path1, path2=None):
 
         for com in rawComs2:
             if com == "None" or com == "":
-                com = commands[-1]
-            commands.append(int(com)) #offset from last one
+                com = int(commands[-1])
+            com=int(com)
+            if com > 24:
+                com = 24
+            if com < -24:
+                com = -24
+            commands.append(com) #offset from last one
 
         commands[:] = [x for x in commands]
         frames = range(len(commands))
 
-        plt.plot(commands, frames, "green") #blue for newCom
+        plt.plot(commands, frames, "green") #green for newCom
 
     plt.show()
 

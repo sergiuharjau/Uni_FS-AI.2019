@@ -1,4 +1,4 @@
-#import pyzed.sl as sl
+import pyzed.sl as sl
 import time
 import cv2
 import os
@@ -31,6 +31,7 @@ class ImageCap:
     def __init__(self, record, replay):
 
         self.frames = 0
+        self.missionNo = replay
 
         if not replay:
             self.zed = sl.Camera()
@@ -56,9 +57,9 @@ class ImageCap:
 
             self.frame = (self.image_zed.get_data(), self.depth_data_zed.get_data())
             self.makeFolder = True
+            self.exit=False
 
         else:
-            self.missionNo = replay
             self.exit = False
             self.replay(self.missionNo)
 
@@ -66,8 +67,9 @@ class ImageCap:
     def record(self):
 
         if self.makeFolder:
-            for r, d, f in os.walk("Frames/"):
+            for r, d, f in os.walk("../test/"):
                 missions = sorted(d)
+                print(missions)
                 break
             self.newMission = "../test/mission" + str(int(missions[-1][7:]) + 1) + "/"
             os.mkdir(self.newMission)
