@@ -3,7 +3,7 @@ import sys
 import numpy as np
 import cv2
 
-from globals import width, newComOffset
+from globals import width, newComOffset, missedColourOffset
 
 sys.path.insert(0, '../../fspycan/lib/')
 #import fspycan_ext
@@ -23,9 +23,9 @@ def findLineMarkers(red, yellow, i, visual):
         missedRed = 0
     except:
         missedRed += 1
-        if missedRed > 10:
-            print("Can't see blue, turning left", (-100 * missedRed + 640) / 2 - 640)
-            return (-100 * missedRed, 0), (640, 0)
+        if missedRed > 20:
+            print("Can't see blue, turning left", (-1*missedRed*missedColourOffset))
+            redMarker = (-1 * missedColourOffset * missedRed, 0)
             # very far left red, middle yellow, turns left
         else:
             print("Missed Red: ", missedRed)
@@ -37,9 +37,9 @@ def findLineMarkers(red, yellow, i, visual):
         missedYellow = 0
     except:
         missedYellow += 1
-        if missedYellow > 10:
-            print("Can't see yellow, turning right", ((1280 + 100 * missedYellow) - 640) / 2 - 640)
-            return (640, 0), (1280 + 100 * missedYellow, 0)
+        if missedYellow > 20:
+            print("Can't see yellow, turning right", (missedYellow*missedColourOffset))
+            yellowMarker = (1280 + missedColourOffset * missedYellow, 0 )
             # middle red, very far right Yellow, turns right
         else:
             print("Missed Yellow: ", missedYellow)
