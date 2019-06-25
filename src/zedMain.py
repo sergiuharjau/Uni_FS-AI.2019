@@ -33,8 +33,7 @@ def main(visual, green, record, replay, loop):
                 reading = imProcessing(image_ocv, depth_data_ocv, visual, original_image, green)
             else:
                 cv2.imshow("image", image)
-                cv2.waitKey(10)
-                time.sleep(0.010) #decides frames per second we save
+                cv2.waitKey(1)
 
             t.start()  # works faster here for performance reasons
 
@@ -72,9 +71,9 @@ def main(visual, green, record, replay, loop):
 
 if __name__ == "__main__":
 
-    vis= False; green= False; rec= False; replay= False; loop= True
+    visual= False; green= False; record= False; replay= False; loop= True
 
     for argument in sys.argv[1:]:
         exec(argument)
 
-    main(vis, green, rec, replay, loop)
+    main(visual, green, record, replay, loop)
