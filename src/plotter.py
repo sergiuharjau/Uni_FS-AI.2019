@@ -51,7 +51,6 @@ def plotCommands(path1, path2=None):
 if __name__ == "__main__":
 
     setBench = False #sets past mission commands to Benchmark for given mission
-    mission = 5
 
     for argument in sys.argv[1:]:
         exec(argument)

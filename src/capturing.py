@@ -69,7 +69,6 @@ class ImageCap:
         if self.makeFolder:
             for r, d, f in os.walk("../test/"):
                 missions = sorted(d)
-                print(missions)
                 break
             self.newMission = "../test/mission" + str(int(missions[-1][7:]) + 1) + "/"
             os.mkdir(self.newMission)

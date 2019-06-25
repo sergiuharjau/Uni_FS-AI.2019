@@ -33,7 +33,7 @@ def findGates(red, yellow, depth, firstPass, gateDistance):
 
     findGates.result.append((firstRed, firstYellow))
 
-    ##findGates(red, yellow, depth, False, maxFirstGate+1)
+    #findGates(red, yellow, depth, False, maxFirstGate+1)
     # re-Add in the future to allow multiple gate processing
 
 
