@@ -19,7 +19,7 @@ def findGates(red, yellow, depth, firstPass, gateDistance):
     if planeDistance == 0:  # no object in sight
         return None
         # empty pixels
-    maxFirstGate = planeDistance + 1
+    maxFirstGate = planeDistance + 0.3
     markedPixels = threshold(conesDepth, planeDistance, maxFirstGate, 0)
     # only keep pixels in the desired threshold
 
