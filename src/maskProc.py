@@ -14,19 +14,18 @@ def findGates(red, yellow, depth, firstPass, gateDistance):
     conesDepth = cv2.bitwise_and(depth, depth, mask=red + yellow)
     # depth info just where the cones are
 
-    planeDistance = findMin(conesDepth, gateDistance, firstPass)
+    conesDepth[conesDepth<gateDistance] = 0
+    planeDistance = np.amin(conesDepth)
 
-    if planeDistance == 0:  # no object in sight
+    if not planeDistance:
         return None
-        # empty pixels
-    maxFirstGate = planeDistance + 1
-    markedPixels = threshold(conesDepth, planeDistance, maxFirstGate, 0)
-    # only keep pixels in the desired threshold
 
-    # if ever an element is bigger than 1, make it 1
-    markedPixels[markedPixels > 1] = 1
-    # transform to desired format
-    markedPixels = (markedPixels.round() * 255).astype(np.uint8)
+    maxFirstGate = planeDistance + 1
+    conesDepth[conesDepth>maxFirstGate] = 0
+
+    conesDepth[conesDepth > 1] =1
+
+    markedPixels = (conesDepth.round() * 255).astype(np.uint8)
 
     firstRed = cv2.bitwise_and(red, red, mask=markedPixels)
     firstYellow = cv2.bitwise_and(yellow, yellow, mask=markedPixels)
