@@ -14,16 +14,18 @@ def findGates(red, yellow, depth, firstPass, gateDistance):
     conesDepth = cv2.bitwise_and(depth, depth, mask=red + yellow)
     # depth info just where the cones are
 
-    conesDepth[conesDepth<gateDistance] = 0
-    planeDistance = np.amin(conesDepth)
+    conesDepth[conesDepth < gateDistance] = np.nan
 
-    if not planeDistance:
+    planeDistance = np.nanmin(conesDepth)
+
+    if np.isnan(planeDistance):
         return None
 
-    maxFirstGate = planeDistance + 1
-    conesDepth[conesDepth>maxFirstGate] = 0
+    maxFirstGate = planeDistance + 0.5
 
-    conesDepth[conesDepth > 1] =1
+    conesDepth[conesDepth > maxFirstGate] = np.nan
+
+    conesDepth[conesDepth > 1] = 1
 
     markedPixels = (conesDepth.round() * 255).astype(np.uint8)
 
