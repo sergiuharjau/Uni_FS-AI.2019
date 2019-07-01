@@ -1,4 +1,4 @@
-import pyzed.sl as sl
+#import pyzed.sl as sl
 import time
 import cv2
 import os
@@ -37,11 +37,15 @@ class ImageCap:
             self.zed = sl.Camera()
 
             init = sl.InitParameters()
-            init.camera_resolution = sl.RESOLUTION.RESOLUTION_VGA
-            init.camera_fps = 100  # Set max fps at 100
+
+            init.camera_resolution = sl.RESOLUTION.RESOLUTION_HD1080
+            init.coordinate_units = sl.UNIT.UNIT_METER
+            init.camera_fps = 30  # Set max fps at 100
+            init.depth_minimum_distance = 0.3 #in meters
+
 
             init.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_ULTRA
-            init.coordinate_units = sl.UNIT.UNIT_METER
+
 
             err = self.zed.open(init)
             if err != sl.ERROR_CODE.SUCCESS:
