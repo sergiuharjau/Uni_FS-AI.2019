@@ -3,11 +3,11 @@ import time
 import threading
 from imProc import imProcessing
 from capturing import ImageCap
-from cmds import issueCommands, calculateReading
+from cmds import calculateReading, issueCommands
 from globals import pixelStrip, startFrom, steeringFactor, carVelocity
 import cv2
 
-def main(visual, green, record, replay, loop):
+def main(visual, green, record, replay, loop, rc):
 
     calculateReading.pastCom = 0  # in case we don't see cones straight away
 
@@ -22,7 +22,6 @@ def main(visual, green, record, replay, loop):
         while loop:  # for amount in range(framesToDo):
 
             image, depth = ic.latest(record)
-
             t = threading.Thread(target=ImageCap.capture, args=(ic, ))
 
             if not record:
@@ -41,7 +40,7 @@ def main(visual, green, record, replay, loop):
                 raise KeyboardInterrupt
 
             print("Camera value: ", reading)
-            issueCommands( (reading or calculateReading.pastCom) /steeringFactor*-1, carVelocity, False, visual, replay, record)
+            issueCommands( (reading or calculateReading.pastCom) /steeringFactor *-1, carVelocity, False, visual, replay, record, rc)
                                     #pastCom if reading=None
             listReadings.append(int((reading or calculateReading.pastCom)/steeringFactor))
 
@@ -52,7 +51,7 @@ def main(visual, green, record, replay, loop):
             #print("Frames left: ", framesToDo-amount)
 
     except KeyboardInterrupt:
-        # issueCommands(0, 0, True, visual) #initiates the exit protocol
+        issueCommands(0, 0, True, visual, replay, record, rc) #initiates the exit protocol
         if not replay:
             ic.zed.close()
 
@@ -71,9 +70,8 @@ def main(visual, green, record, replay, loop):
 
 if __name__ == "__main__":
 
-    visual= False; green= False; record= False; replay= False; loop= True
+    visual= False; green= False; record= False; replay= False; loop= True; rc=False
 
     for argument in sys.argv[1:]:
         exec(argument)
-
-    main(visual, green, record, replay, loop)
+    main(visual, green, record, replay, loop, rc)

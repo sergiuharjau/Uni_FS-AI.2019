@@ -21,6 +21,7 @@ def findGates(red, yellow, depth, firstPass, gateDistance):
     if np.isnan(planeDistance):
         return None
 
+
     maxFirstGate = planeDistance + 0.5
 
     conesDepth[conesDepth > maxFirstGate] = np.nan

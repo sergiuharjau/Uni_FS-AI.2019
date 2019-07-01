@@ -3,6 +3,7 @@ import time
 import cv2
 import os
 import numpy as np
+from globals import width, height
 
 
 class ImageCap:
@@ -14,10 +15,9 @@ class ImageCap:
 
         err = self.zed.grab(self.runtime)
         if err == sl.ERROR_CODE.SUCCESS:
-            self.zed.retrieve_image(
-                self.image_zed, sl.VIEW.VIEW_LEFT, sl.MEM.MEM_CPU)
-            self.zed.retrieve_measure(
-                self.depth_data_zed, sl.MEASURE.MEASURE_DEPTH, sl.MEM.MEM_CPU)
+            self.zed.retrieve_image(self.image_zed, sl.VIEW.VIEW_LEFT, sl.MEM.MEM_CPU, int(width), int(height))
+            self.zed.retrieve_measure(self.depth_data_zed, sl.MEASURE.MEASURE_DEPTH, sl.MEM.MEM_CPU, int(width), int(height))
+
             self.frame = (self.image_zed.get_data(), self.depth_data_zed.get_data())
         else:
             print(err)
@@ -37,10 +37,12 @@ class ImageCap:
             self.zed = sl.Camera()
 
             init = sl.InitParameters()
+
             init.camera_resolution = sl.RESOLUTION.RESOLUTION_HD1080
             init.coordinate_units = sl.UNIT.UNIT_METER
             init.camera_fps = 30  # Set max fps at 100
             init.depth_minimum_distance = 0.3 #in meters
+
 
             init.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_ULTRA
 
@@ -54,8 +56,8 @@ class ImageCap:
             self.runtime = sl.RuntimeParameters()
             self.runtime.sensing_mode = sl.SENSING_MODE.SENSING_MODE_STANDARD
 
-            self.image_zed = sl.Mat(1280, 720, sl.MAT_TYPE.MAT_TYPE_8U_C4)
-            self.depth_data_zed = sl.Mat(1280, 720, sl.MAT_TYPE.MAT_TYPE_32F_C1)
+            self.image_zed = sl.Mat(width, height, sl.MAT_TYPE.MAT_TYPE_8U_C4)
+            self.depth_data_zed = sl.Mat(width, height, sl.MAT_TYPE.MAT_TYPE_32F_C1)
 
             self.frame = (self.image_zed.get_data(), self.depth_data_zed.get_data())
             self.makeFolder = True
