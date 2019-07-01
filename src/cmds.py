@@ -24,7 +24,7 @@ def findLineMarkers(red, yellow, i, visual):
         missedRed = 0
     except:
         missedRed += 1
-        if missedRed > 20:
+        if missedRed > 15:
             print("Can't see blue, turning left", (-1*missedRed*missedColourOffset))
             redMarker = (-1 * missedColourOffset * missedRed, 0)
             # very far left red, middle yellow, turns left
@@ -38,7 +38,7 @@ def findLineMarkers(red, yellow, i, visual):
         missedYellow = 0
     except:
         missedYellow += 1
-        if missedYellow > 20:
+        if missedYellow > 15:
             print("Can't see yellow, turning right", (missedYellow*missedColourOffset))
             yellowMarker = (1280 + missedColourOffset * missedYellow, 0 )
             # middle red, very far right Yellow, turns right
@@ -70,7 +70,7 @@ def calculateReading(target):
 
 def issueCommands(steering, velocity, exit, visual, replay, record, rc):
 
-    if False:
+    if not replay and not record and not visual and not rc:
         if 'car' not in issueCommands.__dict__:  # only runs once
             #issueCommands.car = fspycan_ext.Car("can0")
             #issueCommands.car.init()
@@ -87,10 +87,9 @@ def issueCommands(steering, velocity, exit, visual, replay, record, rc):
             #issueCommands.car.set_steering_velocity(0, 0)
             time.sleep(4)
             #issueCommands.car.exitCAN()  # runs until we exit gracefully
-    else:
+    elif rc == 1:
         if 'ser' not in issueCommands.__dict__:
             issueCommands.ser = serial.Serial("/dev/ttyUSB0", 115200, timeout=5)
-            print(issueCommands.ser.readline())
 
         steering = min(24, max(-24, steering))
         print(steering)
