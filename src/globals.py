@@ -1,9 +1,9 @@
 	
-width = 640
-height = 360  # consider dropping camera res as well
+width = 1920
+height = 1080  # consider dropping camera res as well
 	
-pixelStrip = 30
-startFrom = 120
+pixelStrip = 200
+startFrom = 200
 
 steeringFactor = -5  # divide PixelValue by this number
 newComOffset = 5  # divide newCom by this number

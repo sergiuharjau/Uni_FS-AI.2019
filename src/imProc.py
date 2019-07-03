@@ -13,7 +13,7 @@ def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None, g
         print("Attention, pedestrian!")
         raise KeyboardInterrupt
 
-    findGates(maskRed, maskYellow, depth_data_ocv, True, 0.7)
+    findGates(maskRed, maskYellow, depth_data_ocv, True, 0.3, 4)
     # finds the masks for the first red/yellow cones
     targetList = []
     i = 0
@@ -45,6 +45,16 @@ def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None, g
                     original_image[startFrom:startFrom + pixelStrip], targetList[3], 5, (0, 0, 255), 4)
                 cv2.line(original_image[startFrom:startFrom + pixelStrip],
                          targetList[4], targetList[5], (0, 0, 0), 10)
+                if len(targetList) > 6:
+                    cv2.circle(
+                        original_image[startFrom:startFrom + pixelStrip], targetList[6], 5, (0, 255, 255), 4)
+                    cv2.line(original_image[startFrom:startFrom + pixelStrip],
+                             targetList[7], targetList[8], (255, 255, 255), 10)
+                    if len(targetList) > 9:
+                        cv2.circle(
+                            original_image[startFrom:startFrom + pixelStrip], targetList[9], 5, (0, 255, 255), 4)
+                        cv2.line(original_image[startFrom:startFrom + pixelStrip],
+                             targetList[10], targetList[11], (255, 0, 0), 10)
 
         combinedImage = cv2.bitwise_and(
             image_ocv, image_ocv, mask=maskRed + maskYellow)
