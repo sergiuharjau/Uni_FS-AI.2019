@@ -49,10 +49,7 @@ def findLineMarkers(red, yellow, i, visual):
     if visual:
         for x in range(i + 1):
             cv2.imshow("gate " + str(i), red + yellow)
-
-        for x in range(i + 1, 5):
-            cv2.destroyWindow("gate " + str(x))
-
+            
     return redMarker, yellowMarker
 
 
@@ -85,7 +82,7 @@ def issueCommands(steering, velocity, exit, visual, replay, record, rc):
         if exit:  # can exit protocol
             print("Initiating CAN exit.")
             #issueCommands.car.set_steering_velocity(0, 0)
-            time.sleep(4)
+            #time.sleep(4)
             #issueCommands.car.exitCAN()  # runs until we exit gracefully
     elif rc == 1:
         if 'ser' not in issueCommands.__dict__:
