@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 set(CMAKE_CXX_STANDARD 14)
 
-project(fspycan CXX)
+project(ThreadingZed)
 
 #limit number of errors to 1
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wfatal-errors")
@@ -26,10 +26,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin )
 file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 SET(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib)
 
-# add conversion lib
-include_directories( opencv-ndarray-conversion )
-add_library( conversion opencv-ndarray-conversion/conversion.cpp )
-
 include_directories(${CUDA_INCLUDE_DIRS})
 include_directories(${ZED_INCLUDE_DIRS})
 include_directories(${OPENCV_INCLUDE_DIRS})
@@ -41,10 +37,12 @@ link_directories(${CUDA_LIBRARY_DIRS})
 
 message( ${Boost_LIBRARIES} )
 
+add_library( convert SHARED src/pyboost_cv2_converter.cpp  src/pyboost_cv4_converter.cpp src/pyboost_cv3_converter.cpp  src/python_module.cpp )
+
 add_library( threading SHARED src/threading.cpp )
 
 add_library( expose_threading SHARED src/expose_threading.cpp )
-target_link_libraries( expose_threading conversion ${Boost_LIBRARIES} threading ${ZED_LIBRARIES}  ${OpenCV_LIBRARIES} )
+target_link_libraries( expose_threading ${Boost_LIBRARIES} convert threading ${ZED_LIBRARIES}  ${OpenCV_LIBRARIES} )
 set_target_properties( expose_threading PROPERTIES PREFIX "" )
 
 

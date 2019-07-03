@@ -6,14 +6,12 @@
 #include <chrono>
 #include <string>
 
-#include "conversion.h"
-
  // ZED includes
 #include <sl_zed/Camera.hpp>
 
 // OpenCV includes
 #include <opencv2/opencv.hpp>
-
+#include <pyboostcvconverter/pyboostcvconverter.hpp>
 
 class ZedCam
 {
@@ -27,7 +25,6 @@ private:
 	sl::RuntimeParameters runtime_parameters;
 
     	sl::Camera zed;
-	NDArrayConverter cvt ; 
 
 public:
 
@@ -76,12 +73,12 @@ public:
 
 	PyObject* latestImage()
 	{
-		return cvt.toNDArray(slMat2cvMat(image_zed)) ; 
+		return  pbcvt::fromMatToNDArray(slMat2cvMat(image_zed)) ; 
 	}
 
 	PyObject* latestDepth()
 	{
-		return cvt.toNDArray(slMat2cvMat(depth_image_zed)); 
+		//return slMat2cvMat(depth_image_zed); 
 	}
 
 	void exit()

@@ -1,3 +1,6 @@
 [submodule "opencv-ndarray-conversion"]
 	path = opencv-ndarray-conversion
 	url = https://github.com/yati-sagade/opencv-ndarray-conversion/
+[submodule "pyboostcvconverter"]
+	path = pyboostcvconverter
+	url = https://github.com/Algomorph/pyboostcvconverter
