@@ -12,7 +12,8 @@ def main(visual, green, record, replay, loop, rc):
     calculateReading.pastCom = 0  # in case we don't see cones straight away
 
     ic = ImageCap(False, replay)  # ImCapt() #initializes zed object
-
+    ic.capture()
+    ic.capture()
     startTime = time.time()
 
     reading = None
