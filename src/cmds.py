@@ -4,7 +4,7 @@ import numpy as np
 import cv2
 import serial
 
-from globals import width, newComOffset, missedColourOffset
+from globals import width, newComOffset, missedColourOffset, maxSpeedUp, steeringFactor, carVelocity
 
 sys.path.insert(0, '../../fspycan/lib/')
 #import fspycan_ext
@@ -53,16 +53,28 @@ def findLineMarkers(red, yellow, i, visual):
     return redMarker, yellowMarker
 
 
-def calculateReading(target):
+def calculateReading(gateDict):
 
-    newCom = target - int(width / 2)  # offset from center of image
+    totalValue = 0 
+    cameraValue = 0
 
-    if newCom != -int(width / 2):  # when we have a correct reading
-        final = calculateReading.pastCom + \
-            (newCom - calculateReading.pastCom) / newComOffset
-        calculateReading.pastCom = final
+    for key in gateDict:
+        target = gateDict[key][0][0] #pastValue - currentValue
+        cameraValue = target - int(width / 2) #define currentValue
+        totalValue += cameraValue
 
-        return round(final)
+    if len(gateDict):#avoids division by 0 error
+        averageValue = totalValue/len(gateDict)
+        steering = calculateReading.pastCom + (averageValue - calculateReading.pastCom) / newComOffset
+
+        averageValue = max(0, min(abs(averageValue), 100))
+        velocity = carVelocity + maxSpeedUp*(100-averageValue)/100
+    else:
+        velocity = carVelocity #slowest speed if no gates
+        steering = calculateReading.pastCom #keep past direction
+
+    calculateReading.pastCom = steering
+    return round(steering/steeringFactor), round(velocity)
 
 
 def issueCommands(steering, velocity, exit, visual, replay, record, rc):
@@ -76,7 +88,7 @@ def issueCommands(steering, velocity, exit, visual, replay, record, rc):
             #issueCommands.car.setupCAN()  # function runs until we finish setup
             print("Setup finished gracefully")
 
-        #issueCommands.car.set_steering_velocity(int(steering), int(velocity))
+        #issueCommands.car.set_steering_velocity(int(steering*-1), int(velocity))
         # we only set the steering here, the loop runs on a different c++ thread
 
         if exit:  # can exit protocol
