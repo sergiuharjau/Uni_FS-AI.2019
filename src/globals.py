@@ -1,12 +1,14 @@
 	
-width = 1920
-height = 1080  # consider dropping camera res as well
+width = 1280
+height = 720  # consider dropping camera res as well
 	
 pixelStrip = 200
-startFrom = 200
+startFrom = 250
 
-steeringFactor = -5  # divide PixelValue by this number
-newComOffset = 5  # divide newCom by this number
+steeringFactor = 15  # divide PixelValue by this number
+newComOffset = 20  # divide newCom by this number
+
 missedColourOffset = 1
 
-carVelocity = 52
+carVelocity = 50
+maxSpeedUp = 30

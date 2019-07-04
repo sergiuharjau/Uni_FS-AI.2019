@@ -30,7 +30,7 @@ def main(visual, green, record, replay, loop, rc):
                 depth_data_ocv = depth[startFrom:startFrom + pixelStrip]
                 image_ocv = original_image[startFrom:startFrom + pixelStrip]
 
-                reading = imProcessing(image_ocv, depth_data_ocv, visual, original_image, green)
+                steering, velocity = imProcessing(image_ocv, depth_data_ocv, visual, original_image, green)
             else:
                 cv2.imshow("image", image)
                 cv2.waitKey(1)
@@ -40,10 +40,12 @@ def main(visual, green, record, replay, loop, rc):
             if ic.exit:  # when we replay tests
                 raise KeyboardInterrupt
 
-            print("Camera value: ", reading)
-            issueCommands( (reading or calculateReading.pastCom) /steeringFactor *-1, carVelocity, False, visual, replay, record, rc)
-                                    #pastCom if reading=None
-            listReadings.append(int((reading or calculateReading.pastCom)/steeringFactor))
+            print("Steering: ", steering)
+            print("Velocity: ", velocity)
+            input()
+            issueCommands(steering, velocity, False, visual, replay, record, rc)
+
+            listReadings.append(steering)
 
             if not isinstance(loop, bool):
                 loop -= 1
