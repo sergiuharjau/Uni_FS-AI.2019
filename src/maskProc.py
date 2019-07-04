@@ -21,7 +21,7 @@ def findGates(red, yellow, depth, firstPass, gateDistance, numberGates):
     if np.isnan(planeDistance):
         return None
 
-    maxFirstGate = planeDistance + 0.3
+    maxFirstGate = planeDistance + 0.2
 
     conesDepth[conesDepth > maxFirstGate] = np.nan
 
@@ -35,7 +35,7 @@ def findGates(red, yellow, depth, firstPass, gateDistance, numberGates):
     findGates.result.append((firstRed, firstYellow))
     print("Found a gate.")
     if numberGates:
-        findGates(red, yellow, depth, False, maxFirstGate+1, numberGates-1)
+        findGates(red, yellow, depth, False, maxFirstGate+0.1, numberGates-1)
     # re-Add in the future to allow multiple gate processing
 
 
