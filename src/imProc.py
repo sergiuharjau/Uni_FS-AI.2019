@@ -2,7 +2,7 @@ import cv2
 from maskProc import findGates
 from cmds import findLineMarkers, calculateReading
 from colour import findColour
-from globals import carVelocity, startFrom, pixelStrip
+from globals import startFrom, pixelStrip
 
 
 def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None, green=False):
@@ -36,4 +36,4 @@ def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None, g
         cv2.imshow("cropped", image_ocv)
         cv2.waitKey(10)
 
-    return steering, carVelocity
+    return steering, velocity
