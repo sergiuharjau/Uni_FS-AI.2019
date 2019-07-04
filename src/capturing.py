@@ -1,10 +1,10 @@
-import pyzed.sl as sl
+#import pyzed.sl as sl
 import time
 import cv2
 import os
 import numpy as np
 from globals import width, height
-
+import logging
 
 class ImageCap:
 
@@ -15,9 +15,10 @@ class ImageCap:
 
         err = self.zed.grab(self.runtime)
         if err == sl.ERROR_CODE.SUCCESS:
+            logging.info("Started image retrieving.")
             self.zed.retrieve_image(self.image_zed, sl.VIEW.VIEW_LEFT, sl.MEM.MEM_CPU, int(width), int(height))
             self.zed.retrieve_measure(self.depth_data_zed, sl.MEASURE.MEASURE_DEPTH, sl.MEM.MEM_CPU, int(width), int(height))
-
+            logging.info("Retrieval complete.")
             self.frame = (self.image_zed.get_data(), self.depth_data_zed.get_data())
         else:
             print(err)
@@ -38,9 +39,10 @@ class ImageCap:
 
             init = sl.InitParameters()
 
-            init.camera_resolution = sl.RESOLUTION.RESOLUTION_HD1080
+            init.camera_resolution = sl.RESOLUTION.RESOLUTION_HD720
+
             init.coordinate_units = sl.UNIT.UNIT_METER
-            init.camera_fps = 30  # Set max fps at 100
+            init.camera_fps = 60  # Set max fps at 100
             init.depth_minimum_distance = 0.3 #in meters
 
 
@@ -83,11 +85,11 @@ class ImageCap:
         self.frames += 1
 
     def replay(self, mission):
-
+        logging.info("Replaying past mission.")
         try:
             a = np.load("../test/mission" + str(mission) + "/image" + str(self.frames) + ".npy")
             b = np.load("../test//mission" + str(mission) + "/depth" + str(self.frames) + ".npy")
-
+            logging.info("Loaded files onto memory.")
             self.frame = (a, b)
         except FileNotFoundError:
             print("No more files to go")

@@ -6,7 +6,6 @@ def findColour(openCVobject, greenDetection) -> object:
 	:param openCVobject: variable pointing to an openCVobject
 	:param output: whether you want it saved to the file system as well or not
 	"""
-
 	image = openCVobject  # gcolour
    # blurred_image = cv2.GaussianBlur(image, (5, 5), 0)  # blurred to remove noise
 	hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)

@@ -3,7 +3,7 @@ import numpy as np
 import time
 from bisect import bisect_right
 import itertools
-
+import logging
 
 def findGates(red, yellow, depth, firstPass, gateDistance, numberGates):
     """Inputs are red, yellow and depth mask."""
@@ -18,8 +18,11 @@ def findGates(red, yellow, depth, firstPass, gateDistance, numberGates):
 
     planeDistance = np.nanmin(conesDepth)
 
-    if np.isnan(planeDistance):
+    if np.isnan(planeDistance) or np.isinf(planeDistance):
+        logging.info("Stopped looking for gates.")
         return None
+
+    logging.info("Gate distance: %fm", round(planeDistance,2))
 
     maxFirstGate = planeDistance + 0.2
 
@@ -37,37 +40,6 @@ def findGates(red, yellow, depth, firstPass, gateDistance, numberGates):
     if numberGates:
         findGates(red, yellow, depth, False, maxFirstGate+0.1, numberGates-1)
     # re-Add in the future to allow multiple gate processing
-
-
-def threshold(a, threshmin=None, threshmax=None, newval=0):
-    """Returns an array with values bound between threshmin and threshmax """
-    a = np.ma.array(a, copy=True)
-    mask = np.zeros(a.shape, dtype=bool)
-    if threshmin is not None:
-        mask |= (a < threshmin).filled(False)
-
-    if threshmax is not None:
-        mask |= (a > threshmax).filled(False)
-
-    a[mask] = newval
-
-    return a
-
-
-def findMin(bigList, k, firstPass=False):
-    """Returns the smallest value bigger than k in the array"""
-    if 'flattened_list' not in findMin.__dict__ or firstPass:
-        findMin.flattened_list = list(itertools.chain(*bigList))
-        print(findMin.flattened_list.sort())
-        findMin.flattened_list.sort()
-
-    try:
-        min_val = findMin.flattened_list[bisect_right(
-            findMin.flattened_list, k)]
-    except:
-        min_val = 0
-
-    return min_val
 
 
 if __name__ == "__main__":

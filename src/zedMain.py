@@ -4,24 +4,22 @@ import threading
 from imProc import imProcessing
 from capturing import ImageCap
 from cmds import calculateReading, issueCommands
-from globals import pixelStrip, startFrom, steeringFactor, carVelocity
+from globals import pixelStrip, startFrom, steeringFactor, carVelocity, logInitial
 import cv2
+import logging
 
 def main(visual, green, record, replay, loop, rc):
 
     calculateReading.pastCom = 0  # in case we don't see cones straight away
 
     ic = ImageCap(False, replay)  # ImCapt() #initializes zed object
-    ic.capture()
-    ic.capture()
     startTime = time.time()
-
-    reading = None
     listReadings = []
 
     try:
+        i=0
         while loop:  # for amount in range(framesToDo):
-
+            logging.warning("\n*********\nFrame: " + str(i))
             image, depth = ic.latest(record)
             t = threading.Thread(target=ImageCap.capture, args=(ic, ))
 
@@ -35,6 +33,7 @@ def main(visual, green, record, replay, loop, rc):
                 cv2.imshow("image", image)
                 cv2.waitKey(1)
 
+            logging.info("Started capturing thread.")
             t.start()  # works faster here for performance reasons
 
             if ic.exit:  # when we replay tests
@@ -42,7 +41,9 @@ def main(visual, green, record, replay, loop, rc):
 
             print("Steering: ", steering)
             print("Velocity: ", velocity)
-            input()
+
+            logging.info("Steering: %d, Velocity: %d", steering, velocity)
+            
             issueCommands(steering, velocity, False, visual, replay, record, rc)
 
             listReadings.append(steering)
@@ -51,6 +52,10 @@ def main(visual, green, record, replay, loop, rc):
                 loop -= 1
                 if loop == 0:
                     raise KeyboardInterrupt
+            t.join()
+            i+=1
+            logging.warning("End of frame.\n\n")
+
             #print("Frames left: ", framesToDo-amount)
 
     except KeyboardInterrupt:
@@ -68,6 +73,9 @@ def main(visual, green, record, replay, loop, rc):
         print("Actual framerate: ", len(listReadings) / (time.time() - startTime))
         print("\nFINISH")
 
+        logging.info("Total seconds: %d", time.time()-startTime)
+        logging.info("Framerate: %d", len(listReadings) / (time.time() - startTime))
+        logging.warning("Mission end.\n\n")
         quit()
 
 
@@ -77,4 +85,10 @@ if __name__ == "__main__":
 
     for argument in sys.argv[1:]:
         exec(argument)
+
+    logging.basicConfig(filename='loggingMain.log', format='%(asctime)s %(message)s', level=logging.INFO)
+    logging.warning("\nMission start!\n")
+
+    logInitial()
+
     main(visual, green, record, replay, loop, rc)

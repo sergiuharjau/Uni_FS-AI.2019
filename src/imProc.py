@@ -2,17 +2,19 @@ import cv2
 from maskProc import findGates
 from cmds import findLineMarkers, calculateReading
 from colour import findColour
-from globals import startFrom, pixelStrip
-
+from globals import startFrom, pixelStrip, width
+import logging
 
 def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None, green=False):
 
+    logging.info("Started image processing.")
     maskRed, maskYellow, stop = findColour(image_ocv, green)
+    logging.info("Received colour data.")
 
     if stop:
         print("Attention, pedestrian!")
         raise KeyboardInterrupt
-
+    logging.info("Finding gates.")
     findGates(maskRed, maskYellow, depth_data_ocv, True, 0.3, 3)
     # finds the masks for the first red/yellow cones
     gateDict = {}
@@ -22,7 +24,10 @@ def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None, g
         redLine, yellowLine = findLineMarkers(fRed, fYellow, i, visual)
         if redLine and yellowLine:  # only on correct readings
             target = (int((yellowLine[0] + redLine[0]) / 2),int((yellowLine[1] + redLine[1]) / 2))
+            logging.info("Validated %d!", i)   
             gateDict[i] = [target, redLine, yellowLine]
+        else:
+            logging.info("Gate %d not valid.", i)
 
     steering, velocity =  calculateReading(gateDict)
 
@@ -35,5 +40,7 @@ def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None, g
         cv2.imshow("image", original_image)
         cv2.imshow("cropped", image_ocv)
         cv2.waitKey(10)
+
+    logging.info("Finished image processing.")
 
     return steering, velocity

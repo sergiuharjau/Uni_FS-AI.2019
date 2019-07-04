@@ -3,6 +3,7 @@ import sys
 import numpy as np
 import cv2
 import serial
+import logging
 
 from globals import width, newComOffset, missedColourOffset, maxSpeedUp, steeringFactor, carVelocity
 
@@ -18,15 +19,18 @@ def findLineMarkers(red, yellow, i, visual):
     global missedRed
     global missedYellow
 
+    logging.info("Processing gate %d",i)
+
     redIndex = np.where(red == 255)
     try:
         redMarker = (redIndex[1][0], redIndex[0][0])
         missedRed = 0
     except:
         missedRed += 1
-        if missedRed > 15:
+        logging.info("MissedRed: %d", missedRed)
+        if missedRed > 30:
             print("Can't see blue, turning left", (-1*missedRed*missedColourOffset))
-            redMarker = (-1 * missedColourOffset * missedRed, 0)
+            redMarker = (int(-1 * missedColourOffset * missedRed), 0)
             # very far left red, middle yellow, turns left
         else:
             print("Missed Red: ", missedRed)
@@ -38,9 +42,10 @@ def findLineMarkers(red, yellow, i, visual):
         missedYellow = 0
     except:
         missedYellow += 1
-        if missedYellow > 15:
+        logging.info("MissedYellow: %d", missedYellow)
+        if missedYellow > 30:
             print("Can't see yellow, turning right", (missedYellow*missedColourOffset))
-            yellowMarker = (1280 + missedColourOffset * missedYellow, 0 )
+            yellowMarker = (int(1280 + missedColourOffset * missedYellow), 0 )
             # middle red, very far right Yellow, turns right
         else:
             print("Missed Yellow: ", missedYellow)
@@ -49,7 +54,8 @@ def findLineMarkers(red, yellow, i, visual):
     if visual:
         for x in range(i + 1):
             cv2.imshow("gate " + str(i), red + yellow)
-            
+    logging.info("Red marker: %s", str(redMarker))
+    logging.info("Yellow marker: %s", str(yellowMarker))
     return redMarker, yellowMarker
 
 
@@ -61,15 +67,21 @@ def calculateReading(gateDict):
     for key in gateDict:
         target = gateDict[key][0][0] #pastValue - currentValue
         cameraValue = target - int(width / 2) #define currentValue
+        logging.info("Gate %d: CameraValue: %d", key, cameraValue)
         totalValue += cameraValue
 
     if len(gateDict):#avoids division by 0 error
         averageValue = totalValue/len(gateDict)
-        steering = calculateReading.pastCom + (averageValue - calculateReading.pastCom) / newComOffset
+        logging.info("Average gate value: %d", averageValue)
 
-        averageValue = max(0, min(abs(averageValue), 100))
-        velocity = carVelocity + maxSpeedUp*(100-averageValue)/100
+        steering = calculateReading.pastCom + (averageValue - calculateReading.pastCom) / newComOffset
+        logging.info("Rolling average final camera value: %d", steering)
+
+        averageValue = max(0, min(abs(averageValue), 200))
+
+        velocity = carVelocity + maxSpeedUp*(200-averageValue)/200
     else:
+        logging.info("No valid gates. Using past command.")
         velocity = carVelocity #slowest speed if no gates
         steering = calculateReading.pastCom #keep past direction
 
