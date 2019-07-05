@@ -8,7 +8,7 @@ import logging
 from globals import width, newComOffset, missedColourOffset, maxSpeedUp, steeringFactor, carVelocity
 
 sys.path.insert(0, '../../fspycan/lib/')
-#import fspycan_ext
+import fspycan_ext
 
 missedRed = 0
 missedYellow = 0
@@ -93,21 +93,21 @@ def issueCommands(steering, velocity, exit, visual, replay, record, rc):
 
     if not replay and not record and not visual and not rc:
         if 'car' not in issueCommands.__dict__:  # only runs once
-            #issueCommands.car = fspycan_ext.Car("can0")
-            #issueCommands.car.init()
+            issueCommands.car = fspycan_ext.Car("can0")
+            issueCommands.car.init()
             issueCommands.car = 1
             print("Initiating CAN setup.")
-            #issueCommands.car.setupCAN()  # function runs until we finish setup
+            issueCommands.car.setupCAN()  # function runs until we finish setup
             print("Setup finished gracefully")
 
-        #issueCommands.car.set_steering_velocity(int(steering*-1), int(velocity))
+        issueCommands.car.set_steering_velocity(int(steering*-1), int(velocity))
         # we only set the steering here, the loop runs on a different c++ thread
 
         if exit:  # can exit protocol
             print("Initiating CAN exit.")
-            #issueCommands.car.set_steering_velocity(0, 0)
-            #time.sleep(4)
-            #issueCommands.car.exitCAN()  # runs until we exit gracefully
+            issueCommands.car.set_steering_velocity(0, 0)
+            time.sleep(4)
+            issueCommands.car.exitCAN()  # runs until we exit gracefully
     elif rc == 1:
         if 'ser' not in issueCommands.__dict__:
             issueCommands.ser = serial.Serial("/dev/ttyUSB0", 115200, timeout=5)

@@ -1,4 +1,4 @@
-#import pyzed.sl as sl
+import pyzed.sl as sl
 import time
 import cv2
 import os
