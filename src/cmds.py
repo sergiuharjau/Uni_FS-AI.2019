@@ -97,10 +97,13 @@ def issueCommands(steering, velocity, exit, visual, replay, record, rc):
             issueCommands.car.init()
             issueCommands.car = 1
             print("Initiating CAN setup.")
+            logging.info("Setting up can Device.")
             issueCommands.car.setupCAN()  # function runs until we finish setup
             print("Setup finished gracefully")
 
+        logging.info("Setting steering and velocity.")
         issueCommands.car.set_steering_velocity(int(steering*-1), int(velocity))
+        logging.info("CAN data set.")
         # we only set the steering here, the loop runs on a different c++ thread
 
         if exit:  # can exit protocol
