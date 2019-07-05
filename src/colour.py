@@ -26,8 +26,8 @@ def findColour(openCVobject, greenDetection) -> object:
 
 	#red detection
 	maskRed = cv2.inRange(hsv, red_lower, red_upper)
-	#additional_mask = cv2.inRange(hsv, wrap_around_lower, wrap_around_upper)
-	#maskRed += additional_mask
+	additional_mask = cv2.inRange(hsv, wrap_around_lower, wrap_around_upper)
+	maskRed += additional_mask
 
 	#yellow detection
 	maskYellow = cv2.inRange(hsv, yellow_lower, yellow_upper)
@@ -45,7 +45,7 @@ def findColour(openCVobject, greenDetection) -> object:
 
 if __name__ == "__main__":
 
-	image = cv2.imread("hsv.jpg")
+	image = cv2.imread("../test/hsv_map.png")
 
 	#input()
 	r, y, stop = findColour(image, False)
