@@ -21,6 +21,7 @@ def main(visual, green, record, replay, loop, rc):
         while loop:  # for amount in range(framesToDo):
             logging.warning("\n*********\nFrame: " + str(i))
             image, depth = ic.latest(record)
+            logging.info("Getting latest image and depth.")
             t = threading.Thread(target=ImageCap.capture, args=(ic, ))
 
             if not record:
@@ -71,7 +72,7 @@ def main(visual, green, record, replay, loop, rc):
         print("Actual framerate: ", len(listReadings) / (time.time() - startTime))
         print("\nFINISH")
 
-        logging.info("Total seconds: %d", time.time()-startTime)
+        logging.info("\nTotal seconds: %d", time.time()-startTime)
         logging.info("Framerate: %d", len(listReadings) / (time.time() - startTime))
         logging.warning("Mission end.\n\n")
         quit()
