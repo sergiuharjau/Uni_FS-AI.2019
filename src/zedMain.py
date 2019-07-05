@@ -28,13 +28,11 @@ def main(visual, green, record, replay, loop, rc):
                 depth_data_ocv = depth[startFrom:startFrom + pixelStrip]
                 image_ocv = original_image[startFrom:startFrom + pixelStrip]
 
-                steering, velocity = imProcessing(image_ocv, depth_data_ocv, visual, original_image, green)
+                steering, velocity = imProcessing(t, image_ocv, depth_data_ocv, visual, original_image, green)
             else:
                 cv2.imshow("image", image)
                 cv2.waitKey(1)
-
-            logging.info("Started capturing thread.")
-            t.start()  # works faster here for performance reasons
+             # works faster here for performance reasons
 
             if ic.exit:  # when we replay tests
                 raise KeyboardInterrupt
