@@ -8,7 +8,7 @@ import logging
 from globals import width, newComOffset, missedColourOffset, maxSpeedUp, steeringFactor, carVelocity
 
 sys.path.insert(0, '../../fspycan/lib/')
-import fspycan_ext
+#import fspycan_ext
 
 missedRed = 0
 missedYellow = 0
@@ -23,7 +23,7 @@ def findLineMarkers(red, yellow, i, visual):
 
     redIndex = np.where(red == 255)
     try:
-        redMarker = (redIndex[1][0], redIndex[0][0])
+        redMarker = (redIndex[1][-1], redIndex[0][0])
         missedRed = 0
     except:
         missedRed += 1
