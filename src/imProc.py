@@ -4,8 +4,9 @@ from cmds import findLineMarkers, calculateReading
 from colour import findColour
 from globals import startFrom, pixelStrip, width
 import logging
+import threading
 
-def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None, green=False):
+def imProcessing(t, image_ocv, depth_data_ocv, visual=False, original_image=None, green=False):
 
     logging.info("Started image processing.")
     maskRed, maskYellow, stop = findColour(image_ocv, green)
@@ -15,7 +16,9 @@ def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None, g
         print("Attention, pedestrian!")
         raise KeyboardInterrupt
     logging.info("Finding gates.")
-    findGates(maskRed, maskYellow, depth_data_ocv, True, 0.3, 3)
+    findGates(maskRed, maskYellow, depth_data_ocv, True, 0.3, 0)
+    logging.info("Started capturing thread.")
+    t.start()
     # finds the masks for the first red/yellow cones
     gateDict = {}
     for i, gate in enumerate(findGates.result):
