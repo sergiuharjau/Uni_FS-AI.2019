@@ -3,11 +3,11 @@ import logging
 width = 1280
 height = 720  # consider dropping camera res as well
 	
-pixelStrip = 200
+pixelStrip = 100
 startFrom = 500
 
 steeringFactor = 15  # divide PixelValue by this number
-newComOffset = 20  # divide newCom by this number
+newComOffset = 15  # divide newCom by this number
 
 missedColourOffset = 5
 
