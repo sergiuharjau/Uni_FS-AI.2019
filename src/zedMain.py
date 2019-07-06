@@ -37,7 +37,7 @@ def main(visual, green, record, replay, loop, rc):
 
             if ic.exit:  # when we replay tests
                 raise KeyboardInterrupt
-
+#            input()
             print("Steering: ", steering)
             print("Velocity: ", velocity)
 

@@ -5,7 +5,7 @@ from bisect import bisect_right
 import itertools
 import logging
 
-def findGates(red, yellow, depth, firstPass, gateDistance, numberGates):
+def findGates(red, yellow, depth, firstPass, gateDistance, maxThresh, numberGates):
     """Inputs are red, yellow and depth mask."""
 
     if firstPass:
@@ -15,7 +15,7 @@ def findGates(red, yellow, depth, firstPass, gateDistance, numberGates):
     # depth info just where the cones are
 
     conesDepth[conesDepth < gateDistance] = np.nan
-
+    conesDepth[conesDepth > maxThresh] = np.nan
     planeDistance = np.nanmin(conesDepth)
 
     if np.isnan(planeDistance) or np.isinf(planeDistance):
@@ -24,7 +24,7 @@ def findGates(red, yellow, depth, firstPass, gateDistance, numberGates):
 
     logging.info("Gate distance: %fm", round(planeDistance,2))
 
-    maxFirstGate = planeDistance + 0.2
+    maxFirstGate = planeDistance + 1
 
     conesDepth[conesDepth > maxFirstGate] = np.nan
 
@@ -38,7 +38,7 @@ def findGates(red, yellow, depth, firstPass, gateDistance, numberGates):
     findGates.result.append((firstRed, firstYellow))
 
     if numberGates:
-        findGates(red, yellow, depth, False, maxFirstGate+0.1, numberGates-1)
+        findGates(red, yellow, depth, False, maxFirstGate+0.1, maxThresh, numberGates-1)
     # re-Add in the future to allow multiple gate processing
 
 

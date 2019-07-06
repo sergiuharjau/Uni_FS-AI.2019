@@ -48,7 +48,7 @@ def findColour(openCVobject, greenDetection) -> object:
 		if len(np.where(green==255)[0]) > 500:
 			stopFlag = True
 
-	return maskRed, maskYellow, stopFlag
+	return maskYellow, maskRed,  stopFlag
 
 if __name__ == "__main__":
 

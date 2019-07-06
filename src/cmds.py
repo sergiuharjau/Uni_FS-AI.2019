@@ -66,7 +66,11 @@ def calculateReading(gateDict):
 
     for key in gateDict:
         target = gateDict[key][0][0] #pastValue - currentValue
-        cameraValue = target - int(width / 2) #define currentValue
+        if cameraValue < -150: 
+            cameraValue = target - int(width / 2) + 100 #define currentValue
+        else:
+            cameraValue = target - int(width / 2) #define currentValue
+
         logging.info("Gate %d: CameraValue: %d", key, cameraValue)
         totalValue += cameraValue
 
@@ -101,6 +105,7 @@ def issueCommands(steering, velocity, exit, visual, replay, record, rc):
             issueCommands.car.setupCAN()  # function runs until we finish setup
             print("Setup finished gracefully")
 
+        steering = min(15, max(-15, steering))
         logging.info("Setting steering and velocity.")
         issueCommands.car.set_steering_velocity(int(steering*-1), int(velocity))
         logging.info("CAN data set.")
@@ -115,7 +120,7 @@ def issueCommands(steering, velocity, exit, visual, replay, record, rc):
         if 'ser' not in issueCommands.__dict__:
             issueCommands.ser = serial.Serial("/dev/ttyUSB0", 115200, timeout=5)
 
-        steering = min(24, max(-24, steering))
+        steering = min(17, max(-17, steering))
         print(steering)
         commandSteering = "b " + str(1500+int(17.5*steering)) + " \n"
         print(commandSteering)         
