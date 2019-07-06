@@ -8,7 +8,7 @@ import logging
 from globals import width, newComOffset, missedColourOffset, maxSpeedUp, steeringFactor, carVelocity
 
 sys.path.insert(0, '../../fspycan/lib/')
-#import fspycan_ext
+import fspycan_ext
 
 missedRed = 0
 missedYellow = 0
@@ -95,7 +95,7 @@ def issueCommands(steering, velocity, exit, visual, replay, record, rc):
         if 'car' not in issueCommands.__dict__:  # only runs once
             issueCommands.car = fspycan_ext.Car("can0")
             issueCommands.car.init()
-            issueCommands.car = 1
+
             print("Initiating CAN setup.")
             logging.info("Setting up can Device.")
             issueCommands.car.setupCAN()  # function runs until we finish setup
