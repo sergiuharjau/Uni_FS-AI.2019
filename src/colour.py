@@ -8,26 +8,31 @@ def findColour(openCVobject, greenDetection) -> object:
 	"""
 	image = openCVobject  # gcolour
    # blurred_image = cv2.GaussianBlur(image, (5, 5), 0)  # blurred to remove noise
+
+	maskRed = cv2.inRange(image, np.array([220, 0, 0]), np.array([255, 30, 30]))
+	#actually blue, per RGB percentage
+
+
 	hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
 	# RED COLOUR BOUNDARIES
-	red_lower = np.array([0, 120, 120])  # pair of least red and most red on the hsv map
-	red_upper = np.array([7, 255, 255])
-	wrap_around_lower = np.array([170, 120, 60])  # still need tweaking, doesnt pick up very light reds
-	wrap_around_upper = np.array([180, 255, 255])  # Could draw box around item to remedy this?
+	#red_lower = np.array([0, 120, 120])  # pair of least red and most red on the hsv map
+	#red_upper = np.array([7, 255, 255])
+	#wrap_around_lower = np.array([170, 120, 60])  # still need tweaking, doesnt pick up very light reds
+	#wrap_around_upper = np.array([180, 255, 255])  # Could draw box around item to remedy this?
 
 	# YELLOW COLOUR BOUNDARIES
 	yellow_lower = np.array([20, 120, 120])
 	yellow_upper = np.array([35, 255, 255])
 
 
-	#red_lower = np.array([100, 100, 100]) #actually blue now
-	#red_upper = np.array([140, 255, 255]) #actually blue now
+	#red_lower = np.array([100, 100, 100]) #blue in hsv
+	#red_upper = np.array([140, 255, 255]) #blue in hsv
 
 	#red detection
-	maskRed = cv2.inRange(hsv, red_lower, red_upper)
-	additional_mask = cv2.inRange(hsv, wrap_around_lower, wrap_around_upper)
-	maskRed += additional_mask
+	#maskRed = cv2.inRange(hsv, red_lower, red_upper)
+	#additional_mask = cv2.inRange(hsv, wrap_around_lower, wrap_around_upper)
+	#maskRed += additional_mask
 
 	#yellow detection
 	maskYellow = cv2.inRange(hsv, yellow_lower, yellow_upper)
@@ -48,11 +53,12 @@ if __name__ == "__main__":
 	image = cv2.imread("../test/hsv_map.png")
 
 	#input()
-	r, y, stop = findColour(image, False)
+	r, y, stop,x = findColour(image, False)
 	print(stop)
 	if stop:
 		print("Attention, pedestrian!")
 	cv2.imshow("image", image)
-	cv2.imshow("red", cv2.bitwise_and(image, image, mask=r))
-	cv2.imshow("yellow", cv2.bitwise_and(image, image, mask=y))
+	#cv2.imshow("red", cv2.bitwise_and(image, image, mask=r))
+	#cv2.imshow("yellow", cv2.bitwise_and(image, image, mask=y))
+	cv2.imshow("blue", cv2.bitwise_and(image,image, mask=x))
 	cv2.waitKey(0)
