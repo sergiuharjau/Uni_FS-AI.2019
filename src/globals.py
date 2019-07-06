@@ -11,7 +11,7 @@ newComOffset = 15  # divide newCom by this number
 
 missedColourOffset = 5
 
-carVelocity = 50
+carVelocity = 80
 maxSpeedUp = 0
 
 def logInitial():
