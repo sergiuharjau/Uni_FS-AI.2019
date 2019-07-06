@@ -8,10 +8,12 @@ def findColour(openCVobject, greenDetection) -> object:
 	"""
 	image = openCVobject  # gcolour
    # blurred_image = cv2.GaussianBlur(image, (5, 5), 0)  # blurred to remove noise
-
-	maskRed = cv2.inRange(image, np.array([220, 0, 0]), np.array([255, 30, 30]))
+	#print(image)
+	#print(len(image))
+	#blue_lower = np.array([220, 0, 0])
+	#blue_upper = np.array([255, 30, 30])
+	#maskRed = cv2.inRange(image, blue_lower, blue_upper)
 	#actually blue, per RGB percentage
-
 
 	hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
@@ -26,17 +28,17 @@ def findColour(openCVobject, greenDetection) -> object:
 	yellow_upper = np.array([35, 255, 255])
 
 
-	#red_lower = np.array([100, 100, 100]) #blue in hsv
-	#red_upper = np.array([140, 255, 255]) #blue in hsv
+	red_lower = np.array([110, 100, 100]) #blue in hsv
+	red_upper = np.array([130, 255, 255]) #blue in hsv
 
 	#red detection
-	#maskRed = cv2.inRange(hsv, red_lower, red_upper)
+	maskRed = cv2.inRange(hsv, red_lower, red_upper)
 	#additional_mask = cv2.inRange(hsv, wrap_around_lower, wrap_around_upper)
 	#maskRed += additional_mask
 
 	#yellow detection
 	maskYellow = cv2.inRange(hsv, yellow_lower, yellow_upper)
-
+	#print(maskYellow)
 	#green detection
 	stopFlag = False
 	if greenDetection:
@@ -53,12 +55,12 @@ if __name__ == "__main__":
 	image = cv2.imread("../test/hsv_map.png")
 
 	#input()
-	r, y, stop,x = findColour(image, False)
+	r, y, stop= findColour(image, False)
 	print(stop)
 	if stop:
 		print("Attention, pedestrian!")
 	cv2.imshow("image", image)
 	#cv2.imshow("red", cv2.bitwise_and(image, image, mask=r))
 	#cv2.imshow("yellow", cv2.bitwise_and(image, image, mask=y))
-	cv2.imshow("blue", cv2.bitwise_and(image,image, mask=x))
+	cv2.imshow("blue", cv2.bitwise_and(image,image, mask=r))
 	cv2.waitKey(0)
