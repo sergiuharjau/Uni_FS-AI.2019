@@ -6,10 +6,10 @@ from globals import startFrom, pixelStrip, width
 import logging
 import threading
 
-def imProcessing(t, image_ocv, depth_data_ocv, visual=False, original_image=None, green=False):
+def imProcessing(t, image_ocv, depth_data_ocv, visual=False, original_image=None, green=False, cFlip=0):
 
     logging.info("Started image processing.")
-    maskRed, maskYellow, stop = findColour(image_ocv, green)
+    maskRed, maskYellow, stop = findColour(image_ocv, green, cFlip)
     logging.info("Received colour data.")
 
     if stop:

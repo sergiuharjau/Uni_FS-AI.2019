@@ -4,11 +4,11 @@ import threading
 from imProc import imProcessing
 from capturing import ImageCap
 from cmds import calculateReading, issueCommands
-from globals import pixelStrip, startFrom, steeringFactor, carVelocity, logInitial
+from globals import pixelStrip, startFrom, steeringFactor, carVelocity, logInitial, cFlip
 import cv2
 import logging
 
-def main(visual, green, record, replay, loop, rc):
+def main(visual, green, record, replay, loop, rc, cFlip):
 
     calculateReading.pastCom = 0  # in case we don't see cones straight away
 
@@ -29,7 +29,7 @@ def main(visual, green, record, replay, loop, rc):
                 depth_data_ocv = depth[startFrom:startFrom + pixelStrip]
                 image_ocv = original_image[startFrom:startFrom + pixelStrip]
 
-                steering, velocity = imProcessing(t, image_ocv, depth_data_ocv, visual, original_image, green)
+                steering, velocity = imProcessing(t, image_ocv, depth_data_ocv, visual, original_image, green, cFlip)
             else:
                 cv2.imshow("image", image)
                 cv2.waitKey(1)
@@ -80,7 +80,7 @@ def main(visual, green, record, replay, loop, rc):
 
 if __name__ == "__main__":
 
-    visual= False; green= False; record= False; replay= False; loop= True; rc=False; inspection=False
+    visual= False; green= False; record= False; replay= False; loop= True; rc=False; inspection=False; cFlip=0 ;
 
     for argument in sys.argv[1:]:
         exec(argument)
@@ -115,4 +115,4 @@ if __name__ == "__main__":
 
     logInitial()
 
-    main(visual, green, record, replay, loop, rc)
+    main(visual, green, record, replay, loop, rc, cFlip)

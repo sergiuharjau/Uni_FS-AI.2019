@@ -1,19 +1,14 @@
 import cv2
 import numpy as np
+from globals import cFlip
 
-def findColour(openCVobject, greenDetection) -> object:
+def findColour(openCVobject, greenDetection, cFlip) -> object:
 	"""Function that takes path of an image and outputs a new file highlighting said colour.
 	:param openCVobject: variable pointing to an openCVobject
 	:param output: whether you want it saved to the file system as well or not
 	"""
 	image = openCVobject  # gcolour
    # blurred_image = cv2.GaussianBlur(image, (5, 5), 0)  # blurred to remove noise
-	#print(image)
-	#print(len(image))
-	#blue_lower = np.array([220, 0, 0])
-	#blue_upper = np.array([255, 30, 30])
-	#maskRed = cv2.inRange(image, blue_lower, blue_upper)
-	#actually blue, per RGB percentage
 
 	hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
@@ -27,7 +22,7 @@ def findColour(openCVobject, greenDetection) -> object:
 	yellow_lower = np.array([20, 120, 120])
 	yellow_upper = np.array([35, 255, 255])
 
-
+	# BLUE COLOUR BOUNDARIES
 	red_lower = np.array([110, 100, 100]) #blue in hsv
 	red_upper = np.array([130, 255, 255]) #blue in hsv
 
@@ -38,8 +33,7 @@ def findColour(openCVobject, greenDetection) -> object:
 
 	#yellow detection
 	maskYellow = cv2.inRange(hsv, yellow_lower, yellow_upper)
-	#print(maskYellow)
-	#green detection
+
 	stopFlag = False
 	if greenDetection:
 		green = cv2.inRange(hsv, np.array([45, 100, 60]), np.array([65, 255, 255]))
@@ -48,7 +42,11 @@ def findColour(openCVobject, greenDetection) -> object:
 		if len(np.where(green==255)[0]) > 500:
 			stopFlag = True
 
-	return maskYellow, maskRed,  stopFlag
+	print(cFlip)
+	if cFlip:
+		return maskYellow, maskRed, stopFlag
+	else:
+		return maskRed, maskYellow, stopFlag
 
 if __name__ == "__main__":
 
