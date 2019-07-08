@@ -93,7 +93,7 @@ def calculateReading(gateDict):
     return round(steering/steeringFactor), round(velocity)
 
 
-def issueCommands(steering, velocity, exit, visual, replay, record, rc):
+def issueCommands(steering=0, velocity=0, exit=False, visual=False, replay=False, record=False, rc=False):
 
     if not replay and not record and not visual and not rc:
         if 'car' not in issueCommands.__dict__:  # only runs once
@@ -113,6 +113,14 @@ def issueCommands(steering, velocity, exit, visual, replay, record, rc):
 
         if exit:  # can exit protocol
             print("Initiating CAN exit.")
+            issueCommands.car.set_steering_velocity(0, 0)
+            time.sleep(4)
+            while velocity > 0:
+                steering = int(input("Steering: "))
+                velocity = int(input("Velocity: "))
+                velocity = min(100, max(-10, velocity))
+                print("Sending data to vcu.")
+                issueCommands.car.set_steering_velocity(steering, velocity)
             issueCommands.car.set_steering_velocity(0, 0)
             time.sleep(4)
             issueCommands.car.exitCAN()  # runs until we exit gracefully
