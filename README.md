@@ -30,7 +30,9 @@
 
 -With the visual on, double check the cones are in the pixel strip. 
 
--Using any of these arguments will disable the CAN:
+<b><h3>python3 zedMain.py arguments</h3></b>
+
+<b>-Using any of these arguments will disable the CAN:</b>
 
 visual=1 - brings up a preview of the camera
 
@@ -40,7 +42,7 @@ replay=X - replays recordings found in ../test/missionX
 
 record=1 - records footage and saves it in aforementioned folder
 
--These arguments run with CAN enabled: 
+<b>-These arguments run with CAN enabled: </b>
 
 cFlip=1 - flips the colours to Yellow on the Right, Blue on the Left
 
