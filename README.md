@@ -26,11 +26,14 @@
 
 -These drivers bridge the PeakCAN -- COM1 connection, and allows us to talk to the CAN. 
 
--Run program with visual=1 to ensure it compiles properly. 
+-Run "python3 src/zedMain.py visual=1" to ensure it compiles properly. 
 
 -With the visual on, double check the cones are in the pixel strip. 
 
-<b><h3>python3 zedMain.py arguments</h3></b>
+-Full self driving: run python3 src/zedMain.py and follow the instructions on the screen.
+
+
+<h2>Optional arguments</h2>
 
 <b>-Using any of these arguments will disable the CAN:</b>
 
