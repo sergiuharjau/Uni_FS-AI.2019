@@ -90,22 +90,20 @@ if __name__ == "__main__":
         for i in range(6):
             if i == 0 :
                 issueCommands(0, 0)
-                time.sleep(5)
             elif i == 1:
                 issueCommands(24, 0)
-                time.sleep(5)
+                time.sleep(2)
             elif i == 2:
                 issueCommands(-24, 0)
-                time.sleep(5)
+                time.sleep(2)
             elif i == 3:
                 issueCommands(0, 0)
-                time.sleep(5)
+                time.sleep(1)
             elif i == 4:
-                issueCommands(0, 200)
+                issueCommands(0, 100)
                 time.sleep(5)
             elif i == 5:
                 issueCommands(0, 0)
-                time.sleep(5)
         issueCommands(0, 0, True)
         print("Inspection finished.")
         quit()
