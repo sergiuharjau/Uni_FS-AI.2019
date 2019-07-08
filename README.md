@@ -1,26 +1,47 @@
 # FS-AI.2019
 
-<b>In order to start the car:</b> 
+<h1>Start up sequence:</h1>
 
-Ensure gross funk is on by resetting stop and twisting the red button. 
+<h2><b>Mechanical: </h2></b> 
 
-Ensure gross funk channel is 9.
+-Wheels need to be straight.
 
-Ensure wheels are within 5 degrees of center. You can check this with the ./tester.
+-PeakCAN device is plugged in.
 
-Ensure all variables on the second screen of the car are False. 
+-CAN needs to be terminated properly.
 
-Ensure you terminate the CAN connection appropriately. 
+-Gross funk is on channel 9, red button is twisted.
+
+-Switch side levers on, right to left.
+
+-Check the 12V power level.
+
+-Second screen variables are all False. 
 
 
 
-<b> Computer info </b>
+<h2><b>Software: </b></h2>
 
-The drive we need is DRIVE 2. It is located on the trolly at the moment. 
+-The computer automatically boots with David Croft's drivers at start up. 
 
-The computer starts up with David Croft's driver in order to enable PEAK-CAN over USB, into AI-CAN ComPort
+-These drivers bridge the PeakCAN -- COM1 connection, and allows us to talk to the CAN. 
 
-If you want to run the CAN, run zedMain.py with python3, no arguments, follow the instructions.
+-Run program with visual=1 to ensure it compiles properly. 
 
-Running zedMain.py with visual=1 will provide info on what the camera sees, and it will disable the CAN interface with the car. 
+-With the visual on, double check the cones are in the pixel strip. 
 
+-Using any of these arguments will disable the CAN:
+
+visual=1 - brings up a preview of the camera
+
+rc=1 - used for sending commands to the rc CAR 
+
+replay=X - replays recordings found in ../test/missionX
+
+record=1 - records footage and saves it in aforementioned folder
+
+-These arguments run with CAN enabled: 
+
+cFlip=1 - flips the colours to Yellow on the Right, Blue on the Left
+
+green=1 - enables stopping the car on green detection
