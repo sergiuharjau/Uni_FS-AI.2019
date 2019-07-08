@@ -28,8 +28,8 @@ def findColour(openCVobject, greenDetection) -> object:
 	yellow_upper = np.array([35, 255, 255])
 
 
-	red_lower = np.array([110, 100, 100]) #blue in hsv
-	red_upper = np.array([130, 255, 255]) #blue in hsv
+	red_lower = np.array([108, 55, 55]) #blue in hsv
+	red_upper = np.array([132, 255, 255]) #blue in hsv
 
 	#red detection
 	maskRed = cv2.inRange(hsv, red_lower, red_upper)
