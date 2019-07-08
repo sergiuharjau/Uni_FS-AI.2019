@@ -3,15 +3,15 @@ import logging
 width = 1280
 height = 720  # consider dropping camera res as well
 	
-pixelStrip = 200
-startFrom = 300
+pixelStrip = 100
+startFrom = 275
 
 steeringFactor = 20  # divide PixelValue by this number
-newComOffset = 15  # divide newCom by this number
+newComOffset = 9  # divide newCom by this number
 
 missedColourOffset = 5
 
-carVelocity = 90
+carVelocity = 120
 maxSpeedUp = 0
 
 def logInitial():

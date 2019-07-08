@@ -115,14 +115,6 @@ def issueCommands(steering=0, velocity=0, exit=False, visual=False, replay=False
             print("Initiating CAN exit.")
             issueCommands.car.set_steering_velocity(0, 0)
             time.sleep(4)
-            while velocity > 0:
-                steering = int(input("Steering: "))
-                velocity = int(input("Velocity: "))
-                velocity = min(100, max(-10, velocity))
-                print("Sending data to vcu.")
-                issueCommands.car.set_steering_velocity(steering, velocity)
-            issueCommands.car.set_steering_velocity(0, 0)
-            time.sleep(4)
             issueCommands.car.exitCAN()  # runs until we exit gracefully
     elif rc == 1:
         if 'ser' not in issueCommands.__dict__:
