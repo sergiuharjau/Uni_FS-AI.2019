@@ -1,4 +1,4 @@
-import pyzed.sl as sl
+#import pyzed.sl as sl
 import time
 import cv2
 import os
@@ -88,7 +88,7 @@ class ImageCap:
         logging.info("Replaying past mission.")
         try:
             a = np.load("../test/mission" + str(mission) + "/image" + str(self.frames) + ".npy")
-            b = np.load("../test//mission" + str(mission) + "/depth" + str(self.frames) + ".npy")
+            b = np.load("../test/mission" + str(mission) + "/depth" + str(self.frames) + ".npy")
             logging.info("Loaded files onto memory.")
             self.frame = (a, b)
         except FileNotFoundError:
