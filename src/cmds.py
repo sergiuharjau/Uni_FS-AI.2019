@@ -62,6 +62,7 @@ def findLineMarkers(red, yellow, i, visual):
 def calculateReading(gateDict):
 
     cameraValue = 0
+    totalValue = 0
 
     keysGates = list(gateDict.keys())
     keysGates.sort() #we get all the gates in order
@@ -75,12 +76,12 @@ def calculateReading(gateDict):
         newGate = gateDict[key][0][0] - int(width / 2) #define currentValue
 
         logging.info("Gate %d: CameraValue: %d", key, newGate)
-        logging.info("Affects main gate by: ", -newGate/3)
+        logging.info("Affects main gate by: %d", -newGate/3)
 
         cameraValue -= newGate/3 #following gates only adjust our current reading
         totalValue += newGate
 
-    logging.info("Final main gate camera value: ", cameraValue)
+    logging.info("Final main gate camera value: %d", cameraValue)
 
     if len(gateDict):#avoids division by 0 error
         averageValue = totalValue/len(gateDict)
@@ -124,7 +125,7 @@ def issueCommands(steering=0, velocity=0, exit=False, visual=False, replay=False
         if exit:  # can exit protocol
             print("Initiating CAN exit.")
             issueCommands.car.set_steering_velocity(0, 0)
-            time.sleep(4)
+            time.sleep(1)
             issueCommands.car.exitCAN()  # runs until we exit gracefully
     elif rc == 1:
         if 'ser' not in issueCommands.__dict__:
