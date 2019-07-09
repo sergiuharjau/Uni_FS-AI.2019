@@ -8,7 +8,7 @@ import logging
 from globals import width, newComOffset, missedColourOffset, maxSpeedUp, steeringFactor, carVelocity
 
 sys.path.insert(0, '../../fspycan/lib/')
-import fspycan_ext
+#import fspycan_ext
 
 missedRed = 0
 missedYellow = 0
@@ -58,24 +58,22 @@ def findLineMarkers(red, yellow, i, visual):
     logging.info("Yellow marker: %s", str(yellowMarker))
     return redMarker, yellowMarker
 
-
-def calculateReading(gateDict):
+def calculateReading(gateList):
 
     cameraValue = 0
     totalValue = 0
 
-    keysGates = list(gateDict.keys())
-    keysGates.sort() #we get all the gates in order
 
-    if len(keysGates):
-        cameraValue = gateDict[keysGates[0]][0][0] -int(width/2) #the first gate is what we aim towards
-        logging.info("Gate %d: CameraValue: %d", keysGates[0], cameraValue)
+    if len(gateList):
+        cameraValue = gateList[0][0][0] -int(width/2) #the first gate is what we aim towards
+        logging.info("Gate %d: CameraValue: %d", 0, cameraValue)
+        totalValue += cameraValue
 
-    for key in keysGates[1:]: #the other two gates help us aim better
+    for i, element in enumerate(gateList[1:]): #the other two gates help us aim better
 
-        newGate = gateDict[key][0][0] - int(width / 2) #define currentValue
+        newGate = element[0][0] - int(width / 2) #define currentValue
 
-        logging.info("Gate %d: CameraValue: %d", key, newGate)
+        logging.info("Gate %d: CameraValue: %d", i, newGate)
         logging.info("Affects main gate by: %d", -newGate/3)
 
         cameraValue -= newGate/3 #following gates only adjust our current reading
@@ -83,8 +81,8 @@ def calculateReading(gateDict):
 
     logging.info("Final main gate camera value: %d", cameraValue)
 
-    if len(gateDict):#avoids division by 0 error
-        averageValue = totalValue/len(gateDict)
+    if len(gateList):#avoids division by 0 error
+        averageValue = totalValue/len(gateList)
         logging.info("Average gate value: %d", averageValue)
 
         steering = calculateReading.pastCom + (cameraValue - calculateReading.pastCom) / newComOffset
