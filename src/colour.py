@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-from globals import cFlip
 
 def findColour(openCVobject, greenDetection, cFlip) -> object:
 	"""Function that takes path of an image and outputs a new file highlighting said colour.
