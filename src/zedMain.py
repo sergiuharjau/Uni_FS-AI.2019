@@ -7,6 +7,7 @@ from cmds import calculateReading, issueCommands
 from globals import pixelStrip, startFrom, logInitial
 import cv2
 import logging
+from gps import GPS
 
 def main(visual, green, record, replay, loop, rc, cFlip):
 
@@ -15,6 +16,8 @@ def main(visual, green, record, replay, loop, rc, cFlip):
     ic = ImageCap(False, replay)  # ImCapt() #initializes zed object
     startTime = time.time()
     listReadings = []
+
+    gps = GPS()
 
     try:
         i=0
