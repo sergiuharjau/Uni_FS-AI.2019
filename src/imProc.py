@@ -20,7 +20,7 @@ def imProcessing(t, image_ocv, depth_data_ocv, visual=False, original_image=None
     logging.info("Started capturing thread.")
     t.start()
     # finds the masks for the first red/yellow cones
-    gateList = []
+    gateDict = {}
     for i, gate in enumerate(findGates.result):
         fRed = gate[0]
         fYellow = gate[1]
@@ -28,16 +28,16 @@ def imProcessing(t, image_ocv, depth_data_ocv, visual=False, original_image=None
         if redLine and yellowLine:  # only on correct readings
             target = (int((yellowLine[0] + redLine[0]) / 2),int((yellowLine[1] + redLine[1]) / 2))
             logging.info("Validated %d!", i)   
-            gateList.append((target, redLine, yellowLine))
+            gateDict[i] = [target, redLine, yellowLine]
         else:
             logging.info("Gate %d not valid.", i)
 
-    steering, velocity =  calculateReading(gateList)
+    steering, velocity =  calculateReading(gateDict)
 
     if visual:
         colours = [(0,255,0), (255,0,0), (0,0,0), (0,0,255)]
-        for x,element in enumerate(gateList):
-            cv2.line(original_image[startFrom:startFrom + pixelStrip], gateList[1], gateList[2], colours[x], 10)
+        for key in gateDict:
+            cv2.line(original_image[startFrom:startFrom + pixelStrip], gateDict[key][1], gateDict[key][2], colours[key], 10)
 
         cv2.imshow('colour data', cv2.bitwise_and(image_ocv, image_ocv, mask=maskRed + maskYellow))
         cv2.imshow("image", original_image)
