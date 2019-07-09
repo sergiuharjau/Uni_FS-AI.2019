@@ -61,29 +61,37 @@ def findLineMarkers(red, yellow, i, visual):
 
 def calculateReading(gateDict):
 
-    totalValue = 0 
     cameraValue = 0
 
-    for key in gateDict:
-        target = gateDict[key][0][0] #pastValue - currentValue
-        if cameraValue < -150: 
-            cameraValue = target - int(width / 2) + 100 #define currentValue
-        else:
-            cameraValue = target - int(width / 2) #define currentValue
+    keysGates = list(gateDict.keys())
+    keysGates.sort() #we get all the gates in order
 
-        logging.info("Gate %d: CameraValue: %d", key, cameraValue)
-        totalValue += cameraValue
+    if len(keysGates):
+        cameraValue = gateDict[keysGates[0]][0][0] -int(width/2) #the first gate is what we aim towards
+        logging.info("Gate %d: CameraValue: %d", keysGates[0], cameraValue)
+
+    for key in keysGates[1:]: #the other two gates help us aim better
+
+        newGate = gateDict[key][0][0] - int(width / 2) #define currentValue
+
+        logging.info("Gate %d: CameraValue: %d", key, newGate)
+        logging.info("Affects main gate by: ", -newGate/3)
+
+        cameraValue -= newGate/3 #following gates only adjust our current reading
+        totalValue += newGate
+
+    logging.info("Final main gate camera value: ", cameraValue)
 
     if len(gateDict):#avoids division by 0 error
         averageValue = totalValue/len(gateDict)
         logging.info("Average gate value: %d", averageValue)
 
-        steering = calculateReading.pastCom + (averageValue - calculateReading.pastCom) / newComOffset
+        steering = calculateReading.pastCom + (cameraValue - calculateReading.pastCom) / newComOffset
         logging.info("Rolling average final camera value: %d", steering)
 
-        averageValue = max(0, min(abs(averageValue), 200))
+        averageValue = max(0, min(abs(averageValue), 100))
 
-        velocity = carVelocity + maxSpeedUp*(200-averageValue)/200
+        velocity = carVelocity + maxSpeedUp*(100-averageValue)/100
     else:
         logging.info("No valid gates. Using past command.")
         velocity = carVelocity #slowest speed if no gates
@@ -106,6 +114,8 @@ def issueCommands(steering=0, velocity=0, exit=False, visual=False, replay=False
             print("Setup finished gracefully")
 
         steering = min(15, max(-15, steering))
+        if steering <= -2:
+            steering += 2 #Adjusts leftside steering
         logging.info("Setting steering and velocity.")
         issueCommands.car.set_steering_velocity(int(steering*-1), int(velocity))
         logging.info("CAN data set.")
