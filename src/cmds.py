@@ -58,34 +58,23 @@ def findLineMarkers(red, yellow, i, visual):
     logging.info("Yellow marker: %s", str(yellowMarker))
     return redMarker, yellowMarker
 
-def calculateReading(gateList):
+def calculateReading(gateDict):
 
+    totalValue = 0 
     cameraValue = 0
-    totalValue = 0
 
+    for key in gateDict:
+        target = gateDict[key][0][0] #pastValue - currentValue
+        cameraValue = target - int(width / 2) #define currentValue
 
-    if len(gateList):
-        cameraValue = gateList[0][0][0] -int(width/2) #the first gate is what we aim towards
-        logging.info("Gate %d: CameraValue: %d", 0, cameraValue)
+        logging.info("Gate %d: CameraValue: %d", key, cameraValue)
         totalValue += cameraValue
 
-    for i, element in enumerate(gateList[1:]): #the other two gates help us aim better
-
-        newGate = element[0][0] - int(width / 2) #define currentValue
-
-        logging.info("Gate %d: CameraValue: %d", i, newGate)
-        logging.info("Affects main gate by: %d", -newGate/3)
-
-        cameraValue -= newGate/3 #following gates only adjust our current reading
-        totalValue += newGate
-
-    logging.info("Final main gate camera value: %d", cameraValue)
-
-    if len(gateList):#avoids division by 0 error
-        averageValue = totalValue/len(gateList)
+    if len(gateDict):#avoids division by 0 error
+        averageValue = totalValue/len(gateDict)
         logging.info("Average gate value: %d", averageValue)
 
-        steering = calculateReading.pastCom + (cameraValue - calculateReading.pastCom) / newComOffset
+        steering = calculateReading.pastCom + (averageValue - calculateReading.pastCom) / newComOffset
         logging.info("Rolling average final camera value: %d", steering)
 
         averageValue = max(0, min(abs(averageValue), 100))
@@ -98,7 +87,6 @@ def calculateReading(gateList):
 
     calculateReading.pastCom = steering
     return round(steering/steeringFactor), round(velocity)
-
 
 def issueCommands(steering=0, velocity=0, exit=False, visual=False, replay=False, record=False, rc=False):
 
