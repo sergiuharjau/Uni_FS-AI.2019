@@ -4,7 +4,7 @@ import threading
 from imProc import imProcessing
 from capturing import ImageCap
 from cmds import calculateReading, issueCommands
-from globals import pixelStrip, startFrom, steeringFactor, carVelocity, logInitial, cFlip
+from globals import pixelStrip, startFrom, logInitial
 import cv2
 import logging
 
@@ -31,6 +31,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
 
                 steering, velocity = imProcessing(t, image_ocv, depth_data_ocv, visual, original_image, green, cFlip)
             else:
+                steering,velocity = 0,0
                 cv2.imshow("image", image)
                 cv2.waitKey(1)
              # works faster here for performance reasons
