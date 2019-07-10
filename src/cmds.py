@@ -82,7 +82,7 @@ def calculateReading(gateDict):
         velocity = carVelocity + maxSpeedUp*(100-averageValue)/100
     else:
         logging.info("No valid gates. Using past command.")
-        velocity = carVelocity #slowest speed if no gates
+        velocity = 0 #coast if no gates
         steering = calculateReading.pastCom #keep past direction
 
     calculateReading.pastCom = steering
