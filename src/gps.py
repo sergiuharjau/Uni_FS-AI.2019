@@ -6,10 +6,11 @@ from datetime import datetime
 
 class GPS():
 
-    def __init__(self):
+    def __init__(self, logging=False):
         self.coords = (0,0)
         self.t = threading.Thread(target=GPS.getGPS, args=(self, ))
         self.t.start()
+        self.logging = logging
     
     def stop(self):
         self.t.join()
@@ -30,12 +31,13 @@ class GPS():
 
         dataout = pynmea2.NMEAStreamReader()
 
-        while 1:
+        while self.running:
                 newdata = ser.readline()        # Read a line from serial device
                 if newdata[0:6] == '$GPGGA':        # If line contains GPS coordinate info
                     newmsg = pynmea2.parse(newdata) # Parse it
                     self.coords = (newmsg.latitude, newmsg.longitude)
-                    self.logGPS(coords[0], coords[1])
+                    if self.logging:
+                        self.logGPS(coords[0], coords[1])
                     time.sleep(0.1)
                 else:
                     time.sleep(0.1)
