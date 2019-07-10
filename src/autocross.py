@@ -42,6 +42,11 @@ def main(visual, green, record, replay, loop, rc, cFlip):
             if ic.exit:  # when we replay tests
                 raise KeyboardInterrupt
 #            input()
+
+            steering = min(15, max(-15, steering))
+            if steering <= -2:
+                steering += 2 #Adjusts leftside steering
+                
             print("Steering: ", steering)
             print("Velocity: ", velocity)
 
