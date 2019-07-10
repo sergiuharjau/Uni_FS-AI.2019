@@ -31,19 +31,23 @@ if __name__ == "__main__":
 	fullCirclePulses = fullCircleRotations / 20
 	flip = 1 
 
-	while True:
-		##get odometry on wheels every frame
-		leftPulse=issueCommands.car.get_left_pulse()
-		rightPulse=issueCommands.car.get_right_pulse()
+	try: 
+		while True:
+			##get odometry on wheels every frame
+			leftPulse=issueCommands.car.get_left_pulse()
+			rightPulse=issueCommands.car.get_right_pulse()
 
-		tacoDiff = abs( (rightPulse-startRight) - (leftPulse-startLeft))
+			tacoDiff = abs( (rightPulse-startRight) - (leftPulse-startLeft))
 
-		issueCommands(flip*-24, 85) #go slightly right 
-								#in the future this follows the blue cones
+			issueCommands(flip*-24, 85) #go slightly right 
+									#in the future this follows the blue cones
 
-		if tacoDiff >= fullCirclePulses: #when we complete a circle, flip it around
-			flip = -1 
-			startRight = rightPulse
-			startLeft = leftPulse
+			if tacoDiff >= fullCirclePulses: #when we complete a circle, flip it around
+				flip = -1 
+				startRight = rightPulse
+				startLeft = leftPulse
+	except KeyboardInterrupt:
+		issueCommands(0,0, True)
+		gps.stop()
 
 		##calculate if we've done a full circle yet 
