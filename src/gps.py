@@ -11,8 +11,10 @@ class GPS():
         self.t = threading.Thread(target=GPS.getGPS, args=(self, ))
         self.t.start()
         self.logging = logging
+        self.running = True
     
     def stop(self):
+        self.running=False
         self.t.join()
 
     def coords(self):
