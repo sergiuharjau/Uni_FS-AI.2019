@@ -4,15 +4,15 @@ width = 1280
 height = 720  # consider dropping camera res as well
 	
 pixelStrip = 100
-startFrom = 275
+startFrom = 300
 
-steeringFactor = 20  # divide PixelValue by this number
+steeringFactor = 17  # divide PixelValue by this number
 newComOffset = 9  # divide newCom by this number
 
 missedColourOffset = 5
 
-carVelocity = 120
-maxSpeedUp = 0
+carVelocity = 160
+maxSpeedUp = 40
 
 def logInitial():
 	logging.info("Resolution: %d, %d", width, height)

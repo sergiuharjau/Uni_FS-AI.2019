@@ -24,7 +24,7 @@ def findGates(red, yellow, depth, firstPass, gateDistance, maxThresh, numberGate
 
     logging.info("Gate distance: %fm", round(planeDistance,2))
 
-    maxFirstGate = planeDistance + 1
+    maxFirstGate = planeDistance + 1.5
 
     conesDepth[conesDepth > maxFirstGate] = np.nan
 

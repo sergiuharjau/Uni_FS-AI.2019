@@ -1,14 +1,14 @@
-import time
-import sys
-import numpy as np
-import cv2
-import serial
+import time 
+import sys 
+import numpy as np 
+import cv2 
+import serial 
 import logging
 
 from globals import width, newComOffset, missedColourOffset, maxSpeedUp, steeringFactor, carVelocity
 
 sys.path.insert(0, '../../fspycan/lib/')
-#import fspycan_ext
+import fspycan_ext
 
 missedRed = 0
 missedYellow = 0
@@ -28,7 +28,7 @@ def findLineMarkers(red, yellow, i, visual):
     except:
         missedRed += 1
         logging.info("MissedRed: %d", missedRed)
-        if missedRed > 30:
+        if missedRed > 15:
             print("Can't see blue, turning left", (-1*missedRed*missedColourOffset))
             redMarker = (int(-1 * missedColourOffset * missedRed), 0)
             # very far left red, middle yellow, turns left
@@ -43,7 +43,7 @@ def findLineMarkers(red, yellow, i, visual):
     except:
         missedYellow += 1
         logging.info("MissedYellow: %d", missedYellow)
-        if missedYellow > 30:
+        if missedYellow > 15:
             print("Can't see yellow, turning right", (missedYellow*missedColourOffset))
             yellowMarker = (int(1280 + missedColourOffset * missedYellow), 0 )
             # middle red, very far right Yellow, turns right
@@ -82,7 +82,7 @@ def calculateReading(gateDict):
         velocity = carVelocity + maxSpeedUp*(100-averageValue)/100
     else:
         logging.info("No valid gates. Using past command.")
-        velocity = 0 #coast if no gates
+        velocity = carVelocity #coast if no gates
         steering = calculateReading.pastCom #keep past direction
 
     calculateReading.pastCom = steering
@@ -107,8 +107,8 @@ def issueCommands(steering=0, velocity=0, exit=False, visual=False, replay=False
 
         if exit:  # can exit protocol
             print("Initiating CAN exit.")
-            issueCommands.car.set_steering_velocity(0, 0)
-            time.sleep(1)
+#            issueCommands.car.set_steering_velocity(0, 0)
+            time.sleep(4)
             issueCommands.car.exitCAN()  # runs until we exit gracefully
     elif rc == 1:
         if 'ser' not in issueCommands.__dict__:

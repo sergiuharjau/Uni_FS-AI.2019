@@ -17,7 +17,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
     startTime = time.time()
     listReadings = []
 
-    gps = GPS()
+#    gps = GPS()
 
     try:
         i=0
@@ -45,7 +45,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
 
             steering = min(15, max(-15, steering))
             if steering <= -2:
-                steering += 2 #Adjusts leftside steering
+                steering += 0 #Adjusts leftside steering
                 
             print("Steering: ", steering)
             print("Velocity: ", velocity)

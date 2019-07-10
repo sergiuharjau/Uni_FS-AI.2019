@@ -1,24 +1,25 @@
 from cmds import issueCommands
 from gps import GPS
 import math
+import time
 
 if __name__ == "__main__":
 
 
-	gps = GPS(logging=False)
+#	gps = GPS(logging=False)
 
-	while gps.getCoords() == (0,0):
-		print("Awaiting gps lock.")
+#	while gps.getCoords() == (0,0):
+#		print("Awaiting gps lock.")
 
-	startingPos = gps.coords()
+	startingPos = 0 #gps.coords()
 
 	issueCommands(0,0)	
 
-	distanceAway = 0
-	while distanceAway < 15: #go forward 15m
-		distanceAway = (distance.distance(gps.getCoords(), startingPos)).m
-		print("Distance away from destination: ", distanceAway)
-		issueCommands(0,85)
+#	distanceAway = 0
+#	while distanceAway < 15: #go forward 15m
+#		distanceAway = (distance.distance(gps.getCoords(), startingPos)).m
+#		print("Distance away from destination: ", distanceAway)
+#		issueCommands(0,85)
 
 	issueCommands(0,0) #connect to car
 
@@ -27,9 +28,10 @@ if __name__ == "__main__":
 	carWidth = 1.17 #in meters
 	fullCircleDistance = 2 * math.pi * carWidth
 
-	tyreCirc = PI * 0.58
+	tyreCirc = math.pi * 0.58
 	fullCircleRotations = fullCircleDistance / tyreCirc
-	fullCirclePulses = fullCircleRotations / 20
+	fullCirclePulses = fullCircleRotations * 20
+
 	flip = 1 
 
 	try: 
@@ -41,14 +43,17 @@ if __name__ == "__main__":
 			tacoDiff = abs( (rightPulse-startRight) - (leftPulse-startLeft))
 
 			issueCommands(flip*-24, 85) #go slightly right 
-									#in the future this follows the blue cones
+			
+			print("Pulse diff: ", tacoDiff)						#in the future this follows the blue cones
+			time.sleep(1)
 
-			if tacoDiff >= fullCirclePulses: #when we complete a circle, flip it around
-				flip = -1 
+			if tacoDiff >= 300: #when we complete a circle, flip it around
+				flip = -1
 				startRight = rightPulse
 				startLeft = leftPulse
+				print("Flipped")
 	except KeyboardInterrupt:
 		issueCommands(0,0, True)
-		gps.stop()
+#		gps.stop()
 
 		##calculate if we've done a full circle yet 
