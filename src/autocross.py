@@ -84,33 +84,10 @@ def main(visual, green, record, replay, loop, rc, cFlip):
 
 if __name__ == "__main__":
 
-    visual= False; green= False; record= False; replay= False; loop= True; rc=False; inspection=False; cFlip=0 ;
+    visual= False; green= False; record= False; replay= False; loop= True; rc=False; cFlip=0 ;
 
     for argument in sys.argv[1:]:
         exec(argument)
-
-    if inspection:
-        print("Starting inspection.")
-        for i in range(6):
-            if i == 0 :
-                issueCommands(0, 0)
-            elif i == 1:
-                issueCommands(24, 0)
-                time.sleep(2)
-            elif i == 2:
-                issueCommands(-24, 0)
-                time.sleep(2)
-            elif i == 3:
-                issueCommands(0, 0)
-                time.sleep(1)
-            elif i == 4:
-                issueCommands(0, 100)
-                time.sleep(5)
-            elif i == 5:
-                issueCommands(0, 0)
-        issueCommands(0, 0, True)
-        print("Inspection finished.")
-        quit()
 
     logging.basicConfig(filename='loggingMain.log', format='%(asctime)s %(message)s', level=logging.INFO)
     logging.warning("\nMission start!\n")
