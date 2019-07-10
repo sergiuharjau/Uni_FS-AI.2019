@@ -88,7 +88,6 @@ def calculateReading(gateDict):
     calculateReading.pastCom = steering
     return round(steering/steeringFactor), round(velocity)
 
-issueCommands.setup=False
 def issueCommands(steering=0, velocity=0, exit=False, visual=False, replay=False, record=False, rc=False):
 
     if not replay and not record and not visual and not rc:
@@ -99,12 +98,8 @@ def issueCommands(steering=0, velocity=0, exit=False, visual=False, replay=False
             print("Initiating CAN setup.")
             logging.info("Setting up can Device.")
             issueCommands.car.setupCAN()  # function runs until we finish setup
-            issueCommands.setup=True
             print("Setup finished gracefully")
 
-        steering = min(15, max(-15, steering))
-        if steering <= -2:
-            steering += 2 #Adjusts leftside steering
         logging.info("Setting steering and velocity.")
         issueCommands.car.set_steering_velocity(int(steering*-1), int(velocity))
         logging.info("CAN data set.")
