@@ -17,7 +17,7 @@ class GPS():
         self.running=False
         self.t.join()
 
-    def coords(self):
+    def getCoords(self):
         return self.coords
 
     def logGPS(self, x=None, y=None):

@@ -1,12 +1,13 @@
 from cmds import issueCommands
-from math import PI
+from gps import GPS
+import math
 
 if __name__ == "__main__":
 
 
 	gps = GPS(logging=False)
 
-	while gps.coords() == (0,0):
+	while gps.getCoords() == (0,0):
 		print("Awaiting gps lock.")
 
 	startingPos = gps.coords()
@@ -15,7 +16,7 @@ if __name__ == "__main__":
 
 	distanceAway = 0
 	while distanceAway < 15: #go forward 15m
-		distanceAway = (distance.distance(gps.coords(), startingPos)).m
+		distanceAway = (distance.distance(gps.getCoords(), startingPos)).m
 		print("Distance away from destination: ", distanceAway)
 		issueCommands(0,85)
 
@@ -23,10 +24,10 @@ if __name__ == "__main__":
 
 	startLeft = issueCommands.car.get_left_pulse() #should be 0
 	startRight = issueCommands.car.get_right_pulse() #should be 0 
-	carWidth = #
-	fullCircleDistance = 2 * PI * carWidth
+	carWidth = 1.17 #in meters
+	fullCircleDistance = 2 * math.pi * carWidth
 
-	tyreCirc = PI * #diameter
+	tyreCirc = PI * 0.58
 	fullCircleRotations = fullCircleDistance / tyreCirc
 	fullCirclePulses = fullCircleRotations / 20
 	flip = 1 
