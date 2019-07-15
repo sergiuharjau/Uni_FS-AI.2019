@@ -6,25 +6,32 @@ from datetime import datetime
 
 class GPS():
 
-    def __init__(self):
+    def __init__(self, logging=False):
         self.coords = (0,0)
         self.running = True
+        self.log = logging
         self.t = threading.Thread(target=GPS.getGPS, args=(self, ))
         self.t.start()
     
     def stop(self):
         self.running = False
+        #self.logGPS(True)
         self.t.join()
 
     def getCoords(self):
         return self.coords
 
-    def logGPS(self, x=None, y=None):
-        if x == None:
-            x,y=self.coords
-        f1= open("gpsData.txt", "a+")
-        f1.write(str(datetime.now()) + "," + str(x) + "," + str(y) + "\n")
-        f1.close()
+    def logGPS(self, write=False):
+
+        listGPS.append(self.coords)
+        
+        if write:
+            f1= open("gpsData.txt", "a+")
+            for coords in listGPS:
+                print("Writing to filesystem")
+                x,y = coords
+                f1.write(str(datetime.now()) + "," + str(x) + "," + str(y) + "\n")
+            f1.close()
 
     def getGPS(self):
 
@@ -37,9 +44,11 @@ class GPS():
                 if newdata[0:6] == '$GPGGA':        # If line contains GPS coordinate info
                     newmsg = pynmea2.parse(newdata) # Parse it
                     self.coords = (newmsg.latitude, newmsg.longitude)
-                    time.sleep(0.1)
+                    if self.log:
+                        self.logGPS()
+                    time.sleep(0.5)
                 else:
-                    time.sleep(0.1)
+                    time.sleep(0.5)
 
 if __name__ == "__main__":
 
