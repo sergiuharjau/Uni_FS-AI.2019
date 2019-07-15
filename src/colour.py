@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-def findColour(openCVobject, greenDetection, cFlip) -> object:
+def findColour(openCVobject, greenDetection, cFlip, exitDetection=False) -> object:
 	"""Function that takes path of an image and outputs a new file highlighting said colour.
 	:param openCVobject: variable pointing to an openCVobject
 	:param output: whether you want it saved to the file system as well or not
@@ -37,10 +37,14 @@ def findColour(openCVobject, greenDetection, cFlip) -> object:
 		green = cv2.inRange(hsv, np.array([45, 100, 60]), np.array([65, 255, 255]))
 		print(len(np.where(green==255)[0]))
 		#input()
-		if len(np.where(green==255)[0]) > 500:
+		if exitDetection:
+			try:
+				stopFlag = np.where(green==255)[0]
+			except:
+				stopFlag = "Out of sight"
+		elif len(np.where(green==255)[0]) > 500:
 			stopFlag = True
 
-	print(cFlip)
 	if cFlip:
 		return maskYellow, maskRed, stopFlag
 	else:
