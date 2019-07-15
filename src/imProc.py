@@ -2,21 +2,21 @@ import cv2
 from maskProc import findGates
 from cmds import findLineMarkers, calculateReading
 from colour import findColour
-from globals import startFrom, pixelStrip, width
+from globals import startFrom, pixelStrip, width, steeringFactor
 import logging
 import threading
 
-def imProcessing(t, image_ocv, depth_data_ocv, visual=False, original_image=None, green=False, cFlip=0):
+def imProcessing(t, image_ocv, depth_data_ocv, visual=False, original_image=None, green=False, cFlip=0, eight=0, swapCircles=0, exitDetection=0):
 
     logging.info("Started image processing.")
-    maskRed, maskYellow, stop = findColour(image_ocv, green, cFlip)
+    maskRed, maskYellow, stop = findColour(image_ocv, green, cFlip, exitDetection)
     logging.info("Received colour data.")
 
-    if stop:
+    if stop == True:
         print("Attention, pedestrian!")
         raise KeyboardInterrupt
     logging.info("Finding gates.")
-    findGates(maskRed, maskYellow, depth_data_ocv, True, 2, 7, 2)
+    findGates(maskRed, maskYellow, depth_data_ocv, True, 2, 7, 0) #just one gate
     logging.info("Started capturing thread.")
     t.start()
     # finds the masks for the first red/yellow cones
@@ -27,8 +27,13 @@ def imProcessing(t, image_ocv, depth_data_ocv, visual=False, original_image=None
         redLine, yellowLine = findLineMarkers(fRed, fYellow, i, visual)
         if redLine and yellowLine:  # only on correct readings
             target = (int((yellowLine[0] + redLine[0]) / 2),int((yellowLine[1] + redLine[1]) / 2))
-            logging.info("Validated %d!", i)   
-            gateDict[i] = [target, redLine, yellowLine]
+            logging.info("Validated %d!", i)
+            if eight and swapCircles: #yellow on the right is real, we fake red
+                gateDict[i] = [target, (int(width/3),0), yellowLine]
+            elif eight: #red on the left is real, we fake yellow
+                gateDict[i] = [target, redLine, int(2 * width/3)]
+            else:#normal behaviour
+                gateDict[i] = [target, redLine, yellowLine]
         else:
             logging.info("Gate %d not valid.", i)
 
@@ -45,5 +50,12 @@ def imProcessing(t, image_ocv, depth_data_ocv, visual=False, original_image=None
         cv2.waitKey(10)
 
     logging.info("Finished image processing.")
+
+    if exitDetection:
+        if stop == "Out of sight":
+            steering = 0 
+        else:
+            steering = (width/2 - stop) / steeringFactor
+        velocity = 100
 
     return steering, velocity
