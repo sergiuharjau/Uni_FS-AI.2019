@@ -17,7 +17,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
     startTime = time.time()
     listReadings = []
 
-#    gps = GPS()
+    gps = GPS()
 
     try:
         i=0
@@ -43,9 +43,9 @@ def main(visual, green, record, replay, loop, rc, cFlip):
                 raise KeyboardInterrupt
 #            input()
 
+            if steering <= -2:  #Adjusts leftside steering
+                steering += 2
             steering = min(15, max(-15, steering))
-            if steering <= -2:
-                steering += 0 #Adjusts leftside steering
                 
             print("Steering: ", steering)
             print("Velocity: ", velocity)
@@ -67,6 +67,8 @@ def main(visual, green, record, replay, loop, rc, cFlip):
             #print("Frames left: ", framesToDo-amount)
 
     except KeyboardInterrupt:
+        issueCommands(0,0)
+        time.sleep(4)
         issueCommands(0, 0, True, visual, replay, record, rc) #initiates the exit protocol
         if not replay:
             ic.zed.close()
