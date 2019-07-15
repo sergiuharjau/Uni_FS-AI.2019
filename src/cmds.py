@@ -108,7 +108,6 @@ def issueCommands(steering=0, velocity=0, exit=False, visual=False, replay=False
         if exit:  # can exit protocol
             print("Initiating CAN exit.")
 #            issueCommands.car.set_steering_velocity(0, 0)
-            time.sleep(4)
             issueCommands.car.exitCAN()  # runs until we exit gracefully
     elif rc == 1:
         if 'ser' not in issueCommands.__dict__:
