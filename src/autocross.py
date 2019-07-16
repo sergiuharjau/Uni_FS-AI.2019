@@ -45,7 +45,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
 
             if steering <= -2:  #Adjusts leftside steering
                 steering += 2
-            steering = min(15, max(-15, steering))
+            steering = min(19, max(-19, steering))
                 
             print("Steering: ", steering)
             print("Velocity: ", velocity)
@@ -67,11 +67,11 @@ def main(visual, green, record, replay, loop, rc, cFlip):
             #print("Frames left: ", framesToDo-amount)
 
     except KeyboardInterrupt:
+        if not replay:
+            ic.zed.close()
         issueCommands(0,0)
         time.sleep(4)
         issueCommands(0, 0, True, visual, replay, record, rc) #initiates the exit protocol
-        if not replay:
-            ic.zed.close()
 
         f1 = open("../test/pastMission.txt", "w")
         for element in listReadings:

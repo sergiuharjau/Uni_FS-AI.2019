@@ -2,6 +2,7 @@ import math
 import time
 import cv2
 import logging
+import sys
 
 from geopy import distance
 import threading
@@ -18,16 +19,19 @@ if __name__ == "__main__":
 
 	while gps.getCoords() == (0,0):
 		print("Awaiting gps lock.")
+		#time.sleep(0.2)
+		gps.getGPS()
 
 	startingPos = gps.getCoords() #so we know to stop 15m afterwards
 
 	issueCommands(0,0) #connect to car
 
 	distanceAway = 0
-	while distanceAway < 2: #go forward 15m
+	while distanceAway < 5: #go forward 15m
 		distanceAway = distance.distance(gps.getCoords(), startingPos).m
 		print("Distance away from destination: ", distanceAway)
 		issueCommands(0,85)
+		gps.getGPS()
 
 	issueCommands(0,0)
 	centerGPS = gps.getCoords() 
@@ -37,25 +41,27 @@ if __name__ == "__main__":
 	startRight = issueCommands.car.get_right_pulse() #should be 0 
 	startPulse = int((startLeft + startRight)/2)
 
-	flip = 0 #goes right first
+	flip = 1 #goes right first
 
 			
 	calculateReading.pastCom = 0  # in case we don't see cones straight away
-	ic = ImageCap(False, replay)  # ImCapt() #initializes zed object
 	logging.basicConfig(filename='loggingMain.log', format='%(asctime)s %(message)s', level=logging.INFO)
 	logging.warning("\nMission start!\n")
 
 	visual= False; green= False; record= False; replay= False; loop= True; rc=False; cFlip=0 ;
-	eight = True; swapCircles=0#goes right first
+	eight = True; swapCircles=0 #goes right first
 	followGreen=0 
+
+	ic = ImageCap(False, replay)  # ImCapt() #initializes zed object
 
 	for argument in sys.argv[1:]:
 		exec(argument)
 
 	startTime = time.time()
-
+	count=0
 	try: 
 		while True:
+			#gps.getGPS()
 			##get odometry on wheels every frame
 			leftPulse=issueCommands.car.get_left_pulse()
 			rightPulse=issueCommands.car.get_right_pulse()
@@ -76,10 +82,12 @@ if __name__ == "__main__":
 			print("Velocity: ", velocity)
 			logging.info("Steering: %d, Velocity: %d", steering, velocity)
 
+			steering = min(19, max(-19, steering))
+
 			issueCommands(steering, velocity)
 			print("Pulses done so far: ", averagePulse-startPulse)
 			print("Distance traveled: ",distance.distance(gps.getCoords(), centerGPS).m )
-			if (averagePulse - startPulse) > 50: #circumference of circle / wheel circumeference * Pulse/rotation (probably 20)
+			if (averagePulse - startPulse) > 650: #circumference of circle / wheel circumeference * Pulse/rotation (probably 20)
 				if (distance.distance(gps.getCoords(), centerGPS).m) < 1:
 					print("Reached center")
 					count += 1
@@ -88,7 +96,7 @@ if __name__ == "__main__":
 							followGreen = 1
 							startingPos = gps.getCoords()
 						count = 0
-						swapCircles = 1 #so we go the other way
+						swapCircles = 0 #so we go the other way
 						print("Flipped")
 					else:
 						print("First lap. Doing another.")
@@ -98,6 +106,7 @@ if __name__ == "__main__":
 					print("GPS: ", gps.getCoords())
 
 			if followGreen:
+				gps.getGPS()
 				distanceAway = distance.distance(gps.getCoords(), startingPos).m
 				print("Distance away from destination: ", distanceAway)
 				if distanceAway > 15: #after 15m of following green

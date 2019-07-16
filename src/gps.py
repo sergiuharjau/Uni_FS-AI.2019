@@ -8,15 +8,15 @@ class GPS():
 
     def __init__(self, logging=False):
         self.coords = (0,0)
-        self.running = True
+#        self.running = True
         self.log = logging
-        self.t = threading.Thread(target=GPS.getGPS, args=(self, ))
-        self.t.start()
+#        self.t = threading.Thread(target=GPS.getGPS, args=(self, ))
+#        self.t.start()
     
     def stop(self):
         self.running = False
         self.logGPS(True)
-        self.t.join()
+#        self.t.join()
 
     def getCoords(self):
         return self.coords
@@ -39,16 +39,17 @@ class GPS():
 
         dataout = pynmea2.NMEAStreamReader()
 
-        while self.running:
+        while 1:
                 newdata = ser.readline()        # Read a line from serial device
-                if newdata[0:6] == '$GPGGA':        # If line contains GPS coordinate info
-                    newmsg = pynmea2.parse(newdata) # Parse it
+                print(newdata[:6])
+                if newdata[0:6] == "$GPGGA".encode():        # If line contains GPS coordinate info
+                    newmsg = pynmea2.parse(newdata.decode()) # Parse it
                     self.coords = (newmsg.latitude, newmsg.longitude)
                     if self.log:
                         self.logGPS()
-                    time.sleep(0.5) #when we find, take a little break
-                else:
-                    time.sleep(0.02) #keep reading until we find it
+                    break #time.sleep(0.5) #when we find, take a little break
+                #else:
+                   # time.sleep(0.02) #keep reading until we find it
 
 if __name__ == "__main__":
 
