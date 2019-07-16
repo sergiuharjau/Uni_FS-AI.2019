@@ -15,7 +15,7 @@ class GPS():
     
     def stop(self):
         self.running = False
-        #self.logGPS(True)
+        self.logGPS(True)
         self.t.join()
 
     def getCoords(self):
@@ -46,9 +46,9 @@ class GPS():
                     self.coords = (newmsg.latitude, newmsg.longitude)
                     if self.log:
                         self.logGPS()
-                    time.sleep(0.5)
+                    time.sleep(0.5) #when we find, take a little break
                 else:
-                    time.sleep(0.5)
+                    time.sleep(0.02) #keep reading until we find it
 
 if __name__ == "__main__":
 
