@@ -24,8 +24,8 @@ if __name__ == "__main__":
 	issueCommands(0,0) #connect to car
 
 	distanceAway = 0
-	while distanceAway < 15: #go forward 15m
-		distanceAway = (distance.distance(gps.getCoords(), startingPos)).m
+	while distanceAway < 2: #go forward 15m
+		distanceAway = distance.distance(gps.getCoords(), startingPos).m
 		print("Distance away from destination: ", distanceAway)
 		issueCommands(0,85)
 
@@ -77,9 +77,10 @@ if __name__ == "__main__":
 			logging.info("Steering: %d, Velocity: %d", steering, velocity)
 
 			issueCommands(steering, velocity)
-
+			print("Pulses done so far: ", averagePulse-startPulse)
+			print("Distance traveled: ",distance.distance(gps.getCoords(), centerGPS).m )
 			if (averagePulse - startPulse) > 50: #circumference of circle / wheel circumeference * Pulse/rotation (probably 20)
-				if (distance.distance(gps.getCoords(), centerGPS)).m < 1:
+				if (distance.distance(gps.getCoords(), centerGPS).m) < 1:
 					print("Reached center")
 					count += 1
 					if count == 2:
@@ -97,7 +98,7 @@ if __name__ == "__main__":
 					print("GPS: ", gps.getCoords())
 
 			if followGreen:
-				distanceAway = (distance.distance(gps.getCoords(), startingPos)).m
+				distanceAway = distance.distance(gps.getCoords(), startingPos).m
 				print("Distance away from destination: ", distanceAway)
 				if distanceAway > 15: #after 15m of following green
 					raise KeyboardInterrupt
