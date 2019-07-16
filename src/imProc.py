@@ -16,7 +16,7 @@ def imProcessing(t, image_ocv, depth_data_ocv, visual=False, original_image=None
 		print("Attention, pedestrian!")
 		raise KeyboardInterrupt
 	logging.info("Finding gates.")
-	findGates(maskRed, maskYellow, depth_data_ocv, True, 2, 7, 0) #just one gate
+	findGates(maskRed, maskYellow, depth_data_ocv, True, 2, 4, 0) #just one gate
 	logging.info("Started capturing thread.")
 	t.start()
 	# finds the masks for the first red/yellow cones
@@ -29,10 +29,10 @@ def imProcessing(t, image_ocv, depth_data_ocv, visual=False, original_image=None
 			target = (int((yellowLine[0] + redLine[0]) / 2),int((yellowLine[1] + redLine[1]) / 2))
 			logging.info("Validated %d!", i)
 			if eight and swapCircles: #yellow on the right is real, we fake red
-				gateDict[i] = [target, (int(width/3),0), yellowLine]
+				gateDict[i] = [target, (int(width/4),0), yellowLine]
 			elif eight: #red on the left is real, we fake yellow
-				gateDict[i] = [target, redLine, int(2 * width/3)]
-			else:#normal behaviour
+				gateDict[i] = [target, redLine, int(3 * width/4)]
+			else: #normal behaviour
 				gateDict[i] = [target, redLine, yellowLine]
 		else:
 			logging.info("Gate %d not valid.", i)
