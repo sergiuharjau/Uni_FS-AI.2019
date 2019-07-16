@@ -29,7 +29,7 @@ if __name__ == "__main__":
 
 	tyreCirc = PI * 0.58
 	fullCircleRotations = fullCircleDistance / tyreCirc
-	fullCirclePulses = fullCircleRotations / 20
+	fullCirclePulses = fullCircleRotations * 20
 	flip = 1 
 
 	try: 
