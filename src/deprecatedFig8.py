@@ -27,7 +27,7 @@ if __name__ == "__main__":
 	carWidth = 1.17 #in meters
 	fullCircleDistance = 2 * math.pi * carWidth
 
-	tyreCirc = PI * 0.58
+	tyreCirc = math.pi * 0.58
 	fullCircleRotations = fullCircleDistance / tyreCirc
 	fullCirclePulses = fullCircleRotations * 20
 	flip = 1 

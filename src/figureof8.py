@@ -29,7 +29,7 @@ if __name__ == "__main__":
 		print("Distance away from destination: ", distanceAway)
 		issueCommands(0,85)
 
-	issueCommands(0,0) 
+	issueCommands(0,0)
 	centerGPS = gps.getCoords() 
 	time.sleep(3)
 
@@ -72,10 +72,6 @@ if __name__ == "__main__":
 
 			steering, velocity = imProcessing(t, image_ocv, depth_data_ocv, visual, original_image, green, cFlip, eight, swapCircles, followGreen)
 
-			if (time.time() - followedFor) > 10:
-				steering = 0
-				velocity = 100
-
 			print("Steering: ", steering)
 			print("Velocity: ", velocity)
 			logging.info("Steering: %d, Velocity: %d", steering, velocity)
@@ -83,14 +79,13 @@ if __name__ == "__main__":
 			issueCommands(steering, velocity)
 
 			if (averagePulse - startPulse) > 50: #circumference of circle / wheel circumeference * Pulse/rotation (probably 20)
-				if (distance.distance(gps.getCoords(), centerGPS)).m < 2:
+				if (distance.distance(gps.getCoords(), centerGPS)).m < 1:
 					print("Reached center")
 					count += 1
 					if count == 2:
 						if swapCircles == 1: # 4th full circle we do
 							followGreen = 1
 							startingPos = gps.getCoords()
-							followedFor = time.time()
 						count = 0
 						swapCircles = 1 #so we go the other way
 						print("Flipped")
@@ -104,7 +99,7 @@ if __name__ == "__main__":
 			if followGreen:
 				distanceAway = (distance.distance(gps.getCoords(), startingPos)).m
 				print("Distance away from destination: ", distanceAway)
-				if distanceAway > 20: #after 20m of following green
+				if distanceAway > 15: #after 15m of following green
 					raise KeyboardInterrupt
 
 				
@@ -122,6 +117,6 @@ if __name__ == "__main__":
 		logging.info("Framerate: %d", len(listReadings) / (time.time() - startTime))
 		logging.warning("Mission end.\n\n")
 		quit()
-#		gps.stop()
+		gps.stop()
 
 		##calculate if we've done a full circle yet 
