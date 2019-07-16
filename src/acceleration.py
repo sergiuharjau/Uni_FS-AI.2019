@@ -19,7 +19,7 @@ if __name__ == "__main__":
 	startRight = issueCommands.car.get_right_pulse()
 	start = time.time()
 	distanceAway = 0
-	while distanceAway < 50:
+	while distanceAway < 75: #stops after 75m
 		coordinates = gps.coords()
 		if coordinates == (0,0):
 			print("Lost GPS. Stopping until we regain")
@@ -27,11 +27,12 @@ if __name__ == "__main__":
 		distanceAway = (distance.distance(gps.getCoords(), startingPos)).m
 		print("Distance away from destination: ", distanceAway)
 		issueCommands(0,150)
-		time.sleep(4)
+		time.sleep(1)	
 	print("Total time: ", time.time()-start)
 	print("Total left pulse: ", issueCommands.car.get_left_pulse() - startLeft)
 	print("Total right pulse: ", issueCommands.car.get_right_pulse() - startRight)
 	print("Reached destination, stopping.")
-
+	issueCommands(0,0)
+	time.sleep(10)
 	issueCommands(0,0,True)
 	gps.stop()
