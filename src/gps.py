@@ -47,7 +47,7 @@ class GPS():
                     self.coords = (newmsg.latitude, newmsg.longitude)
                     if self.log:
                         self.logGPS()
-                    break #time.sleep(0.5) #when we find, take a little break
+                    return self.coords #time.sleep(0.5) #when we find, take a little break
                 #else:
                    # time.sleep(0.02) #keep reading until we find it
 
