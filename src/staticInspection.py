@@ -1,9 +1,10 @@
 from cmds import issueCommands 
+import time
 
 if __name__ == "__main__":
 
-	print("Starting inspection.")
-    for i in range(6):
+    print("Starting inspection.")
+    for i in range(9):
         if i == 0:
             issueCommands(0, 0) #connects and sets up CAN 
         elif i == 1:
@@ -22,13 +23,14 @@ if __name__ == "__main__":
             issueCommands(0, 0) #stops within 5 seconds
             time.sleep(3)
         elif i == 6:
-            issueCommands.car.set_AS_Finished()
+#            issueCommands.car.set_AS_Finished()
+#            print("Got here")
             time.sleep(1)
         elif i == 7:
-            issueCommands(0,50) #ramp up to 50 for 3s
+            issueCommands(0,200) #ramp up to 50 for 3s
             time.sleep(3)
         elif i == 8:
-            issueCommands.car.deploy_ebs() #deploy EBS
+            issueCommands.car.deploy_EBS() #deploy EBS
             time.sleep(2)
 
     print("Inspection finished.")
