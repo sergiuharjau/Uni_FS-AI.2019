@@ -17,7 +17,22 @@ def main(visual, green, record, replay, loop, rc, cFlip):
     startTime = time.time()
     listReadings = []
 
+
     gps = GPS()
+
+    while gps.getGPS() == (0,0):
+        print("Awaiting GPS lock.")
+        time.sleep(1)
+
+
+    startingPos = gps.getGPS()
+    timeMarker = time.time()
+
+    issueCommands(0,0)
+
+    time.sleep(3) # waits 3 seconds
+
+    lapCounter = 0 
 
     try:
         i=0
@@ -43,10 +58,18 @@ def main(visual, green, record, replay, loop, rc, cFlip):
                 raise KeyboardInterrupt
 #            input()
 
-            if steering <= -2:  #Adjusts leftside steering
-                steering += 2
+            #if steering <= -2:  #Adjusts leftside steering
+            #    steering += 2 #disabling it for temporary purposes
             steering = min(19, max(-19, steering))
-                
+
+            if time.time()-timeMarker > 10: #only checks 10s after we've passed the starting point
+                if distance.distance(gps.getGPS(), startingPos).m < 5: #5m within the finish line
+                    lapCounter += 1 
+                    timeMarker = time.time() 
+                    if lapCounter == 2: #change to 10 in the future 
+                        raise KeyboardInterrupt
+
+                        
             print("Steering: ", steering)
             print("Velocity: ", velocity)
 
@@ -70,7 +93,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
         if not replay:
             ic.zed.close()
         issueCommands(0,0)
-        time.sleep(4)
+        time.sleep(5)
         issueCommands(0, 0, True, visual, replay, record, rc) #initiates the exit protocol
 
         f1 = open("../test/pastMission.txt", "w")
