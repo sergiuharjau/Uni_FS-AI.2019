@@ -23,14 +23,10 @@ if __name__ == "__main__":
             issueCommands(0, 0) #stops within 5 seconds
             time.sleep(3)
         elif i == 6:
-#            issueCommands.car.set_AS_Finished()
-#            print("Got here")
-            time.sleep(1)
-        elif i == 7:
-            issueCommands(0,200) #ramp up to 50 for 3s
+            issueCommands(0, 70) #ramp up to 50 for 3s
             time.sleep(3)
-        elif i == 8:
+        elif i == 7:
             issueCommands.car.deploy_EBS() #deploy EBS
-            time.sleep(2)
+            time.sleep(5)
 
     print("Inspection finished.")
