@@ -19,10 +19,17 @@ def main(visual, green, record, replay, loop, rc, cFlip):
 
     gps = GPS()
 
+    while gps.getGPS() == (0,0):
+        print("Waiting on GPS lock.")
+        time.sleep(1)
+
     issueCommands(0,0) #makes connection
 
     issueCommands(-24, 0) #sweeps left
+    time.sleep(2)
     issueCommands(24, 0) #sweep right
+    time.sleep(2)
+    issueCommands(0,0)
 
     startingPos = gps.getGPS()
     running = True
