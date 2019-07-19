@@ -27,7 +27,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
     time.sleep(5)
     startingPos = gps.getGPS(force=True)
 
-    startPulse = int((issueCommands.get_left_pulse() + issueCommands.get_right_pulse())/2)
+#    startPulse = int((issueCommands.get_left_pulse() + issueCommands.get_right_pulse())/2)
 
     try:
         i=0
@@ -37,7 +37,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
             logging.info("Getting latest image and depth.")
             t = threading.Thread(target=ImageCap.capture, args=(ic, ))
 
-            currentPulse = int((issueCommands.get_left_pulse() + issueCommands.get_right_pulse())/2)
+ #           currentPulse = int((issueCommands.get_left_pulse() + issueCommands.get_right_pulse())/2)
 
             if not record:
                 original_image = image
@@ -54,15 +54,15 @@ def main(visual, green, record, replay, loop, rc, cFlip):
             if ic.exit:  # when we replay tests
                 raise KeyboardInterrupt
 
-            steering = min(19, max(-19, steering))
+            steering = min(3, max(-3, steering))
             
-            velocity = 250
+            velocity = 230
 
-            if distance.distance(gps.getGPS(timeBound=2.5), startingPos).m > 67: #change to 75 later
+            if distance.distance(gps.getGPS(timeBound=3), startingPos).m > 65: #change to 75 later
                 raise KeyboardInterrupt
 
-            if currentPulse - startPulse > 822: #track / (wheelDiam * pi) * pulses 
-            	print("Reached end.")
+  #          if currentPulse - startPulse > 822: #track / (wheelDiam * pi) * pulses 
+   #         	print("Reached end.")
             	#raise KeyboardInterrupt
 
             print("Steering: ", steering)
@@ -87,16 +87,16 @@ def main(visual, green, record, replay, loop, rc, cFlip):
     except KeyboardInterrupt:
         if not replay:
             ic.zed.close()
-        issueCommands(2,0) #this is our wheels centered properly
+        issueCommands(2,200) #this is our wheels centered properly
         print("We've set velocity to 0. Waiting to stop now.")
         print("Doing -2 on the can for 3s")
-        time.sleep(3) #increase in future if needed
-        issueCommands(1,0)
+        time.sleep(1.5) #increase in future if needed
+        issueCommands(1,200)
         print("Doing -1 on the can for 3s")	
-        time.sleep(3)
+        time.sleep(1.5)
         issueCommands(2,0)
         print("Doing -2 on the can for 3s")
-        time.sleep(3)
+        time.sleep(2)
         issueCommands(1,0)
         print("Doing -1 on the can for 10s")
         time.sleep(10)

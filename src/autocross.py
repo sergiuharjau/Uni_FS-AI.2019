@@ -64,7 +64,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
             #    steering += 2 #disabling it for temporary purposes
             steering = min(19, max(-19, steering))
 
-            if time.time()-timeMarker > 20: #only checks 20s after we've passed the starting point
+            if time.time()-timeMarker > 30: #only checks 20s after we've passed the starting point
                 if distance.distance(gps.getGPS(), startingPos).m < 5: #5m within the finish line
                     lapCounter += 1 
                     timeMarker = time.time() #resets the time marker
