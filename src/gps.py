@@ -34,9 +34,9 @@ class GPS():
                 f1.write(str(datetime.now()) + "," + str(x) + "," + str(y) + "\n")
             f1.close()
 
-    def getGPS(self, force=False):
+    def getGPS(self, force=False, timeBound=3): #3s by default
 
-        if time.time() - self.timeCheck > 1 or force: #every 3 seconds
+        if time.time() - self.timeCheck > timeBound or force: #every 3 seconds
             print("Reading new gps")
             self.timeCheck = time.time()
         else:
