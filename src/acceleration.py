@@ -27,6 +27,8 @@ def main(visual, green, record, replay, loop, rc, cFlip):
     time.sleep(5)
     startingPos = gps.getGPS(force=True)
 
+    startPulse = int((issueCommands.get_left_pulse() + issueCommands.get_right_pulse())/2)
+
     try:
         i=0
         while loop:  # for amount in range(framesToDo):
@@ -34,6 +36,8 @@ def main(visual, green, record, replay, loop, rc, cFlip):
             image, depth = ic.latest(record)
             logging.info("Getting latest image and depth.")
             t = threading.Thread(target=ImageCap.capture, args=(ic, ))
+
+            currentPulse = int((issueCommands.get_left_pulse() + issueCommands.get_right_pulse())/2)
 
             if not record:
                 original_image = image
@@ -54,8 +58,12 @@ def main(visual, green, record, replay, loop, rc, cFlip):
             
             velocity = 250
 
-            if distance.distance(gps.getGPS(timeBound=2), startingPos).m > 70: #change to 75 later
+            if distance.distance(gps.getGPS(timeBound=3), startingPos).m > 70: #change to 75 later
                 raise KeyboardInterrupt
+
+            if currentPulse - startPulse > 822: #track / (wheelDiam * pi) * pulses 
+            	print("Reached end.")
+            	#raise KeyboardInterrupt
 
             print("Steering: ", steering)
             print("Velocity: ", velocity)
