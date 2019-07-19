@@ -24,6 +24,8 @@ def main(visual, green, record, replay, loop, rc, cFlip):
         time.sleep(1)
 
     issueCommands(0,0) #makes connection
+    time.sleep(3) #waits 3 seconds
+
 
     issueCommands(-24, 0) #sweeps left
     time.sleep(2)
@@ -71,6 +73,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
                 timeCheck = time.time()
                 if ebs:
                     issueCommands.car.deploy_ebs()
+                    raise KeyboardInterrupt
 
             if timeCheck:
                 if time.time()-timeCheck > 5: #after 5 seconds
@@ -91,6 +94,10 @@ def main(visual, green, record, replay, loop, rc, cFlip):
                 loop -= 1
                 if loop == 0:
                     raise KeyboardInterrupt
+
+            if issueCommands.car.checkEBS():
+                raise KeyboardInterrupt
+            i+=1   
             t.join()
             i+=1
             logging.warning("End of frame.\n\n")
@@ -100,14 +107,10 @@ def main(visual, green, record, replay, loop, rc, cFlip):
     except KeyboardInterrupt:
         if not replay:
             ic.zed.close()
-        issueCommands(0,0)
-        time.sleep(4)
-        issueCommands(0, 0, True, visual, replay, record, rc) #initiates the exit protocol
-
-        f1 = open("../test/pastMission.txt", "w")
-        for element in listReadings:
-            f1.write(str(element) + ",")
-        f1.close()
+        if not esbs:
+            issueCommands(0,0, False, visual, replay, record, rc)
+            time.sleep(4)
+            issueCommands(0, 0, True, visual, replay, record, rc) #initiates the exit protocol
 
         print("Seconds it took: ", time.time() - startTime)
         print("Total frames: ", len(listReadings))
