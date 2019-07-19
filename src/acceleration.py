@@ -58,7 +58,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
             
             velocity = 250
 
-            if distance.distance(gps.getGPS(timeBound=3), startingPos).m > 70: #change to 75 later
+            if distance.distance(gps.getGPS(timeBound=2.5), startingPos).m > 67: #change to 75 later
                 raise KeyboardInterrupt
 
             if currentPulse - startPulse > 822: #track / (wheelDiam * pi) * pulses 
@@ -89,12 +89,18 @@ def main(visual, green, record, replay, loop, rc, cFlip):
             ic.zed.close()
         issueCommands(2,0) #this is our wheels centered properly
         print("We've set velocity to 0. Waiting to stop now.")
-        print("Doing -2 on the can for 7s")
-        time.sleep(7) #increase in future if needed
+        print("Doing -2 on the can for 3s")
+        time.sleep(3) #increase in future if needed
+        issueCommands(1,0)
+        print("Doing -1 on the can for 3s")	
+        time.sleep(3)
+        issueCommands(2,0)
+        print("Doing -2 on the can for 3s")
+        time.sleep(3)
         issueCommands(1,0)
         print("Doing -1 on the can for 10s")
         time.sleep(10)
-        issueCommands(2, 0, True, visual, replay, record, rc) #initiates the exit protocol
+        issueCommands(0, 0, True, visual, replay, record, rc) #initiates the exit protocol
 
         print("Seconds it took: ", time.time() - startTime)
         print("Total frames: ", len(listReadings))
