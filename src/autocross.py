@@ -89,7 +89,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
             if issueCommands.car.checkEBS():
                 raise KeyboardInterrupt
                 i+=1
-                
+
             logging.warning("End of frame.\n\n")
 
             #print("Frames left: ", framesToDo-amount)
@@ -97,7 +97,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
     except KeyboardInterrupt:
         if not replay:
             ic.zed.close()
-        issueCommands(0,0)
+        issueCommands(0,0, False, visual, replay, record, rc)
         time.sleep(5)
         issueCommands(0, 0, True, visual, replay, record, rc) #initiates the exit protocol
 
