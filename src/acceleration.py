@@ -20,11 +20,12 @@ def main(visual, green, record, replay, loop, rc, cFlip):
 
     gps = GPS()
 
-    while gps.getGPS() == (0,0):
+    while gps.getGPS(force=True) == (0,0):
         print("Waiting on GPS lock.")
         time.sleep(1)
-
-    startingPos = gps.getGPS()
+    issueCommands(0,0) #makes connection
+    time.sleep(5)
+    startingPos = gps.getGPS(force=True)
 
     try:
         i=0
@@ -51,9 +52,9 @@ def main(visual, green, record, replay, loop, rc, cFlip):
 
             steering = min(19, max(-19, steering))
             
-            velocity = 200
+            velocity = 250
 
-            if distance.distance(gps.getGPS(), startingPos).m > 15: #change to 75 later
+            if distance.distance(gps.getGPS(timeBound=2), startingPos).m > 70: #change to 75 later
                 raise KeyboardInterrupt
 
             print("Steering: ", steering)
@@ -78,15 +79,14 @@ def main(visual, green, record, replay, loop, rc, cFlip):
     except KeyboardInterrupt:
         if not replay:
             ic.zed.close()
-        issueCommands(0,0)
+        issueCommands(2,0) #this is our wheels centered properly
         print("We've set velocity to 0. Waiting to stop now.")
-        time.sleep(10) #increase in future if needed
-        issueCommands(0, 0, True, visual, replay, record, rc) #initiates the exit protocol
-
-        f1 = open("../test/pastMission.txt", "w")
-        for element in listReadings:
-            f1.write(str(element) + ",")
-        f1.close()
+        print("Doing -2 on the can for 7s")
+        time.sleep(7) #increase in future if needed
+        issueCommands(1,0)
+        print("Doing -1 on the can for 10s")
+        time.sleep(10)
+        issueCommands(2, 0, True, visual, replay, record, rc) #initiates the exit protocol
 
         print("Seconds it took: ", time.time() - startTime)
         print("Total frames: ", len(listReadings))
