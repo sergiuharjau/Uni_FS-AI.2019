@@ -13,24 +13,24 @@ def main(visual, green, record, replay, loop, rc, cFlip):
 
     calculateReading.pastCom = 0  # in case we don't see cones straight away
 
-    ic = ImageCap(False, replay)  # ImCapt() #initializes zed object
-    startTime = time.time()
-    listReadings = []
-
-
     gps = GPS()
 
     while gps.getGPS() == (0,0):
         print("Awaiting GPS lock.")
         time.sleep(1)
 
-
     startingPos = gps.getGPS()
-    timeMarker = time.time()
-
+   
     issueCommands(0,0)
 
-    time.sleep(3) # waits 3 seconds
+    timeMarker = time.time()
+
+    ic = ImageCap(False, replay)  # ImCapt() #initializes zed object
+
+    time.sleep(3) # waits 3 seconds 
+    
+    startTime = time.time()
+    listReadings = []
 
     lapCounter = 0 
 
@@ -62,7 +62,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
             #    steering += 2 #disabling it for temporary purposes
             steering = min(19, max(-19, steering))
 
-            if time.time()-timeMarker > 10: #only checks 10s after we've passed the starting point
+            if time.time()-timeMarker > 30: #only checks 10s after we've passed the starting point
                 if distance.distance(gps.getGPS(), startingPos).m < 5: #5m within the finish line
                     lapCounter += 1 
                     timeMarker = time.time() 
