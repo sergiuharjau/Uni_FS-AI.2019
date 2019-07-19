@@ -8,6 +8,7 @@ from globals import pixelStrip, startFrom, logInitial
 import cv2
 import logging
 from gps import GPS
+from geopy import distance
 
 def main(visual, green, record, replay, loop, rc, cFlip):
 
@@ -71,13 +72,19 @@ def main(visual, green, record, replay, loop, rc, cFlip):
             if distance.distance(gps.getGPS(), startingPos).m > 10:
                 running = False
                 timeCheck = time.time()
-                if ebs:
-                    issueCommands.car.deploy_ebs()
-                    raise KeyboardInterrupt
+                issueCommands(0,0)
+                time.sleep(5)
+                issueCommands(0,250)
+                time.sleep(2)
+                issueCommands.car.deploy_ebs()
+                raise KeyboardInterrupt
+
 
             if timeCheck:
                 if time.time()-timeCheck > 5: #after 5 seconds
-                    startingPos = gps.getGPS() #resets starting position so we go for 10m
+                    while gps.getGPS(True) == startingPos:
+                           pass #resets starting position so we go for 10m
+                    startingPos = gps.getGPS(True)
                     running = True #resets velocity to 15kph
                     ebs = True #it will deploy ebs once it reaches 10m again
 

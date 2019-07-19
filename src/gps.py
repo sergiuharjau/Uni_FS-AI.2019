@@ -12,7 +12,8 @@ class GPS():
         self.log = logging
 #        self.t = threading.Thread(target=GPS.getGPS, args=(self, ))
 #        self.t.start()
-    
+        self.timeCheck = time.time()
+
     def stop(self):
         self.running = False
         self.logGPS(True)
@@ -33,20 +34,25 @@ class GPS():
                 f1.write(str(datetime.now()) + "," + str(x) + "," + str(y) + "\n")
             f1.close()
 
-    def getGPS(self):
+    def getGPS(self, force=False):
+
+        if time.time() - self.timeCheck > 1 or force: #every 3 seconds
+            print("Reading new gps")
+            self.timeCheck = time.time()
+        else:
+            return self.coords
 
         ser = serial.Serial("/dev/ttyACM1")
 
         dataout = pynmea2.NMEAStreamReader()
-
         while 1:
                 newdata = ser.readline()        # Read a line from serial device
-                print(newdata[:6])
+#                print(newdata[:6])
                 if newdata[0:6] == "$GPGGA".encode():        # If line contains GPS coordinate info
                     newmsg = pynmea2.parse(newdata.decode()) # Parse it
                     self.coords = (newmsg.latitude, newmsg.longitude)
                     if self.log:
-                        self.logGPS()
+                       self.logGPS()
                     return self.coords #time.sleep(0.5) #when we find, take a little break
                 #else:
                    # time.sleep(0.02) #keep reading until we find it

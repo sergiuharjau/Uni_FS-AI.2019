@@ -8,6 +8,7 @@ from globals import pixelStrip, startFrom, logInitial
 import cv2
 import logging
 from gps import GPS
+from geopy import distance
 
 def main(visual, green, record, replay, loop, rc, cFlip):
 
@@ -67,7 +68,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
                 if distance.distance(gps.getGPS(), startingPos).m < 5: #5m within the finish line
                     lapCounter += 1 
                     timeMarker = time.time() #resets the time marker
-                    if lapCounter == 2: #change to 10 in the future 
+                    if lapCounter == 1: #change to 10 in the future 
                         raise KeyboardInterrupt
 
                         
@@ -86,9 +87,10 @@ def main(visual, green, record, replay, loop, rc, cFlip):
                     raise KeyboardInterrupt
             t.join()
 
-            if issueCommands.car.checkEBS():
-                raise KeyboardInterrupt
-                i+=1
+            if 'car' in issueCommands.__dict__:
+                  if issueCommands.car.checkEBS():
+                      raise KeyboardInterrupt
+            i+=1
 
             logging.warning("End of frame.\n\n")
 
