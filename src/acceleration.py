@@ -8,6 +8,7 @@ from globals import pixelStrip, startFrom, logInitial
 import cv2
 import logging
 from gps import GPS
+from geopy import distance
 
 def main(visual, green, record, replay, loop, rc, cFlip):
 
