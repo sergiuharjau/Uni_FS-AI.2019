@@ -38,7 +38,7 @@ def findLineMarkers(red, yellow, i, visual):
 
 	yellowIndex = np.where(yellow == 255)
 	try:
-		yellowMarker = (yellowIndex[1][0], yellowIndex[0][0])
+		yellowMarker = (yellowIndex[1][-1], yellowIndex[0][0]) #CHANGE EXCEPT FOR ACCELERATION EVENT
 		missedYellow = 0
 	except:
 		missedYellow += 1
