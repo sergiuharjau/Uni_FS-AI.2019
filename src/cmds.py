@@ -100,6 +100,9 @@ def issueCommands(steering=0, velocity=0, exit=False, visual=False, replay=False
 			issueCommands.car.setupCAN()  # function runs until we finish setup
 			print("Setup finished gracefully")
 
+		if issueCommands.car.checkEBS():
+			raise KeyboardInterrupt
+		
 		logging.info("Setting steering and velocity.")
 		issueCommands.car.set_steering_velocity(int(steering*-1), int(velocity))
 		logging.info("CAN data set.")
@@ -107,7 +110,6 @@ def issueCommands(steering=0, velocity=0, exit=False, visual=False, replay=False
 
 		if exit:  # can exit protocol
 			print("Initiating CAN exit.")
-#            issueCommands.car.set_steering_velocity(0, 0)
 			issueCommands.car.exitCAN()  # runs until we exit gracefully
 	elif rc == 1:
 		if 'ser' not in issueCommands.__dict__:
