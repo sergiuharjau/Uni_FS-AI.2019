@@ -107,7 +107,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
     except KeyboardInterrupt:
         if not replay:
             ic.zed.close()
-        if not esbs:
+        if not ebs:
             issueCommands(0,0, False, visual, replay, record, rc)
             time.sleep(4)
             issueCommands(0, 0, True, visual, replay, record, rc) #initiates the exit protocol
