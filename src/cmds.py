@@ -109,8 +109,6 @@ def issueCommands(steering=0, velocity=0, exit=False, visual=False, replay=False
 			print("Initiating CAN exit.")
 			issueCommands.car.exitCAN()  # runs until we exit gracefully
 
-		if issueCommands.car.checkEBS():
-			raise KeyboardInterrupt
 		
 	elif rc == 1:
 		if 'ser' not in issueCommands.__dict__:

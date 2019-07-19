@@ -21,7 +21,8 @@ def main(visual, green, record, replay, loop, rc, cFlip):
 
     startingPos = gps.getGPS()
    
-    issueCommands(0,0)
+    if not visual:
+        issueCommands(0,0)
 
     timeMarker = time.time()
 
@@ -84,7 +85,11 @@ def main(visual, green, record, replay, loop, rc, cFlip):
                 if loop == 0:
                     raise KeyboardInterrupt
             t.join()
-            i+=1
+
+            if issueCommands.car.checkEBS():
+                raise KeyboardInterrupt
+                i+=1
+                
             logging.warning("End of frame.\n\n")
 
             #print("Frames left: ", framesToDo-amount)
