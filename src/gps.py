@@ -36,7 +36,7 @@ class GPS():
 
     def getGPS(self, force=False, timeBound=3): #3s by default
 
-        if time.time() - self.timeCheck > timeBound or force: #every 3 seconds
+        if time.time() - self.timeCheck > timeBound or force: #every 3 seconds since last reading
             print("Reading new gps")
             self.timeCheck = time.time()
         else:
