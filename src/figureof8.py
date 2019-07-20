@@ -112,7 +112,7 @@ if __name__ == "__main__":
 					print("Reached center")
 					count += 1
 					if count == 2:
-						if swapCircles == 1: # 4th full circle we do
+						if flip == -1: # 4th full circle we do
 							closeEyes = -1
 						count = 0
 						flip=-1
