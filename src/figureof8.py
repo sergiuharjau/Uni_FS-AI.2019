@@ -27,7 +27,7 @@ if __name__ == "__main__":
 	issueCommands(0,0) #connect to car
 
 	distanceAway = 0
-	while distanceAway < 13: #go forward 15m
+	while distanceAway < 12: #go forward 15m
 		distanceAway = distance.distance(gps.getGPS(force=1), startingPos).m
 		print("Distance away from destination: ", distanceAway)
 		issueCommands(1,100) #go straight
@@ -85,11 +85,20 @@ if __name__ == "__main__":
 
 			steering, velocity = imProcessing(t, image_ocv, depth_data_ocv, visual, original_image, green, cFlip, swapCircles=swapCircles)
 
-			print("Steering: ", steering)
-			print("Velocity: ", velocity)
+			#print("Steering: ", steering)
+			#print("Velocity: ", velocity)
 			logging.info("Steering: %d, Velocity: %d", steering, velocity)
 
-			if distance.distance(gps.getCoords(force=1), centerGPS).m < closeEyes:
+
+			if not gps.running:
+				t = threading.Thread(target=GPS.getGPS, args=(gps, 0.7))
+				t.start()
+
+			distance1 = gps.getCoords()
+
+			print("Distance to center: ", distance1)
+				
+			if distance1 < closeEyes:
 				steering = 10 * flip
 
 			velocity=100
@@ -97,30 +106,29 @@ if __name__ == "__main__":
 
 			issueCommands(steering, velocity)
 
-			if timeMarker - time.time() > 20: #looks 20s after it leaves the center
-				if (distance.distance(gps.getCoords(force=1), centerGPS).m) < 2:
+			if timeMarker - time.time() > 5: #looks 20s after it leaves the center
+				if distance1 < 1:
 					timeMarker = time.time()
 					print("Reached center")
 					count += 1
 					if count == 2:
 						if swapCircles == 1: # 4th full circle we do
-							closeEyes = 0
+							closeEyes = -1
 						count = 0
-						swapCircles = 0 #so we go the other way
 						flip=-1
 						print("Flipped")
 					else:
-						print("First lap. Doing another.")
+						print("\n\n\nFirst lap. Doing another.")
 
-			if closeEyes == 0:
-				if (distance.distance(gps.getCoords(force=1), centerGPS).m) > 3:
+			if closeEyes == -1:
+				if distance1 > 3:
 					raise KeyboardInterrupt
 
 	except KeyboardInterrupt:
 		issueCommands(0,0)
 		time.sleep(3)
 
-		while (distance.distance(gps.getCoords(force=1), centerGPS).m) < 15:
+		while (distance.distance(gps.getGPS(force=1), centerGPS).m) < 15:
 			issueCommands(1, 100)
 			time.sleep(1)
 		issueCommands(0,0)
