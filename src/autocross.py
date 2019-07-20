@@ -20,7 +20,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
         print("Awaiting GPS lock.")
         time.sleep(1)
 
-    if not visual:
+    if not visual and not rc:
         issueCommands(0,0)
 
     ic = ImageCap(False, replay)  # ImCapt() #initializes zed object
@@ -39,6 +39,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
     try:
         i=0
         while loop:  # for amount in range(framesToDo):
+            time1 = time.time()
             logging.warning("\n*********\nFrame: " + str(i))
             image, depth = ic.latest(record)
             logging.info("Getting latest image and depth.")
@@ -99,7 +100,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
             i+=1
 
             logging.warning("End of frame.\n\n")
-
+            print(time.time()-time1)
             #print("Frames left: ", framesToDo-amount)
 
     except KeyboardInterrupt:
