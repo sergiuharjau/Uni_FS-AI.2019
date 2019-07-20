@@ -16,25 +16,25 @@ def main(visual, green, record, replay, loop, rc, cFlip):
 
     gps = GPS()
 
-    while gps.getGPS() == (0,0):
+    while gps.getGPS(force=1) == (0,0):
         print("Awaiting GPS lock.")
         time.sleep(1)
 
-    startingPos = gps.getGPS()
-   
     if not visual:
         issueCommands(0,0)
 
-    timeMarker = time.time()
-
     ic = ImageCap(False, replay)  # ImCapt() #initializes zed object
 
-    time.sleep(3) # waits 3 seconds 
+    time.sleep(5) # waits 3 seconds 
     
     startTime = time.time()
     listReadings = []
 
     lapCounter = 0 
+
+    timeMarker = time.time()
+
+    setStart = True
 
     try:
         i=0
@@ -64,8 +64,14 @@ def main(visual, green, record, replay, loop, rc, cFlip):
             #    steering += 2 #disabling it for temporary purposes
             steering = min(19, max(-19, steering))
 
-            if time.time()-timeMarker > 30: #only checks 20s after we've passed the starting point
-                if distance.distance(gps.getGPS(), startingPos).m < 5: #5m within the finish line
+            if setStart:
+                if time.time()-startTime > 5
+                    startingPos = gps.getGPS(force=1)
+                    setStart = False
+   
+
+            if time.time()-timeMarker > 30: #only checks 30s after we've passed the starting point
+                if distance.distance(gps.getGPS(timeBound=3), startingPos).m < 5: #5m within the finish line
                     lapCounter += 1 
                     timeMarker = time.time() #resets the time marker
                     if lapCounter == 1: #change to 10 in the future 
@@ -99,7 +105,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
     except KeyboardInterrupt:
         if not replay:
             ic.zed.close()
-        issueCommands(0,0, False, visual, replay, record, rc)
+        issueCommands(0, 0, False, visual, replay, record, rc)
         time.sleep(5)
         issueCommands(0, 0, True, visual, replay, record, rc) #initiates the exit protocol
 
