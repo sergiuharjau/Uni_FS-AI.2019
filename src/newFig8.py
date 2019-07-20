@@ -53,7 +53,6 @@ if __name__ == "__main__":
 	for argument in sys.argv[1:]:
 		exec(argument)
 
-	time.sleep(5)
 	startTime = time.time()
 	timeMarker = False
 	count=0
@@ -63,15 +62,6 @@ if __name__ == "__main__":
 	visualMarker = False
 	try: 
 		while True:
-			#gps.getGPS()
-			##get odometry on wheels every frame
-
-			#if not passedStart:
-			#	if distanceAway = distance.distance(gps.getGPS(force=1), startingPos).m > 7:
-			#		issueCommands(0,0)
-			#		centerGPS = gps.getCoords()
-			#		passedStart = True
-			#		timeMarker = time.time()
 
 			image, depth = ic.latest(record)
 			logging.info("Getting latest image and depth.")
@@ -96,13 +86,14 @@ if __name__ == "__main__":
 				#we start seeing
 					visualMarker = time.time() 
 			
-			if time.time() - start > z: #full lap
+			if time.time() - startTime > : #full lap
 				timeMarker = time.time()
+				startTime = time.time()
 				visualMarker = False
 				print("Reached center")
 				count += 1 
 				if count == 2:
-					if swapCircles == 1:
+					if flip == -1:
 						closeEyes = -1
 					count = 0
 					flip = -1

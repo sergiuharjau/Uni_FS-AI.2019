@@ -8,7 +8,7 @@ class GPS():
 
     def __init__(self, logging=False):
         self.coords = (0,0)
-#        self.running = True
+        self.running = False
         self.log = logging
 #        self.t = threading.Thread(target=GPS.getGPS, args=(self, ))
 #        self.t.start()
@@ -36,10 +36,12 @@ class GPS():
 
     def getGPS(self, force=False, timeBound=3): #3s by default
 
+        self.running = True
         if time.time() - self.timeCheck > timeBound or force: #every 3 seconds since last reading
             print("Reading new gps")
             self.timeCheck = time.time()
         else:
+            self.running = False
             return self.coords
 
         ser = serial.Serial("/dev/ttyACM1")
@@ -53,6 +55,8 @@ class GPS():
                     self.coords = (newmsg.latitude, newmsg.longitude)
                     if self.log:
                        self.logGPS()
+                    print(self.coords)
+                    self.running = False
                     return self.coords #time.sleep(0.5) #when we find, take a little break
                 #else:
                    # time.sleep(0.02) #keep reading until we find it
