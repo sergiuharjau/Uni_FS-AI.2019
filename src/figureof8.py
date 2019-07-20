@@ -27,7 +27,7 @@ if __name__ == "__main__":
 	issueCommands(0,0) #connect to car
 
 	distanceAway = 0
-	while distanceAway < 12: #go forward 15m
+	while distanceAway < 13: #go forward 15m
 		distanceAway = distance.distance(gps.getGPS(force=1), startingPos).m
 		print("Distance away from destination: ", distanceAway)
 		issueCommands(1,100) #go straight
@@ -59,7 +59,7 @@ if __name__ == "__main__":
 	count=0
 	timeMarker = time.time()
 	centerGPS = gps.getGPS(force=1)
-	closeEyes = 5
+	closeEyes = 7
 	try: 
 		while True:
 			#gps.getGPS()
@@ -113,7 +113,7 @@ if __name__ == "__main__":
 						print("First lap. Doing another.")
 
 			if closeEyes == 0:
-				if (distance.distance(gps.getCoords(force=1), centerGPS).m) > 5:
+				if (distance.distance(gps.getCoords(force=1), centerGPS).m) > 3:
 					raise KeyboardInterrupt
 
 	except KeyboardInterrupt:
