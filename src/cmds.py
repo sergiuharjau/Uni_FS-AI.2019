@@ -62,6 +62,7 @@ def calculateReading(gateDict):
 
 	totalValue = 0 
 	cameraValue = 0
+	print("Gates: ", len(gateDict))
 
 	for key in gateDict:
 		target = gateDict[key][0][0] #pastValue - currentValue
@@ -110,7 +111,7 @@ def issueCommands(steering=0, velocity=0, exit=False, visual=False, replay=False
 			issueCommands.car.exitCAN()  # runs until we exit gracefully
 
 		
-	elif rc == 1:
+	elif rc == 12:
 		if 'ser' not in issueCommands.__dict__:
 			issueCommands.ser = serial.Serial("/dev/ttyUSB0", 115200, timeout=5)
 
