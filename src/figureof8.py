@@ -27,13 +27,12 @@ if __name__ == "__main__":
 	issueCommands(0,0) #connect to car
 
 	distanceAway = 0
-	while distanceAway < 5: #go forward 15m
+	while distanceAway < 12: #go forward 15m
 		distanceAway = distance.distance(gps.getGPS(force=1), startingPos).m
 		print("Distance away from destination: ", distanceAway)
 		issueCommands(1,100) #go straight
 
 	issueCommands(0,0)
-
 
 
 	startLeft = issueCommands.car.get_left_pulse() #should be 0
@@ -58,9 +57,9 @@ if __name__ == "__main__":
 	startTime = time.time()
 	timeMarker = False
 	count=0
-	passedStart = False
-	startingPos = gps.getGPS(force=1)
-	closeEyes = 7
+	timeMarker = time.time()
+	centerGPS = gps.getGPS(force=1)
+	closeEyes = 5
 	try: 
 		while True:
 			#gps.getGPS()
@@ -69,12 +68,12 @@ if __name__ == "__main__":
 			rightPulse=issueCommands.car.get_right_pulse()
 			averagePulse = int((leftPulse+rightPulse)/2)
 
-			if not passedStart:
-				if distanceAway = distance.distance(gps.getGPS(force=1), startingPos).m > 7:
-					issueCommands(0,0)
-					centerGPS = gps.getCoords()
-					passedStart = True
-					timeMarker = time.time()
+			#if not passedStart:
+			#	if distanceAway = distance.distance(gps.getGPS(force=1), startingPos).m > 7:
+			#		issueCommands(0,0)
+			#		centerGPS = gps.getCoords()
+			#		passedStart = True
+			#		timeMarker = time.time()
 
 			image, depth = ic.latest(record)
 			logging.info("Getting latest image and depth.")
@@ -90,15 +89,15 @@ if __name__ == "__main__":
 			print("Velocity: ", velocity)
 			logging.info("Steering: %d, Velocity: %d", steering, velocity)
 
-			if passedStart and distance.distance(gps.getCoords(force=1), centerGPS).m < closeEyes:
+			if distance.distance(gps.getCoords(force=1), centerGPS).m < closeEyes:
 				steering = 10 * flip
 
-			velcity=100
+			velocity=100
 			steering = min(19, max(-19, steering))
 
 			issueCommands(steering, velocity)
 
-			if timeMarker - time.time() > 20 and timeMarker: #looks 20s after it leaves the center
+			if timeMarker - time.time() > 20: #looks 20s after it leaves the center
 				if (distance.distance(gps.getCoords(force=1), centerGPS).m) < 2:
 					timeMarker = time.time()
 					print("Reached center")
@@ -116,13 +115,13 @@ if __name__ == "__main__":
 			if closeEyes == 0:
 				if (distance.distance(gps.getCoords(force=1), centerGPS).m) > 5:
 					raise KeyboardInterrupt
-				
+
 	except KeyboardInterrupt:
 		issueCommands(0,0)
 		time.sleep(3)
 
-		while (distance.distance(gps.getCoords(force=1), centerGPS).m) < 10:
-			issueCommands(1, 120)
+		while (distance.distance(gps.getCoords(force=1), centerGPS).m) < 15:
+			issueCommands(1, 100)
 			time.sleep(1)
 		issueCommands(0,0)
 		time.sleep(5)
