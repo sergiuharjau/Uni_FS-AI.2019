@@ -70,9 +70,9 @@ if __name__ == "__main__":
 			averagePulse = int((leftPulse+rightPulse)/2)
 
 			if not passedStart:
-				if distanceAway = distance.distance(gps.getCoords(), startingPos).m > 5:
+				if distanceAway = distance.distance(gps.getGPS(force=1), startingPos).m > 5:
 					issueCommands(0,0)
-					centerGPS = gps.getGPS(force=1)
+					centerGPS = gps.getCoords()
 					passedStart = True
 					timeMarker = time.time()
 
