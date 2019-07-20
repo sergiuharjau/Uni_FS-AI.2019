@@ -27,7 +27,7 @@ if __name__ == "__main__":
 	issueCommands(0,0) #connect to car
 
 	distanceAway = 0
-	while distanceAway < 10: #go forward 15m
+	while distanceAway < 5: #go forward 15m
 		distanceAway = distance.distance(gps.getGPS(force=1), startingPos).m
 		print("Distance away from destination: ", distanceAway)
 		issueCommands(1,100) #go straight
@@ -70,7 +70,7 @@ if __name__ == "__main__":
 			averagePulse = int((leftPulse+rightPulse)/2)
 
 			if not passedStart:
-				if distanceAway = distance.distance(gps.getGPS(force=1), startingPos).m > 5:
+				if distanceAway = distance.distance(gps.getGPS(force=1), startingPos).m > 7:
 					issueCommands(0,0)
 					centerGPS = gps.getCoords()
 					passedStart = True
@@ -93,7 +93,7 @@ if __name__ == "__main__":
 			if passedStart and distance.distance(gps.getCoords(force=1), centerGPS).m < closeEyes:
 				steering = 10 * flip
 
-			velcity=120
+			velcity=100
 			steering = min(19, max(-19, steering))
 
 			issueCommands(steering, velocity)
