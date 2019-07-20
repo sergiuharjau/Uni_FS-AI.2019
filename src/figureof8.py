@@ -20,7 +20,7 @@ if __name__ == "__main__":
 	while gps.getCoords() == (0,0):
 		print("Awaiting gps lock.")
 		#time.sleep(0.2)
-		gps.getGPS()
+		gps.getGPS(force=1)
 
 	startingPos = gps.getCoords() #so we know to stop 15m afterwards
 
@@ -30,11 +30,11 @@ if __name__ == "__main__":
 	while distanceAway < 5: #go forward 15m
 		distanceAway = distance.distance(gps.getCoords(), startingPos).m
 		print("Distance away from destination: ", distanceAway)
-		issueCommands(0,85)
-		gps.getGPS()
+		issueCommands(1,85) #go straight
+		gps.getGPS(force=1)
 
 	issueCommands(0,0)
-	centerGPS = gps.getCoords() 
+	centerGPS = gps.getCoords(force=1) 
 	time.sleep(3)
 
 	startLeft = issueCommands.car.get_left_pulse() #should be 0
@@ -49,7 +49,7 @@ if __name__ == "__main__":
 	logging.warning("\nMission start!\n")
 
 	visual= False; green= False; record= False; replay= False; loop= True; rc=False; cFlip=0 ;
-	eight = True; swapCircles=0 #goes right first
+	swapCircles=0 #goes right first
 	followGreen=0 
 
 	ic = ImageCap(False, replay)  # ImCapt() #initializes zed object
@@ -76,46 +76,44 @@ if __name__ == "__main__":
 			depth_data_ocv = depth[startFrom:startFrom + pixelStrip]
 			image_ocv = original_image[startFrom:startFrom + pixelStrip]
 
-			steering, velocity = imProcessing(t, image_ocv, depth_data_ocv, visual, original_image, green, cFlip, eight, swapCircles, followGreen)
+			steering, velocity = imProcessing(t, image_ocv, depth_data_ocv, visual, original_image, green, cFlip, swapCircles=swapCircles)
 
 			print("Steering: ", steering)
 			print("Velocity: ", velocity)
 			logging.info("Steering: %d, Velocity: %d", steering, velocity)
 
+			if distance.distance(gps.getCoords(force=1), centerGPS).m < 7:
+				steering = 10 * flip
+
+			velcity=120
 			steering = min(19, max(-19, steering))
 
 			issueCommands(steering, velocity)
-			print("Pulses done so far: ", averagePulse-startPulse)
-			print("Distance traveled: ",distance.distance(gps.getCoords(), centerGPS).m )
-			if (averagePulse - startPulse) > 650: #circumference of circle / wheel circumeference * Pulse/rotation (probably 20)
-				if (distance.distance(gps.getCoords(), centerGPS).m) < 1:
-					print("Reached center")
-					count += 1
-					if count == 2:
-						if swapCircles == 1: # 4th full circle we do
-							followGreen = 1
-							startingPos = gps.getCoords()
-						count = 0
-						swapCircles = 0 #so we go the other way
-						print("Flipped")
-					else:
-						print("First lap. Doing another.")
-					startPulse = int((rightPulse + leftPulse) / 2) #reset starting pulse to center again
-				else:
-					print("Pulses say we should be centered, but GPS doesn't agree.")
-					print("GPS: ", gps.getCoords())
 
-			if followGreen:
-				gps.getGPS()
-				distanceAway = distance.distance(gps.getCoords(), startingPos).m
-				print("Distance away from destination: ", distanceAway)
-				if distanceAway > 15: #after 15m of following green
-					raise KeyboardInterrupt
+			if (distance.distance(gps.getCoords(force=1), centerGPS).m) < 2:
+				print("Reached center")
+				count += 1
+				if count == 2:
+					if swapCircles == 1: # 4th full circle we do
+						raise KeyboardInterrupt
+					count = 0
+					swapCircles = 0 #so we go the other way
+					flip=-1
+					print("Flipped")
+				else:
+					print("First lap. Doing another.")
+				startPulse = int((rightPulse + leftPulse) / 2) #reset starting pulse to center again
 
 				
 	except KeyboardInterrupt:
 		issueCommands(0,0)
-		time.sleep(4)
+		time.sleep(3)
+
+		while (distance.distance(gps.getCoords(force=1), centerGPS).m) < 20:
+			issueCommands(1, 120)
+			time.sleep(1)
+		issueCommands(0,0)
+		time.sleep(5)
 		issueCommands(0,0, True)
 
 		print("Seconds it took: ", time.time() - startTime)
