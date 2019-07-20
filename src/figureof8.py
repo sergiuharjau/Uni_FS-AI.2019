@@ -27,22 +27,20 @@ if __name__ == "__main__":
 	issueCommands(0,0) #connect to car
 
 	distanceAway = 0
-	while distanceAway < 5: #go forward 15m
-		distanceAway = distance.distance(gps.getCoords(), startingPos).m
+	while distanceAway < 10: #go forward 15m
+		distanceAway = distance.distance(gps.getGPS(force=1), startingPos).m
 		print("Distance away from destination: ", distanceAway)
-		issueCommands(1,85) #go straight
-		gps.getGPS(force=1)
+		issueCommands(1,100) #go straight
 
 	issueCommands(0,0)
-	centerGPS = gps.getCoords(force=1) 
-	time.sleep(3)
+
+
 
 	startLeft = issueCommands.car.get_left_pulse() #should be 0
 	startRight = issueCommands.car.get_right_pulse() #should be 0 
 	startPulse = int((startLeft + startRight)/2)
 
 	flip = 1 #goes right first
-
 			
 	calculateReading.pastCom = 0  # in case we don't see cones straight away
 	logging.basicConfig(filename='loggingMain.log', format='%(asctime)s %(message)s', level=logging.INFO)
@@ -50,15 +48,19 @@ if __name__ == "__main__":
 
 	visual= False; green= False; record= False; replay= False; loop= True; rc=False; cFlip=0 ;
 	swapCircles=0 #goes right first
-	followGreen=0 
 
 	ic = ImageCap(False, replay)  # ImCapt() #initializes zed object
 
 	for argument in sys.argv[1:]:
 		exec(argument)
 
+	time.sleep(5)
 	startTime = time.time()
+	timeMarker = False
 	count=0
+	passedStart = False
+	startingPos = gps.getGPS(force=1)
+	closeEyes = 7
 	try: 
 		while True:
 			#gps.getGPS()
@@ -67,6 +69,12 @@ if __name__ == "__main__":
 			rightPulse=issueCommands.car.get_right_pulse()
 			averagePulse = int((leftPulse+rightPulse)/2)
 
+			if not passedStart:
+				if distanceAway = distance.distance(gps.getCoords(), startingPos).m > 5:
+					issueCommands(0,0)
+					centerGPS = gps.getGPS(force=1)
+					passedStart = True
+					timeMarker = time.time()
 
 			image, depth = ic.latest(record)
 			logging.info("Getting latest image and depth.")
@@ -82,7 +90,7 @@ if __name__ == "__main__":
 			print("Velocity: ", velocity)
 			logging.info("Steering: %d, Velocity: %d", steering, velocity)
 
-			if distance.distance(gps.getCoords(force=1), centerGPS).m < 7:
+			if passedStart and distance.distance(gps.getCoords(force=1), centerGPS).m < closeEyes:
 				steering = 10 * flip
 
 			velcity=120
@@ -90,26 +98,30 @@ if __name__ == "__main__":
 
 			issueCommands(steering, velocity)
 
-			if (distance.distance(gps.getCoords(force=1), centerGPS).m) < 2:
-				print("Reached center")
-				count += 1
-				if count == 2:
-					if swapCircles == 1: # 4th full circle we do
-						raise KeyboardInterrupt
-					count = 0
-					swapCircles = 0 #so we go the other way
-					flip=-1
-					print("Flipped")
-				else:
-					print("First lap. Doing another.")
-				startPulse = int((rightPulse + leftPulse) / 2) #reset starting pulse to center again
+			if timeMarker - time.time() > 20 and timeMarker: #looks 20s after it leaves the center
+				if (distance.distance(gps.getCoords(force=1), centerGPS).m) < 2:
+					timeMarker = time.time()
+					print("Reached center")
+					count += 1
+					if count == 2:
+						if swapCircles == 1: # 4th full circle we do
+							closeEyes = 0
+						count = 0
+						swapCircles = 0 #so we go the other way
+						flip=-1
+						print("Flipped")
+					else:
+						print("First lap. Doing another.")
 
+			if closeEyes == 0:
+				if (distance.distance(gps.getCoords(force=1), centerGPS).m) > 5:
+					raise KeyboardInterrupt
 				
 	except KeyboardInterrupt:
 		issueCommands(0,0)
 		time.sleep(3)
 
-		while (distance.distance(gps.getCoords(force=1), centerGPS).m) < 20:
+		while (distance.distance(gps.getCoords(force=1), centerGPS).m) < 10:
 			issueCommands(1, 120)
 			time.sleep(1)
 		issueCommands(0,0)
