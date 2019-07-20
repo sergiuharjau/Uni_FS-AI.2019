@@ -62,20 +62,20 @@ def main(visual, green, record, replay, loop, rc, cFlip):
 
             #if steering <= -2:  #Adjusts leftside steering
             #    steering += 2 #disabling it for temporary purposes
-            steering = min(19, max(-19, steering))
+#            steering = min(19, max(-19, steering))
 
             if setStart:
-                if time.time()-startTime > 5
+                if time.time()-startTime > 5:
                     startingPos = gps.getGPS(force=1)
                     setStart = False
    
 
-            if time.time()-timeMarker > 30: #only checks 30s after we've passed the starting point
-                if distance.distance(gps.getGPS(timeBound=3), startingPos).m < 5: #5m within the finish line
-                    lapCounter += 1 
-                    timeMarker = time.time() #resets the time marker
-                    if lapCounter == 1: #change to 10 in the future 
-                        raise KeyboardInterrupt
+ #           if time.time()-timeMarker > 30: #only checks 30s after we've passed the starting point
+#                if distance.distance(gps.getGPS(timeBound=5), startingPos).m < 5: #5m within the finish line
+  #                  lapCounter += 1 
+   #                 timeMarker = time.time() #resets the time marker
+    #                if lapCounter == 1: #change to 10 in the future 
+     #                   raise KeyboardInterrupt
 
                         
             print("Steering: ", steering)

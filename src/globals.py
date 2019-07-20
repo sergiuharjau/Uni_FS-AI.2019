@@ -9,10 +9,10 @@ startFrom = 340
 steeringFactor = 17  # divide PixelValue by this number
 newComOffset = 9  # divide newCom by this number
 
-missedColourOffset = 5
+missedColourOffset = 7
 
-carVelocity = 120
-maxSpeedUp = 20
+carVelocity = 150
+maxSpeedUp = 200
 
 def logInitial():
 	logging.info("Resolution: %d, %d", width, height)
