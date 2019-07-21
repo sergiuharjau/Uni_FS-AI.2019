@@ -12,7 +12,7 @@ newComOffset = 9  # divide newCom by this number
 missedColourOffset = 7
 
 carVelocity = 120
-maxSpeedUp = 80
+maxSpeedUp = 70
 
 def logInitial():
 	logging.info("Resolution: %d, %d", width, height)
