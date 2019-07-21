@@ -68,18 +68,18 @@ def main(visual, green, record, replay, loop, rc, cFlip):
                 if time.time()-startTime > 7:
                     startingPos = gps.getGPS(force=1)
                     setStart = False
-
-            if not gps.running:
-                t = threading.Thread(target=GPS.getGPS, args=(gps, 3))
-                t.start()
+                    gps.coords = (-1,-1)
 
             if time.time()-timeMarker > 50: #only checks 30s after we've passed the starting point
-                if distance.distance(gps.getCoords, startingPos).m < 7: #5m within the finish line
+                velocity -= 30
+                if not gps.running:
+                    t = threading.Thread(target=GPS.getGPS, args=(gps, 2))
+                    t.start()
+                if distance.distance(gps.getCoords(), startingPos).m < 7: #5m within the finish line
                     lapCounter += 1 
                     timeMarker = time.time() #resets the time marker
                     if lapCounter == 1: #change to 10 in the future 
                         raise KeyboardInterrupt
-
                         
             print("Steering: ", steering)
             print("Velocity: ", velocity)
