@@ -6,7 +6,7 @@ from globals import startFrom, pixelStrip, width, steeringFactor
 import logging
 import threading
 
-def imProcessing(t, image_ocv, depth_data_ocv, visual=False, original_image=None, green=False, cFlip=0, eight=0, swapCircles=0, exitDetection=0, gates=3):
+def imProcessing(t, image_ocv, depth_data_ocv, visual=False, original_image=None, green=False, cFlip=0, eight=0, swapCircles=0, exitDetection=0, gates=2):
 
 	logging.info("Started image processing.")
 	maskRed, maskYellow, stop = findColour(image_ocv, green, cFlip, exitDetection)
