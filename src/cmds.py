@@ -84,8 +84,8 @@ def calculateReading(gateDict):
 		if abs(averageValue) < steeringFactor * 2:
 			velocity = carVelocity + maxSpeedUp * len(gateDict)/3
 		else:
-			velocity = carVelocity + maxSpeedUp*(100-averageValue)/100 * len(gateDict)/3
-	else:
+			velocity = carVelocity + (maxSpeedUp+30)*(100-averageValue)/100 * len(gateDict)/3
+	else:							#so it is linearly throughout 2-6degrees
 		logging.info("No valid gates. Using past command.")
 		velocity = carVelocity #coast if no gates
 		steering = calculateReading.pastCom #keep past direction
