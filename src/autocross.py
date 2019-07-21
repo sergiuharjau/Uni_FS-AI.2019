@@ -25,7 +25,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
 
     ic = ImageCap(False, replay)  # ImCapt() #initializes zed object
 
-    time.sleep(2) # waits 3 seconds 
+    #time.sleep(2) # waits 3 seconds 
     
     startTime = time.time()
     listReadings = []
