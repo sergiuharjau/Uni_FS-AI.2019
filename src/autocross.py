@@ -62,19 +62,19 @@ def main(visual, green, record, replay, loop, rc, cFlip):
 
             #if steering <= -2:  #Adjusts leftside steering
             #    steering += 2 #disabling it for temporary purposes
-            steering = min(19, max(-19, steering))
+#            steering = min(19, max(-19, steering))
 
             if setStart:
-                velocity -= 30
-                if time.time()-startTime > 12:
+                velocity -= 50
+                if time.time()-startTime > 7:
                     startingPos = gps.getGPS()
                     setStart = False
                     gps.coords = (-1,-1)
-            if time.time() - timeMarker > 70:
-               velocity -= 50
-            if time.time()-timeMarker > 75: #only checks 30s after we've passed the starting point
+            if time.time() - timeMarker > 45:
+               velocity -= 70
+            if time.time()-timeMarker > 48: #only checks 30s after we've passed the starting point
                 gps.getGPS(timeBound=2)
-                if distance.distance(gps.getCoords(), startingPos).m < 7: #5m within the finish line
+                if distance.distance(gps.getCoords(), startingPos).m < 10: #5m within the finish line
                     lapCounter += 1
                     timeMarker = time.time() #resets the time marker
                     if lapCounter == 10: #change to 10 in the future 
@@ -107,6 +107,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
             #print("Frames left: ", framesToDo-amount)
 
     except KeyboardInterrupt:
+#	time.sleep(1)
         if not replay:
             ic.zed.close()
         issueCommands(0, 0, False, visual, replay, record, rc)

@@ -6,7 +6,7 @@ from globals import startFrom, pixelStrip, width, steeringFactor
 import logging
 import threading
 
-def imProcessing(t, image_ocv, depth_data_ocv, visual=False, original_image=None, green=False, cFlip=0, eight=0, swapCircles=0, exitDetection=0, gates=4):
+def imProcessing(t, image_ocv, depth_data_ocv, visual=False, original_image=None, green=False, cFlip=0, eight=0, swapCircles=0, exitDetection=0, gates=3):
 
 	logging.info("Started image processing.")
 	maskRed, maskYellow, stop = findColour(image_ocv, green, cFlip, exitDetection)
@@ -16,7 +16,7 @@ def imProcessing(t, image_ocv, depth_data_ocv, visual=False, original_image=None
 		print("Attention, pedestrian!")
 		raise KeyboardInterrupt
 	logging.info("Finding gates.")
-	findGates(maskRed, maskYellow, depth_data_ocv, True, 2, 7, gates) #just one gate
+	findGates(maskRed, maskYellow, depth_data_ocv, True, 2, 9, gates) #just one gate
 	logging.info("Started capturing thread.")
 	t.start()
 	# finds the masks for the first red/yellow cones
