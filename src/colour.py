@@ -18,7 +18,7 @@ def findColour(openCVobject, greenDetection, cFlip, exitDetection=False) -> obje
 	#wrap_around_upper = np.array([180, 255, 255])  # Could draw box around item to remedy this?
 
 	# YELLOW COLOUR BOUNDARIES
-	yellow_lower = np.array([20, 120, 120])
+	yellow_lower = np.array([20, 70, 70])
 	yellow_upper = np.array([35, 255, 255])
 
 	red_lower = np.array([108, 55, 55]) #blue in hsv
