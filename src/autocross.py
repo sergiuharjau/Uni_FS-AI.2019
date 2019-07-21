@@ -25,7 +25,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
 
     ic = ImageCap(False, replay)  # ImCapt() #initializes zed object
 
-    time.sleep(5) # waits 3 seconds 
+    time.sleep(2) # waits 3 seconds 
     
     startTime = time.time()
     listReadings = []
@@ -59,7 +59,6 @@ def main(visual, green, record, replay, loop, rc, cFlip):
 
             if ic.exit:  # when we replay tests
                 raise KeyboardInterrupt
-#            input()
 
             #if steering <= -2:  #Adjusts leftside steering
             #    steering += 2 #disabling it for temporary purposes
