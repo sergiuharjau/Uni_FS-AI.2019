@@ -20,7 +20,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
         print("Awaiting GPS lock.")
         time.sleep(1)
 
-    if not visual:
+    if not visual and not rc:
         issueCommands(0,0)
 
     ic = ImageCap(False, replay)  # ImCapt() #initializes zed object
@@ -39,6 +39,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
     try:
         i=0
         while loop:  # for amount in range(framesToDo):
+            time1 = time.time()
             logging.warning("\n*********\nFrame: " + str(i))
             image, depth = ic.latest(record)
             logging.info("Getting latest image and depth.")
@@ -65,12 +66,16 @@ def main(visual, green, record, replay, loop, rc, cFlip):
             steering = min(19, max(-19, steering))
 
             if setStart:
-                if time.time()-startTime > 5:
+                if time.time()-startTime > 7:
                     startingPos = gps.getGPS(force=1)
                     setStart = False
 
+            if not gps.running:
+                t = threading.Thread(target=GPS.getGPS, args=(gps, 3))
+                t.start()
+
             if time.time()-timeMarker > 30: #only checks 30s after we've passed the starting point
-                if distance.distance(gps.getGPS(timeBound=3), startingPos).m < 5: #5m within the finish line
+                if distance.distance(gps.getCoords, startingPos).m < 7: #5m within the finish line
                     lapCounter += 1 
                     timeMarker = time.time() #resets the time marker
                     if lapCounter == 1: #change to 10 in the future 
@@ -98,6 +103,8 @@ def main(visual, green, record, replay, loop, rc, cFlip):
             i+=1
 
             logging.warning("End of frame.\n\n")
+
+            print(time.time()-time1)
 
             #print("Frames left: ", framesToDo-amount)
 
