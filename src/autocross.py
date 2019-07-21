@@ -73,7 +73,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
                 t = threading.Thread(target=GPS.getGPS, args=(gps, 3))
                 t.start()
 
-            if time.time()-timeMarker > 30: #only checks 30s after we've passed the starting point
+            if time.time()-timeMarker > 50: #only checks 30s after we've passed the starting point
                 if distance.distance(gps.getCoords, startingPos).m < 7: #5m within the finish line
                     lapCounter += 1 
                     timeMarker = time.time() #resets the time marker
