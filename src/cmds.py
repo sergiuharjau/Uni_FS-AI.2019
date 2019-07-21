@@ -12,8 +12,6 @@ import fspycan_ext
 
 missedRed = 0
 missedYellow = 0
-
-
 def findLineMarkers(red, yellow, i, visual):
 
 	global missedRed
@@ -58,6 +56,7 @@ def findLineMarkers(red, yellow, i, visual):
 	logging.info("Yellow marker: %s", str(yellowMarker))
 	return redMarker, yellowMarker
 
+
 def calculateReading(gateDict):
 
 	totalValue = 0 
@@ -78,9 +77,9 @@ def calculateReading(gateDict):
 		steering = calculateReading.pastCom + (averageValue - calculateReading.pastCom) / newComOffset
 		logging.info("Rolling average final camera value: %d", steering)
 
-		averageValue = max(0, min(abs(averageValue), 200))
+		averageValue = max(0, min(abs(averageValue), 100))
 
-		velocity = carVelocity + maxSpeedUp*(200-averageValue)/200 * len(gateDict)/4
+		velocity = carVelocity + maxSpeedUp*(100-averageValue)/100 * len(gateDict)/3
 	else:
 		logging.info("No valid gates. Using past command.")
 		velocity = carVelocity #coast if no gates
