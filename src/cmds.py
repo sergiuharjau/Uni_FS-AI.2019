@@ -77,9 +77,14 @@ def calculateReading(gateDict):
 		steering = calculateReading.pastCom + (averageValue - calculateReading.pastCom) / newComOffset
 		logging.info("Rolling average final camera value: %d", steering)
 
+		averageValue += steeringFactor * 1.5 #2 degrees of steering factor
+
 		averageValue = max(0, min(abs(averageValue), 100))
 
-		velocity = carVelocity + maxSpeedUp*(100-averageValue)/100 * len(gateDict)/3
+		if abs(averageValue) < steeringFactor * 2:
+			velocity = carVelocity + maxSpeedUp * len(gateDict)/3
+		else:
+			velocity = carVelocity + maxSpeedUp*(100-averageValue)/100 * len(gateDict)/3
 	else:
 		logging.info("No valid gates. Using past command.")
 		velocity = carVelocity #coast if no gates
