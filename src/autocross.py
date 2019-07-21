@@ -65,23 +65,21 @@ def main(visual, green, record, replay, loop, rc, cFlip):
             steering = min(19, max(-19, steering))
 
             if setStart:
-#                if time.time() -syartTime >5:
-#                    pass
-                if time.time()-startTime > 10:
+                velocity -= 30
+                if time.time()-startTime > 12:
                     startingPos = gps.getGPS()
                     setStart = False
                     gps.coords = (-1,-1)
-            if time.time() - timeMarker > 90:
+            if time.time() - timeMarker > 70:
                velocity -= 50
-            if time.time()-timeMarker > 95: #only checks 30s after we've passed the starting point
-                gps.getGPS(timeBound=3)
+            if time.time()-timeMarker > 75: #only checks 30s after we've passed the starting point
+                gps.getGPS(timeBound=2)
                 if distance.distance(gps.getCoords(), startingPos).m < 7: #5m within the finish line
                     lapCounter += 1
                     timeMarker = time.time() #resets the time marker
                     if lapCounter == 10: #change to 10 in the future 
                         raise KeyboardInterrupt
-            if setStart:
-               velocity -=30
+          
             print("Steering: ", steering)
             print("Velocity: ", velocity)
 
