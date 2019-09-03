@@ -26,7 +26,7 @@ def findLineMarkers(red, yellow, i, visual):
 	except:
 		missedRed += 1
 		logging.info("MissedRed: %d", missedRed)
-		if missedRed > 15:
+		if missedRed > 10:
 			print("Can't see blue, turning left", (-1*missedRed*missedColourOffset))
 			redMarker = (int(-1 * missedColourOffset * missedRed), 0)
 			# very far left red, middle yellow, turns left
@@ -41,7 +41,7 @@ def findLineMarkers(red, yellow, i, visual):
 	except:
 		missedYellow += 1
 		logging.info("MissedYellow: %d", missedYellow)
-		if missedYellow > 15:
+		if missedYellow > 10:
 			print("Can't see yellow, turning right", (missedYellow*missedColourOffset))
 			yellowMarker = (int(1280 + missedColourOffset * missedYellow), 0 )
 			# middle red, very far right Yellow, turns right
@@ -81,10 +81,10 @@ def calculateReading(gateDict):
 
 		averageValue = max(0, min(abs(averageValue), 100))
 
-#		if abs(averageValue) < steeringFactor * 2:
-#			velocity = carVelocity + maxSpeedUp * len(gateDict)/4
-#		else:
-		velocity = carVelocity + maxSpeedUp*(100-averageValue)/100 * len(gateDict)/4
+		if abs(averageValue) < steeringFactor * 3:
+			velocity = carVelocity + maxSpeedUp * len(gateDict)/4
+		else:
+			velocity = carVelocity + (maxSpeedUp+30)*(100-averageValue)/100 * len(gateDict)/4
 	else:							#so it is linearly throughout 2-6degrees
 		logging.info("No valid gates. Using past command.")
 		velocity = carVelocity #coast if no gates

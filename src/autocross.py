@@ -62,7 +62,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
 
             #if steering <= -2:  #Adjusts leftside steering
             #    steering += 2 #disabling it for temporary purposes
-            steering = min(19, max(-19, steering))
+#            steering = min(19, max(-19, steering))
 
 #            if setStart:
  #               velocity -= 30
@@ -107,6 +107,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
             #print("Frames left: ", framesToDo-amount)
 
     except KeyboardInterrupt:
+#	time.sleep(1)
         if not replay:
             ic.zed.close()
         issueCommands(0, 0, False, visual, replay, record, rc)
