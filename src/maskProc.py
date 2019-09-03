@@ -35,7 +35,8 @@ def findGates(red, yellow, depth, firstPass, gateDistance, maxThresh, numberGate
     firstRed = cv2.bitwise_and(red, red, mask=markedPixels)
     firstYellow = cv2.bitwise_and(yellow, yellow, mask=markedPixels)
 
-    findGates.result.append((firstRed, firstYellow))
+    if len(firstRed) > 50 or len(firstYellow) > 50:
+        findGates.result.append((firstRed, firstYellow))
 
     if numberGates:
         findGates(red, yellow, depth, False, maxFirstGate+0.2, maxThresh, numberGates-1)

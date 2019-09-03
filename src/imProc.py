@@ -25,7 +25,7 @@ def imProcessing(t, image_ocv, depth_data_ocv, visual=False, original_image=None
 		fRed = gate[0]
 		fYellow = gate[1]
 		redLine, yellowLine = findLineMarkers(fRed, fYellow, i, visual)
-		if len(redLine) > 50 and len(yellowLine) > 50:  # only on correct readings
+		if redLine and yellowLine:  # only on correct readings
 			target = (int((yellowLine[0] + redLine[0]) / 2),int((yellowLine[1] + redLine[1]) / 2))
 			logging.info("Validated %d!", i)
 			if eight and swapCircles: #yellow on the right is real, we fake red
