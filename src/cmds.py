@@ -26,7 +26,7 @@ def findLineMarkers(red, yellow, i, visual):
 	except:
 		missedRed += 1
 		logging.info("MissedRed: %d", missedRed)
-		if missedRed > 20:
+		if missedRed > 15:
 			print("Can't see blue, turning left", (-1*missedRed*missedColourOffset))
 			redMarker = (int(-1 * missedColourOffset * missedRed), 0)
 			# very far left red, middle yellow, turns left
@@ -41,7 +41,7 @@ def findLineMarkers(red, yellow, i, visual):
 	except:
 		missedYellow += 1
 		logging.info("MissedYellow: %d", missedYellow)
-		if missedYellow > 20:
+		if missedYellow > 15:
 			print("Can't see yellow, turning right", (missedYellow*missedColourOffset))
 			yellowMarker = (int(1280 + missedColourOffset * missedYellow), 0 )
 			# middle red, very far right Yellow, turns right
@@ -70,7 +70,7 @@ def calculateReading(gateDict):
 		logging.info("Gate %d: CameraValue: %d", key, cameraValue)
 		totalValue += cameraValue
 
-	if len(gateDict):#avoids division by 0 error
+	if len(gateDict): #avoids division by 0 error
 		averageValue = totalValue/len(gateDict)
 		logging.info("Average gate value: %d", averageValue)
 
