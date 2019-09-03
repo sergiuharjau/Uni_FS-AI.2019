@@ -14,11 +14,11 @@ def main(visual, green, record, replay, loop, rc, cFlip):
 
     calculateReading.pastCom = 0  # in case we don't see cones straight away
 
-    gps = GPS()
+#    gps = GPS()
 
-    while gps.getGPS(force=1) == (0,0):
-        print("Awaiting GPS lock.")
-        time.sleep(1)
+#    while gps.getGPS(force=1) == (0,0):
+#        print("Awaiting GPS lock.")
+#        time.sleep(1)
 
     if not visual and not rc:
         issueCommands(0,0)
@@ -64,21 +64,21 @@ def main(visual, green, record, replay, loop, rc, cFlip):
             #    steering += 2 #disabling it for temporary purposes
             steering = min(19, max(-19, steering))
 
-            if setStart:
-                velocity -= 30
-                if time.time()-startTime > 12:
-                    startingPos = gps.getGPS()
-                    setStart = False
-                    gps.coords = (-1,-1)
-            if time.time() - timeMarker > 70:
-               velocity -= 50
-            if time.time()-timeMarker > 75: #only checks 30s after we've passed the starting point
-                gps.getGPS(timeBound=2)
-                if distance.distance(gps.getCoords(), startingPos).m < 7: #5m within the finish line
-                    lapCounter += 1
-                    timeMarker = time.time() #resets the time marker
-                    if lapCounter == 10: #change to 10 in the future 
-                        raise KeyboardInterrupt
+#            if setStart:
+ #               velocity -= 30
+ #               if time.time()-startTime > 12:
+ #                   startingPos = gps.getGPS()
+ #                   setStart = False
+ #                   gps.coords = (-1,-1)
+ #           if time.time() - timeMarker > 70:
+ #              velocity -= 50
+ #           if time.time()-timeMarker > 75: #only checks 30s after we've passed the starting point
+ #               gps.getGPS(timeBound=2)
+ #               if distance.distance(gps.getCoords(), startingPos).m < 7: #5m within the finish line
+ #                   lapCounter += 1
+ #                   timeMarker = time.time() #resets the time marker
+ #                   if lapCounter == 10: #change to 10 in the future 
+ #                       raise KeyboardInterrupt
           
             print("Steering: ", steering)
             print("Velocity: ", velocity)
