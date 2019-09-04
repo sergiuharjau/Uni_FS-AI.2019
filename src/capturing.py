@@ -13,13 +13,13 @@ class ImageCap:
             self.replay(self.missionNo)
             return None
 
-        if False and self.exposure and self.count == 10:
-            cmd = input("Exposure: ")
-            if cmd == "start":
+        if self.exposure and self.count == 60:
+           # cmd = input("Exposure: ")
+            if False:
                 self.exposure = False
             else:
                 self.count = 0
-                self.zed.set_camera_settings(sl.CAMERA_SETTINGS.CAMERA_SETTINGS_EXPOSURE, int(cmd), False)
+                self.zed.set_camera_settings(sl.CAMERA_SETTINGS.CAMERA_SETTINGS_EXPOSURE, -1, False)
         else:
             self.count += 1
 
@@ -77,7 +77,7 @@ class ImageCap:
             self.frame = (self.image_zed.get_data(), self.depth_data_zed.get_data())
             self.makeFolder = True
             self.exit=False
-            self.zed.set_camera_settings(sl.CAMERA_SETTINGS.CAMERA_SETTINGS_EXPOSURE, 0, False)
+            self.zed.set_camera_settings(sl.CAMERA_SETTINGS.CAMERA_SETTINGS_EXPOSURE, -1, False)
 #            self.zed.set_camera_settings(sl.CAMERA_SETTINGS.CAMERA_SETTINGS_WHITE_BALANCE, 4600, False)
         else:
             self.exit = False
