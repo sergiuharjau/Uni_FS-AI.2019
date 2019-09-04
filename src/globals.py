@@ -9,9 +9,9 @@ startFrom = 330
 steeringFactor = 17  # divide PixelValue by this number
 newComOffset = 9  # divide newCom by this number
 
-missedColourOffset = 7
+missedColourOffset = 12
 
-carVelocity = 70
+carVelocity = 120
 maxSpeedUp = 30
 
 def logInitial():

@@ -16,7 +16,7 @@ def imProcessing(t, image_ocv, depth_data_ocv, visual=False, original_image=None
 		print("Attention, pedestrian!")
 		raise KeyboardInterrupt
 	logging.info("Finding gates.")
-	findGates(maskRed, maskYellow, depth_data_ocv, True, 2, 9, gates) #just one gate
+	findGates(maskRed, maskYellow, depth_data_ocv, True, 2, 3.5, gates) #just one gate
 	logging.info("Started capturing thread.")
 	t.start()
 	# finds the masks for the first red/yellow cones
