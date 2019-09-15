@@ -19,7 +19,6 @@ python3 src/autocross.py --> follow on screen commands
 (run with "nohup [command] &" to ensure shell does not kill the process)
 
 Args:
-
 visual=1 -->  Does not start the CAN procedure, display a visual.
 rc=1     -->  Instead of CAN it sends PWM to the RC car.
 replay=? -->  Replays mission number ? from past recordings.
