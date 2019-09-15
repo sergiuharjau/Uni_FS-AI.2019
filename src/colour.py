@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-def findColour(openCVobject, greenDetection, cFlip, exitDetection=False) -> object:
+def findColour(openCVobject, greenDetection, cFlip=False, exitDetection=False) -> object:
 	"""Function that takes path of an image and outputs a new file highlighting said colour.
 	:param openCVobject: variable pointing to an openCVobject
 	:param output: whether you want it saved to the file system as well or not
@@ -52,7 +52,7 @@ def findColour(openCVobject, greenDetection, cFlip, exitDetection=False) -> obje
 
 if __name__ == "__main__":
 
-	image = cv2.imread("../test/hsv_map.png")
+	image = cv2.imread("../test/car.png")
 
 	#input()
 	r, y, stop= findColour(image, False)
@@ -61,6 +61,6 @@ if __name__ == "__main__":
 		print("Attention, pedestrian!")
 	cv2.imshow("image", image)
 	#cv2.imshow("red", cv2.bitwise_and(image, image, mask=r))
-	#cv2.imshow("yellow", cv2.bitwise_and(image, image, mask=y))
+	cv2.imshow("yellow", cv2.bitwise_and(image, image, mask=y))
 	cv2.imshow("blue", cv2.bitwise_and(image,image, mask=r))
 	cv2.waitKey(0)
