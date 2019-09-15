@@ -40,8 +40,6 @@ def findGates(red, yellow, depth, firstPass, gateDistance, maxThresh, numberGate
 
     if numberGates:
         findGates(red, yellow, depth, False, maxFirstGate+0.2, maxThresh, numberGates-1)
-    # re-Add in the future to allow multiple gate processing
-
 
 if __name__ == "__main__":
     pass

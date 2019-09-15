@@ -36,7 +36,6 @@ def findColour(openCVobject, greenDetection, cFlip=False, exitDetection=False) -
 	if greenDetection:
 		green = cv2.inRange(hsv, np.array([45, 100, 60]), np.array([65, 255, 255]))
 		print(len(np.where(green==255)[0]))
-		#input()
 		if exitDetection:
 			try:
 				stopFlag = np.where(green==255)[0]
@@ -54,7 +53,6 @@ if __name__ == "__main__":
 
 	image = cv2.imread("../test/car.png")
 
-	#input()
 	r, y, stop= findColour(image, False)
 	print(stop)
 	if stop:

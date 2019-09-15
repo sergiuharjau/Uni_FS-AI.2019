@@ -7,7 +7,7 @@ import logging
 
 from globals import width, newComOffset, missedColourOffset, maxSpeedUp, steeringFactor, carVelocity
 
-sys.path.insert(0, '../../fspycan/lib/')
+sys.path.insert(0, '../../fspycan/lib/') #fork from DavidCroft's fspycan github repo.
 import fspycan_ext
 
 missedRed = 0
