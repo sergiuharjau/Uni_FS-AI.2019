@@ -19,12 +19,19 @@ python3 src/autocross.py --> follow on screen commands
 (run with "nohup [command] &" to ensure shell does not kill the process)
 
 Args:
+
 visual=1   Does not start the CAN procedure, display a visual.
+
 rc=1       Instead of CAN it sends PWM to the RC car.
+
 replay=?   Replays mission number ? from past recordings.
+
 record=1   Does not send commands to the car, just records video.
+
 loop=?     Instead of looping forever, loops for given ?.
+
 cflip=1    When Blue on left and Yellow on right.
+
 green=1    Stops the car whenever it has green in front of it.
 
 Different scrips exist (such as acceleration or figureof8), but expect them to not work from the get-go, they were done in a very rushed manner to simply compete at all. 
