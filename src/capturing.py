@@ -13,6 +13,16 @@ class ImageCap:
             self.replay(self.missionNo)
             return None
 
+        if self.exposure and self.count == 60:
+           # cmd = input("Exposure: ")
+            if False:
+                self.exposure = False
+            else:
+                self.count = 0
+                self.zed.set_camera_settings(sl.CAMERA_SETTINGS.CAMERA_SETTINGS_EXPOSURE, -1, False)
+        else:
+            self.count += 1
+
         err = self.zed.grab(self.runtime)
         if err == sl.ERROR_CODE.SUCCESS:
             logging.info("Started image retrieving.")
@@ -33,7 +43,8 @@ class ImageCap:
 
         self.frames = 0
         self.missionNo = replay
-
+        self.exposure = True
+        self.count = 0
         if not replay:
             self.zed = sl.Camera()
 
@@ -55,6 +66,8 @@ class ImageCap:
                 self.zed.close()
                 exit(1)
 
+
+
             self.runtime = sl.RuntimeParameters()
             self.runtime.sensing_mode = sl.SENSING_MODE.SENSING_MODE_STANDARD
 
@@ -64,7 +77,8 @@ class ImageCap:
             self.frame = (self.image_zed.get_data(), self.depth_data_zed.get_data())
             self.makeFolder = True
             self.exit=False
-
+            self.zed.set_camera_settings(sl.CAMERA_SETTINGS.CAMERA_SETTINGS_EXPOSURE, -1, False)
+#            self.zed.set_camera_settings(sl.CAMERA_SETTINGS.CAMERA_SETTINGS_WHITE_BALANCE, 4600, False)
         else:
             self.exit = False
             self.replay(self.missionNo)
@@ -99,9 +113,9 @@ class ImageCap:
 
 
 if __name__ == "__main__":
-    ic = ImageCap(False)
+    ic = ImageCap(False, False)
     while True:
-        ic.replay()
+        ic.capture()
         cv2.imshow("image", ic.frame[0])
         cv2.imshow("depth", ic.frame[1])
         cv2.waitKey(10)

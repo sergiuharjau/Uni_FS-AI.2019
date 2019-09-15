@@ -9,7 +9,7 @@ startFrom = 330
 steeringFactor = 17  # divide PixelValue by this number
 newComOffset = 9  # divide newCom by this number
 
-missedColourOffset = 12
+missedColourOffset = 15
 
 carVelocity = 120
 maxSpeedUp = 30

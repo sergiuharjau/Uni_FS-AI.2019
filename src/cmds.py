@@ -26,7 +26,7 @@ def findLineMarkers(red, yellow, i, visual):
 	except:
 		missedRed += 1
 		logging.info("MissedRed: %d", missedRed)
-		if missedRed > 10:
+		if missedRed > 7:
 			print("Can't see blue, turning left", (-1*missedRed*missedColourOffset))
 			redMarker = (int(-1 * missedColourOffset * missedRed), 0)
 			# very far left red, middle yellow, turns left
@@ -41,7 +41,7 @@ def findLineMarkers(red, yellow, i, visual):
 	except:
 		missedYellow += 1
 		logging.info("MissedYellow: %d", missedYellow)
-		if missedYellow > 10:
+		if missedYellow > 7:
 			print("Can't see yellow, turning right", (missedYellow*missedColourOffset))
 			yellowMarker = (int(1280 + missedColourOffset * missedYellow), 0 )
 			# middle red, very far right Yellow, turns right
