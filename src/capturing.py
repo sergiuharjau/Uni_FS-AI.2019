@@ -13,16 +13,6 @@ class ImageCap:
             self.replay(self.missionNo)
             return None
 
-        if self.exposure and self.count == 60:
-           # cmd = input("Exposure: ")
-            if False:
-                self.exposure = False
-            else:
-                self.count = 0
-                self.zed.set_camera_settings(sl.CAMERA_SETTINGS.CAMERA_SETTINGS_EXPOSURE, -1, False)
-        else:
-            self.count += 1
-
         err = self.zed.grab(self.runtime)
         if err == sl.ERROR_CODE.SUCCESS:
             logging.info("Started image retrieving.")
@@ -56,17 +46,13 @@ class ImageCap:
             init.camera_fps = 60  # Set max fps at 100
             init.depth_minimum_distance = 0.3 #in meters
 
-
             init.depth_mode = sl.DEPTH_MODE.DEPTH_MODE_ULTRA
-
 
             err = self.zed.open(init)
             if err != sl.ERROR_CODE.SUCCESS:
                 print(repr(err))
                 self.zed.close()
                 exit(1)
-
-
 
             self.runtime = sl.RuntimeParameters()
             self.runtime.sensing_mode = sl.SENSING_MODE.SENSING_MODE_STANDARD
@@ -77,8 +63,6 @@ class ImageCap:
             self.frame = (self.image_zed.get_data(), self.depth_data_zed.get_data())
             self.makeFolder = True
             self.exit=False
-            self.zed.set_camera_settings(sl.CAMERA_SETTINGS.CAMERA_SETTINGS_EXPOSURE, -1, False)
-#            self.zed.set_camera_settings(sl.CAMERA_SETTINGS.CAMERA_SETTINGS_WHITE_BALANCE, 4600, False)
         else:
             self.exit = False
             self.replay(self.missionNo)
