@@ -13,13 +13,14 @@ As such, proceed with care. This code was developed in 6 weeks. Here be dragons.
 Here for legacy reasons. 
 
 Set up a track with Yellow on the left and Blue on the right.
-
+<br>
 
 python3 src/autocross.py --> follow on screen commands 
 
 (run with "nohup [command] &" to ensure shell does not kill the process)
+<br>
 
-
+<pre>
 Args:
 
 visual=1 -->  Does not start the CAN procedure, display a visual.
@@ -35,7 +36,8 @@ loop=?   -->  Instead of looping forever, loops for given ?.
 cflip=1  -->  When Blue on left and Yellow on right.
 
 green=1  -->  Stops the car whenever it has green in front of it.
-
+</pre>
+<br>
 
 Different scrips exist (such as acceleration or figureof8), but expect them to not work from the get-go, they were done in a very rushed manner to simply compete at all. 
 
