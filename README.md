@@ -35,7 +35,7 @@ Different scrips exist (such as acceleration or figureof8), but expect them to n
 ## Notable things about the car
 
 On the 2019 car we had to ensure a multitude of things occured:
-<pre>	
+<pre>
 Grossfunk is powered on.
 Wheels are within 5 degrees from centre.
 Grossfunk/E-Stops on the side are not engaged.
