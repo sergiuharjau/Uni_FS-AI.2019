@@ -1,6 +1,6 @@
-## Coventry University Formula Student AI 2019
+# Coventry University Formula Student AI 2019
 
-# About repository
+## About repository
 
 This code is currently considered deprecated. For future developments email sergiuharjau@gmail.com, we are porting our system on a ROS-Melodic architecture. 
 
@@ -8,7 +8,7 @@ This code shall stand as a testament of our achievements at FS-AI 2019, having g
 
 As such, proceed with care. This code was developed in 6 weeks. Here be dragons.
 
-# Autonomous start up procedure 
+## Autonomous start up procedure 
 
 Here for legacy reasons. 
 
@@ -29,7 +29,7 @@ green=1    Stops the car whenever it has green in front of it.
 
 Different scrips exist (such as acceleration or figureof8), but expect them to not work from the get-go, they were done in a very rushed manner to simply compete at all. 
 
-# Notable things about the car
+## Notable things about the car
 
 On the 2019 car we had to ensure a multitude of things occured:
 
