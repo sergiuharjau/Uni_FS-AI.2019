@@ -1,5 +1,13 @@
 # Coventry University Formula Student AI 2019
 
+## WARNING !! 
+
+The branch you're browsing is not representative of the 2019 FS-AI software. 
+
+This will be used Dec2019 -> Mar2020 by Sergiu Harjau for testing purposes in order to asses how much our 2020 architecture can improve our autonomous racing results, compared to 2019. 
+
+As such the code you're viewing has been adapted to run and send messages to a ROS system, but is otherwise the same at its autonomous core (e.g. image processing or path planning). 
+
 ## About repository
 
 This code is currently considered deprecated. For future developments email sergiuharjau@gmail.com, we are porting our system on a ROS-Melodic architecture. 
