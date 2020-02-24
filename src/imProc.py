@@ -18,7 +18,7 @@ def imProcessing(t, image_ocv, depth_data_ocv, visual=False, original_image=None
 	logging.info("Finding gates.")
 	findGates(maskRed, maskYellow, depth_data_ocv, True, 2, 3.5, gates) #just one gate
 	logging.info("Started capturing thread.")
-	t.start()
+	
 	# finds the masks for the first red/yellow cones
 	gateDict = {}
 	for i, gate in enumerate(findGates.result):
