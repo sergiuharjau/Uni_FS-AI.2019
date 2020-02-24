@@ -3,6 +3,7 @@
 import sys
 import rospy
 import cv2
+from geometry_msgs.msg import Twist
 from std_msgs.msg import String
 from sensor_msgs.msg import  Image
 from cv_bridge import CvBridge, CvBridgeError
@@ -23,6 +24,7 @@ class Image_converter:
     self.cFlip = cFlip
     self.bridge = CvBridge()
     self.image_sub = rospy.Subscriber("image_topic", Image, self.callback)
+    self.publisher = rospy.Publisher('cmd_vel', Twist, queue_size=10)
     print("Subscribed to topic")
     height = 720 ; width = 1280
     self.cv_image = np.zeros((height,width,3), np.uint8)
@@ -43,6 +45,13 @@ class Image_converter:
 
   def latest(self):
     return self.cv_image, self.cv_depth
+
+  def pub(self, steering, velocity):
+    vel_msg = Twist()
+    vel_msg.linear.x = velocity
+    vel_msg.angular.z = steering
+    self.publisher.publish(vel_msg)
+
 
 def mainRosNode(args=[]):
 

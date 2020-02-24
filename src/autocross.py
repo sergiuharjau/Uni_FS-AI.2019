@@ -84,6 +84,7 @@ def mainProgram(visual, green, record, replay, loop, rc, cFlip, ic):
             logging.info("Steering: %d, Velocity: %d", steering, velocity)
             
             #issueCommands(steering, velocity, False, visual, replay, record, rc)
+            ic.pub(steering, velocity)
 
             listReadings.append(steering)
             
