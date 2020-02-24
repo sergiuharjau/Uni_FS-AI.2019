@@ -3,7 +3,7 @@ import time
 import threading
 from imProc import imProcessing
 #from capturing import ImageCap
-from rosCapturing import Image_converter, mainRosNode 
+#from rosCapturing import Image_converter, mainRosNode 
 from cmds import calculateReading, issueCommands
 from globals import pixelStrip, startFrom, logInitial
 import cv2
@@ -12,7 +12,7 @@ import logging
 #from gps import GPS
 #from geopy import distance
 
-def main(visual, green, record, replay, loop, rc, cFlip, ic):
+def mainProgram(visual, green, record, replay, loop, rc, cFlip, ic):
 # //Used when stopping is needed.
 #     gps = GPS()
 #     while gps.getGPS(force=1) == (0,0):
@@ -21,9 +21,9 @@ def main(visual, green, record, replay, loop, rc, cFlip, ic):
 # 
 
     #ic = ImageCap(False, replay)  # ImCapt() #initializes zed object
-
     
 
+    
     #if not visual and not rc: #initalizes CAN connection
         #issueCommands(0,0)
 
@@ -48,7 +48,7 @@ def main(visual, green, record, replay, loop, rc, cFlip, ic):
                 depth_data_ocv = depth[startFrom:startFrom + pixelStrip]
                 image_ocv = original_image[startFrom:startFrom + pixelStrip]
 
-                steering, velocity = imProcessing(t, image_ocv, depth_data_ocv, visual, original_image, green, cFlip)
+                steering, velocity = imProcessing(None, image_ocv, depth_data_ocv, visual, original_image, green, cFlip)
             else:
                 steering,velocity = 0,0
                 cv2.imshow("image", image)
@@ -86,7 +86,7 @@ def main(visual, green, record, replay, loop, rc, cFlip, ic):
             #issueCommands(steering, velocity, False, visual, replay, record, rc)
 
             listReadings.append(steering)
-
+            
             if not isinstance(loop, bool):
                 loop -= 1
                 if loop == 0:
@@ -105,6 +105,7 @@ def main(visual, green, record, replay, loop, rc, cFlip, ic):
             #print("Frames left: ", framesToDo-amount)
 
     except KeyboardInterrupt:
+        
         # if not replay:
         #     ic.zed.close()
         # issueCommands(0, 0, False, visual, replay, record, rc)
@@ -115,7 +116,6 @@ def main(visual, green, record, replay, loop, rc, cFlip, ic):
         for element in listReadings:
             f1.write(str(element) + ",")
         f1.close()
-        t.join()
 
         print("Seconds it took: ", time.time() - startTime)
         print("Total frames: ", len(listReadings))
@@ -130,23 +130,7 @@ def main(visual, green, record, replay, loop, rc, cFlip, ic):
 
 if __name__ == "__main__":
 
-    visual= False; green= False; record= False; replay= False; loop= True; rc=False; cFlip=0 ;
-
-    for argument in sys.argv[1:]:
-        exec(argument)
-
-    logging.basicConfig(filename='loggingMain.log', format='%(asctime)s %(message)s', level=logging.INFO)
-    logging.warning("\nMission start!\n")
-
-    logInitial()
-
-    ic = Image_converter()
-    t = threading.Thread(target=main, args=(visual, green, record, replay, loop, rc, cFlip, ic))
-    t.start()
-    
-    mainRosNode()
-    t.join()
-    #main(visual, green, record, replay, loop, rc, cFlip)
+    mainProgram(visual, green, record, replay, loop, rc, cFlip, None)
 
     """
     What we need to do:
