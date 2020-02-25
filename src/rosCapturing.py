@@ -49,7 +49,11 @@ class Image_converter:
   def pub(self, steering, velocity):
     vel_msg = Twist()
     vel_msg.linear.x = velocity
-    vel_msg.angular.z = steering
+    vel_msg.angular.z = steering / 10 #to get the right data in cmd_vel
+    if vel_msg.angular.z > 0.7:
+        vel_msg.angular.z=0.7
+    elif vel_msg.angular.z < -0.7:
+        vel_msg.angular.z=-0.7
     self.publisher.publish(vel_msg)
 
 
