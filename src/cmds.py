@@ -7,8 +7,8 @@ import logging
 
 from globals import width, newComOffset, missedColourOffset, maxSpeedUp, steeringFactor, carVelocity
 
-sys.path.insert(0, '../../fspycan/lib/') #fork from DavidCroft's fspycan github repo.
-import fspycan_ext
+#sys.path.insert(0, '../../fspycan/lib/') #fork from DavidCroft's fspycan github repo.
+#import fspycan_ext
 
 missedRed = 0
 missedYellow = 0
@@ -94,7 +94,7 @@ def calculateReading(gateDict):
 	return round(steering/steeringFactor), round(velocity)
 
 def issueCommands(steering=0, velocity=0, exit=False, visual=False, replay=False, record=False, rc=False):
-
+	return 0
 	if not replay and not record and not visual and not rc:
 		if 'car' not in issueCommands.__dict__:  # only runs once
 			issueCommands.car = fspycan_ext.Car("can0")
