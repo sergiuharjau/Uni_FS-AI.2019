@@ -24,24 +24,28 @@ class Image_converter:
     self.cFlip = cFlip
     self.bridge = CvBridge()
     self.image_sub = rospy.Subscriber("image_topic", Image, self.callback)
+    self.depth_pub = rospy.Subscriber("depth_topic", Image, self.depthCallback)
     self.publisher = rospy.Publisher('cmd_vel', Twist, queue_size=10)
     print("Subscribed to topic")
     height = 720 ; width = 1280
     self.cv_image = np.zeros((height,width,3), np.uint8)
     self.cv_depth = np.zeros((height,width,1), np.uint8)
 
-  def callback(self,data):
+  def depthCallback(self, data):
     try:
-      intermediate = self.bridge.imgmsg_to_cv2(data, "bgr8")
-      self.cv_image = cv2.resize(intermediate, (1280,720))
+      intermediateDepth = self.bridge.imgmsg_to_cv2(data)
+      self.cv_depth = cv2.resize(intermediateDepth, (1280, 720))
     except CvBridgeError as e:
       print(e)
-    
-    #cv2.imshow("Image", self.cv_image)
-    #cv2.waitKey(10)
+
+  def callback(self, data):
+    try:
+      intermediate = self.bridge.imgmsg_to_cv2(data, "bgr8")
+      self.cv_image = cv2.resize(intermediate, (1280, 720))
+    except CvBridgeError as e:
+      print(e)
 
     mainProgram(self.visual, self.green, self.record, self.replay, 1, self.rc, self.cFlip, self)
-    
 
   def latest(self):
     return self.cv_image, self.cv_depth
@@ -49,7 +53,7 @@ class Image_converter:
   def pub(self, steering, velocity):
     vel_msg = Twist()
     vel_msg.linear.x = velocity
-    vel_msg.angular.z = steering / 10 #to get the right data in cmd_vel
+    vel_msg.angular.z = steering / 15 #to get the right data in cmd_vel
     if vel_msg.angular.z > 0.7:
         vel_msg.angular.z=0.7
     elif vel_msg.angular.z < -0.7:

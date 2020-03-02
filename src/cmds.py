@@ -20,8 +20,10 @@ def findLineMarkers(red, yellow, i, visual):
 	logging.info("Processing gate %d",i)
 
 	redIndex = np.where(red == 255)
+
+	redMarker = False
 	try:
-		redMarker = (redIndex[1][-1], redIndex[0][0])
+		redMarker = (redIndex[1][-1], 0)
 		missedRed = 0
 	except:
 		missedRed += 1
@@ -29,29 +31,37 @@ def findLineMarkers(red, yellow, i, visual):
 		if missedRed > 7:
 			print("Can't see blue, turning left", (-1*missedRed*missedColourOffset))
 			redMarker = (int(-1 * missedColourOffset * missedRed), 0)
+			
 			# very far left red, middle yellow, turns left
 		else:
 			print("Missed Red: ", missedRed)
-			redMarker = False
 
 	yellowIndex = np.where(yellow == 255)
-	try:
-		yellowMarker = (yellowIndex[1][0], yellowIndex[0][0])
-		missedYellow = 0
-	except:
+	yellowMarker = False
+	
+	offset = 0 if isinstance(redMarker, bool) else redMarker[0]
+
+	for element in yellowIndex[1]:
+		if element > offset+100: #at least 100px to the right of our blue cone
+			yellowMarker = (element, 0)
+			missedYellow = 0
+			break
+
+	if isinstance(yellowMarker, bool):
 		missedYellow += 1
 		logging.info("MissedYellow: %d", missedYellow)
 		if missedYellow > 7:
 			print("Can't see yellow, turning right", (missedYellow*missedColourOffset))
 			yellowMarker = (int(1280 + missedColourOffset * missedYellow), 0 )
-			# middle red, very far right Yellow, turns right
+					# middle red, very far right Yellow, turns right
 		else:
 			print("Missed Yellow: ", missedYellow)
-			yellowMarker = False
 
 	if visual:
 		for x in range(i + 1):
 			cv2.imshow("gate " + str(i), red + yellow)
+	print("Red Marker: ", redMarker)
+	print("Yellow Marker: ", yellowMarker)
 	logging.info("Red marker: %s", str(redMarker))
 	logging.info("Yellow marker: %s", str(yellowMarker))
 	return redMarker, yellowMarker
