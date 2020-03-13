@@ -60,8 +60,8 @@ def findLineMarkers(red, yellow, i, visual):
 	if visual:
 		for x in range(i + 1):
 			cv2.imshow("gate " + str(i), red + yellow)
-	print("Red Marker: ", redMarker)
-	print("Yellow Marker: ", yellowMarker)
+	#print("Red Marker: ", redMarker)
+	#print("Yellow Marker: ", yellowMarker)
 	logging.info("Red marker: %s", str(redMarker))
 	logging.info("Yellow marker: %s", str(yellowMarker))
 	return redMarker, yellowMarker
@@ -69,6 +69,8 @@ def findLineMarkers(red, yellow, i, visual):
 
 def calculateReading(gateDict):
 
+	if "pastCom" not in calculateReading.__dict__:
+		calculateReading.pastCom = 0
 	totalValue = 0 
 	cameraValue = 0
 	print("Gates: ", len(gateDict))
