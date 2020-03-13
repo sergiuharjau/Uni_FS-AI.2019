@@ -4,11 +4,7 @@ import numpy as np
 import cv2 
 import serial 
 import logging
-
 from globals import width, newComOffset, missedColourOffset, maxSpeedUp, steeringFactor, carVelocity
-
-#sys.path.insert(0, '../../fspycan/lib/') #fork from DavidCroft's fspycan github repo.
-#import fspycan_ext
 
 missedRed = 0
 missedYellow = 0
@@ -20,7 +16,6 @@ def findLineMarkers(red, yellow, i, visual):
 	logging.info("Processing gate %d",i)
 
 	redIndex = np.where(red == 255)
-
 	redMarker = False
 	try:
 		redMarker = (redIndex[1][-1], 0)
@@ -38,7 +33,6 @@ def findLineMarkers(red, yellow, i, visual):
 
 	yellowIndex = np.where(yellow == 255)
 	yellowMarker = False
-	
 	offset = 0 if isinstance(redMarker, bool) else redMarker[0]
 
 	for element in yellowIndex[1]:
@@ -53,15 +47,12 @@ def findLineMarkers(red, yellow, i, visual):
 		if missedYellow > 7:
 			print("Can't see yellow, turning right", (missedYellow*missedColourOffset))
 			yellowMarker = (int(1280 + missedColourOffset * missedYellow), 0 )
-					# middle red, very far right Yellow, turns right
 		else:
 			print("Missed Yellow: ", missedYellow)
 
 	if visual:
 		for x in range(i + 1):
 			cv2.imshow("gate " + str(i), red + yellow)
-	#print("Red Marker: ", redMarker)
-	#print("Yellow Marker: ", yellowMarker)
 	logging.info("Red marker: %s", str(redMarker))
 	logging.info("Yellow marker: %s", str(yellowMarker))
 	return redMarker, yellowMarker
@@ -73,7 +64,6 @@ def calculateReading(gateDict):
 		calculateReading.pastCom = 0
 	totalValue = 0 
 	cameraValue = 0
-	print("Gates: ", len(gateDict))
 
 	for key in gateDict:
 		target = gateDict[key][0][0] #pastValue - currentValue
