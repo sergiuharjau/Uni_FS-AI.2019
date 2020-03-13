@@ -1,27 +1,24 @@
 import time
-from imProc import imProcessing
-from cmds import calculateReading, issueCommands
-from globals import pixelStrip, startFrom, logInitial
-import cv2
 import logging
+from imProc import imProcessing
+from globals import pixelStrip, startFrom
 #from gps import GPS
 #from geopy import distance
 
-def mainProgram(visual, rc, cFlip, ic):
+def mainProgram(visual, cFlip, ic):
 # //Used when stopping is needed.
 #     gps = GPS()
 #     while gps.getGPS(force=1) == (0,0):
 #         print("Awaiting GPS lock.")
-#         time.sleep(1) 
-# 
-    calculateReading.pastCom = 0  # in case we don't see cones straight away
+#         time.sleep(1)
+#
     startTime = time.time()
-    # lapCounter = 0 
+    # lapCounter = 0
     # timeMarker = time.time()
     # setStart = True
 
     original_image, depth = ic.latest()
-    
+
     depth_data_ocv = depth[startFrom:startFrom + pixelStrip]
     image_ocv = original_image[startFrom:startFrom + pixelStrip]
 
@@ -38,15 +35,15 @@ def mainProgram(visual, rc, cFlip, ic):
 #                     gps.coords = (-1,-1)
 #             if time.time() - timeMarker > 70:
 #                velocity -= 50
-#             if time.time()-timeMarker > 75: #only checks 30s after we've passed the starting point
+#             if time.time()-timeMarker > 75: #only checks 30s after
 #                 gps.getGPS(timeBound=2)
-#                 if distance.distance(gps.getCoords(), startingPos).m < 7: #5m within the finish line
+#                 if distance.distance(gps.getCoords(), startingPos).m < 7: e
 #                     lapCounter += 1
 #                     timeMarker = time.time() #resets the time marker
-#                     if lapCounter == 10: #change to 10 in the future 
+#                     if lapCounter == 10: #change to 10 in the future
 #                         raise KeyboardInterrupt
-# """   
-       
+# """
+
     ic.pub(steering, velocity)
 
     print("Steering: %d, Velocity: %d" % (steering, velocity))
