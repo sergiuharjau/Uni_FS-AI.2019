@@ -14,7 +14,7 @@ import logging
 
 class Image_converter:
 
-  def __init__(self, visual, rc, cFlip):
+  def __init__(self, visual, cFlip):
     self.visual = visual
     self.rc = rc
     self.cFlip = cFlip
@@ -40,7 +40,7 @@ class Image_converter:
     except CvBridgeError as e:
       print(e)
 
-    mainProgram(self.visual, self.rc, self.cFlip, self)
+    mainProgram(self.visual, self.cFlip, self)
 
   def latest(self):
     return self.cv_image, self.cv_depth
@@ -63,10 +63,10 @@ def mainRosNode(args=[]):
   rospy.spin()
 
 if __name__ == '__main__':
-    visual= False; green= False; rc=False; cFlip=0
+    visual= False; green= False; cFlip=0
 
     for argument in sys.argv[1:]:
         exec(argument)
 
-    ic = Image_converter(visual, green, rc, cFlip)
+    ic = Image_converter(visual, green, cFlip)
     mainRosNode(sys.argv)
