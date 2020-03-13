@@ -12,26 +12,13 @@ def findGates(red, yellow, depth, firstPass, gateDistance, maxThresh, numberGate
         findGates.result = []
 
     conesDepth = cv2.bitwise_and(depth, depth, mask=red + yellow)
-    # depth info just where the cones are
-    #print("Len depth", len(depth))
-    #print("Len red", len(red))
-    #for element in conesDepth:
-       #for x in element:
-         #print(x, end=", ")
-       #print()
-    #print("Gate distance", gateDistance)
-    #print("Max thresh", maxThresh)
+
     conesDepth[conesDepth < gateDistance] = np.nan #used to be np.nan
     conesDepth[conesDepth > maxThresh] = np.nan #used to be np.nan
     planeDistance = np.nanmin(conesDepth)
-    #print(conesDepth)
-    #print("Plane distance: ", planeDistance)
 
     if np.isnan(planeDistance) or np.isinf(planeDistance):
-        print("Stopped looking for gates.")
         return None
-
-    print("Gate distance: ", round(planeDistance,2))
 
     maxFirstGate = planeDistance + 1
 
