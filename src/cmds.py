@@ -102,38 +102,3 @@ def calculateReading(gateDict):
 
 	calculateReading.pastCom = steering
 	return round(steering/steeringFactor), round(velocity)
-
-def issueCommands(steering=0, velocity=0, exit=False, visual=False, replay=False, record=False, rc=False):
-	return 0
-	if not replay and not record and not visual and not rc:
-		if 'car' not in issueCommands.__dict__:  # only runs once
-			issueCommands.car = fspycan_ext.Car("can0")
-			issueCommands.car.init()
-
-			print("Initiating CAN setup.")
-			logging.info("Setting up can Device.")
-			issueCommands.car.setupCAN()  # function runs until we finish setup
-			print("Setup finished gracefully")
-
-		logging.info("Setting steering and velocity.")
-		issueCommands.car.set_steering_velocity(int(steering*-1), int(velocity))
-		logging.info("CAN data set.")
-		# we only set the steering here, the loop runs on a different c++ thread
-
-		if exit:  # can exit protocol
-			print("Initiating CAN exit.")
-			issueCommands.car.exitCAN()  # runs until we exit gracefully
-
-		
-	elif rc == 12:
-		if 'ser' not in issueCommands.__dict__:
-			issueCommands.ser = serial.Serial("/dev/ttyUSB0", 115200, timeout=5)
-
-		steering = min(17, max(-17, steering))
-		print(steering)
-		commandSteering = "b " + str(1500+int(17.5*steering)) + " \n"
-		print(commandSteering)         
-		issueCommands.ser.write(commandSteering.encode())
-
-		commandVelocity = "a " + str(1525 + int((velocity-40)/2)) + " \n"
-		issueCommands.ser.write(commandVelocity.encode())
