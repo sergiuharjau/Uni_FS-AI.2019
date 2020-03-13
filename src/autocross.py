@@ -2,6 +2,7 @@ import time
 import logging
 from imProc import imProcessing
 from globals import pixelStrip, startFrom
+from cmds import calculateReading
 #from gps import GPS
 #from geopy import distance
 
@@ -41,7 +42,7 @@ def mainProgram(visual, cFlip, ros):
 #                         raise KeyboardInterrupt
 # """
 
-    ros.pub(steering, velocity)
+    ros.publishCommands(steering, velocity)
 
     print("Steering: %d, Velocity: %d" % (steering, velocity))
     logging.info("Steering: %d, Velocity: %d", steering, velocity)
