@@ -6,15 +6,12 @@ from globals import startFrom, pixelStrip, width, steeringFactor
 import logging
 import threading
 
-def imProcessing(t, image_ocv, depth_data_ocv, visual=False, original_image=None, green=False, cFlip=0, eight=0, swapCircles=0, exitDetection=0, gates=3):
+def imProcessing(image_ocv, depth_data_ocv, visual=False, original_image=None, cFlip=0, eight=0, swapCircles=0, gates=3):
 
 	logging.info("Started image processing.")
-	maskRed, maskYellow, stop = findColour(image_ocv, green, cFlip, exitDetection)
+	maskRed, maskYellow = findColour(image_ocv, cFlip)
 	logging.info("Received colour data.")
 
-	if stop == True:
-		print("Attention, pedestrian!")
-		raise KeyboardInterrupt
 	logging.info("Finding gates.")
 	print("Gates to look for", gates)
 	findGates(maskRed, maskYellow, depth_data_ocv, True, 2, 15, gates) #just one gate
@@ -51,12 +48,4 @@ def imProcessing(t, image_ocv, depth_data_ocv, visual=False, original_image=None
 		cv2.waitKey(10)
 
 	logging.info("Finished image processing.")
-
-	if exitDetection:
-		if stop == "Out of sight":
-			steering = 0 
-		else:
-			steering = (width/2 - stop) / steeringFactor
-		velocity = 100
-
 	return steering, velocity

@@ -14,9 +14,8 @@ import logging
 
 class Image_converter:
 
-  def __init__(self, visual, green, rc, cFlip):
+  def __init__(self, visual, rc, cFlip):
     self.visual = visual
-    self.green = green
     self.rc = rc
     self.cFlip = cFlip
     self.bridge = CvBridge()
@@ -41,7 +40,7 @@ class Image_converter:
     except CvBridgeError as e:
       print(e)
 
-    mainProgram(self.visual, self.green, self.rc, self.cFlip, self)
+    mainProgram(self.visual, self.rc, self.cFlip, self)
 
   def latest(self):
     return self.cv_image, self.cv_depth

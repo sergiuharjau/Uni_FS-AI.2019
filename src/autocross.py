@@ -7,7 +7,7 @@ import logging
 #from gps import GPS
 #from geopy import distance
 
-def mainProgram(visual, green, rc, cFlip, ic):
+def mainProgram(visual, rc, cFlip, ic):
 # //Used when stopping is needed.
 #     gps = GPS()
 #     while gps.getGPS(force=1) == (0,0):
@@ -25,11 +25,10 @@ def mainProgram(visual, green, rc, cFlip, ic):
     depth_data_ocv = depth[startFrom:startFrom + pixelStrip]
     image_ocv = original_image[startFrom:startFrom + pixelStrip]
 
-    steering, velocity = imProcessing(None, image_ocv, depth_data_ocv, visual, original_image, green, cFlip)
+    steering, velocity = imProcessing(image_ocv, depth_data_ocv, visual, original_image, cFlip)
 
 #   steering = min(19, max(-19, steering))
 #Uncomment to cap steering to a certain boundary
-
 # """ //To be used when counting laps
 #             if setStart:
 #                 velocity -= 30
@@ -47,11 +46,9 @@ def mainProgram(visual, green, rc, cFlip, ic):
 #                     if lapCounter == 10: #change to 10 in the future 
 #                         raise KeyboardInterrupt
 # """          
-
         ic.pub(steering, velocity)
 
-        print("Steering: ", steering)
-        print("Velocity: ", velocity)
+        print("Steering: %d, Velocity: %d" % (steering, velocity))
         logging.info("Steering: %d, Velocity: %d", steering, velocity)
 
         #time.sleep(1) ??
@@ -61,7 +58,3 @@ def mainProgram(visual, green, rc, cFlip, ic):
 
         logging.info("\nTotal seconds: %d", time.time()-startTime)
         logging.info("Framerate: %d", 1 / (time.time() - startTime))
-
-if __name__ == "__main__":
-
-    mainProgram(visual, green, record, replay, loop, rc, cFlip, None)
