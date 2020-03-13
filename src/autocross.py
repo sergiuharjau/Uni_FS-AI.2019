@@ -25,29 +25,27 @@ def mainProgram(visual, cFlip, ros):
     steering, velocity = imProcessing(image_ocv, depth_data_ocv, visual, original_image, cFlip)
 #   steering = min(19, max(-19, steering))
 #Uncomment to cap steering to a certain boundary
-# """ //To be used when counting laps
-#             if setStart:
-#                 velocity -= 30
-#                 if time.time()-startTime > 12:
-#                     startingPos = ros.gps
-#                     setStart = False
-#                     ros.gps
-#             if time.time() - timeMarker > 70:
-#                velocity -= 50
-#             if time.time()-timeMarker > 75: #only checks 30s after
-#                 if distance.distance(ros.gps, startingPos).m < 7: e
-#                     lapCounter += 1
-#                     timeMarker = time.time() #resets the time marker
-#                     if lapCounter == 10: #change to 10 in the future
-#                         raise KeyboardInterrupt
-# """
+    """ //To be used when counting laps
+             if setStart:
+                 velocity -= 30
+                 if time.time()-startTime > 12:
+                     startingPos = ros.gps                    
+                      setStart = False
+                      ros.gps
+              if time.time() - timeMarker > 70:
+                velocity -= 50
+             if time.time()-timeMarker > 75: #only checks 30s after
+                 if distance.distance(ros.gps, startingPos).m < 7: e
+                     lapCounter += 1
+                     timeMarker = time.time() #resets the time marker
+                     if lapCounter == 10: #change to 10 in the future
+                         raise KeyboardInterrupt
+    """
 
     ros.publishCommands(steering, velocity)
 
     print("Steering: %d, Velocity: %d" % (steering, velocity))
     logging.info("Steering: %d, Velocity: %d", steering, velocity)
-
-    #time.sleep(1) ??
 
     print("Seconds it took: ", time.time() - startTime)
     print("Actual framerate: ", 1 / (time.time() - startTime))
