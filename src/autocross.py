@@ -5,46 +5,43 @@ from globals import pixelStrip, startFrom
 #from gps import GPS
 #from geopy import distance
 
-def mainProgram(visual, cFlip, ic):
+def mainProgram(visual, cFlip, ros):
 # //Used when stopping is needed.
-#     gps = GPS()
-#     while gps.getGPS(force=1) == (0,0):
+#     while ros.gps == (0,0):
 #         print("Awaiting GPS lock.")
 #         time.sleep(1)
-#
-    startTime = time.time()
+# 
     # lapCounter = 0
     # timeMarker = time.time()
     # setStart = True
 
-    original_image, depth = ic.latest()
+    startTime = time.time()
 
+    original_image, depth = ros.latestCamera()
     depth_data_ocv = depth[startFrom:startFrom + pixelStrip]
     image_ocv = original_image[startFrom:startFrom + pixelStrip]
 
     steering, velocity = imProcessing(image_ocv, depth_data_ocv, visual, original_image, cFlip)
-
 #   steering = min(19, max(-19, steering))
 #Uncomment to cap steering to a certain boundary
 # """ //To be used when counting laps
 #             if setStart:
 #                 velocity -= 30
 #                 if time.time()-startTime > 12:
-#                     startingPos = gps.getGPS()
+#                     startingPos = ros.gps
 #                     setStart = False
-#                     gps.coords = (-1,-1)
+#                     ros.gps
 #             if time.time() - timeMarker > 70:
 #                velocity -= 50
 #             if time.time()-timeMarker > 75: #only checks 30s after
-#                 gps.getGPS(timeBound=2)
-#                 if distance.distance(gps.getCoords(), startingPos).m < 7: e
+#                 if distance.distance(ros.gps, startingPos).m < 7: e
 #                     lapCounter += 1
 #                     timeMarker = time.time() #resets the time marker
 #                     if lapCounter == 10: #change to 10 in the future
 #                         raise KeyboardInterrupt
 # """
 
-    ic.pub(steering, velocity)
+    ros.pub(steering, velocity)
 
     print("Steering: %d, Velocity: %d" % (steering, velocity))
     logging.info("Steering: %d, Velocity: %d", steering, velocity)

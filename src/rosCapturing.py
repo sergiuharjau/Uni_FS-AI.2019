@@ -1,28 +1,27 @@
-#!/usr/bin/env python3
-
 import sys
 import rospy
 import cv2
+import logging
+import numpy as np
 from geometry_msgs.msg import Twist
-from std_msgs.msg import String
 from sensor_msgs.msg import  Image
 from cv_bridge import CvBridge, CvBridgeError
-import numpy as np
-import time
+from sensor_msgs.msg import NavSatFix
 from autocross import mainProgram
-import logging
 
-class Image_converter:
+class Image_Converter:
 
   def __init__(self, visual, cFlip):
     self.visual = visual
-    self.rc = rc
     self.cFlip = cFlip
     self.bridge = CvBridge()
-    self.image_sub = rospy.Subscriber("image_topic", Image, self.callback)
+
+    self.image_sub = rospy.Subscriber("image_topic", Image, self.imageCallback)
     self.depth_pub = rospy.Subscriber("depth_topic", Image, self.depthCallback)
+    self.depth_pub = rospy.Subscriber("gps_topic", NavSatFix, self.gpsCallback)
     self.publisher = rospy.Publisher('cmd_vel', Twist, queue_size=10)
     print("Subscribed to topic")
+
     self.cv_image = np.zeros((720,1280,3), np.uint8)
     self.cv_depth = np.zeros((720,1280,1), np.uint8)
 
@@ -33,16 +32,18 @@ class Image_converter:
     except CvBridgeError as e:
       print(e)
 
-  def callback(self, data):
+  def imageCallback(self, data):
     try:
       intermediate = self.bridge.imgmsg_to_cv2(data, "bgr8")
       self.cv_image = cv2.resize(intermediate, (1280, 720))
     except CvBridgeError as e:
       print(e)
-
     mainProgram(self.visual, self.cFlip, self)
 
-  def latest(self):
+  def gpsCallback(self, data):
+    self.gps = (data.latitude, data.longitude)
+
+  def latestCamera(self):
     return self.cv_image, self.cv_depth
 
   def pub(self, steering, velocity):
@@ -55,11 +56,10 @@ class Image_converter:
         vel_msg.angular.z=-0.7
     self.publisher.publish(vel_msg)
 
-
-def mainRosNode(args=[]):
+def mainRosNode():
 
   print("Creating ROS node to grab OpenCV images.")
-  rospy.init_node('image_converter', anonymous=True)
+  rospy.init_node('Image_Converter', anonymous=True)
   rospy.spin()
 
 if __name__ == '__main__':
@@ -68,5 +68,5 @@ if __name__ == '__main__':
     for argument in sys.argv[1:]:
         exec(argument)
 
-    ic = Image_converter(visual, green, cFlip)
-    mainRosNode(sys.argv)
+    ros = Image_Converter(visual, green, cFlip)
+    mainRosNode()
