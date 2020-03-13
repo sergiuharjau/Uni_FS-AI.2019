@@ -12,12 +12,12 @@ from geopy import distance
 
 def main(visual, green, record, replay, loop, rc, cFlip):
 
-"""//Used when stopping is needed.
+    """//Used when stopping is needed.
     gps = GPS()
     while gps.getGPS(force=1) == (0,0):
         print("Awaiting GPS lock.")
-        time.sleep(1)
-"""
+        time.sleep(1) 
+    """
 
     ic = ImageCap(False, replay)  # ImCapt() #initializes zed object
   
@@ -58,7 +58,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
 #Uncomment to cap steering to a certain boundary
 
 
-""" //To be used when counting laps
+            """ //To be used when counting laps
 
             if setStart:
                 velocity -= 30
@@ -75,7 +75,7 @@ def main(visual, green, record, replay, loop, rc, cFlip):
                     timeMarker = time.time() #resets the time marker
                     if lapCounter == 10: #change to 10 in the future 
                         raise KeyboardInterrupt
-"""          
+            """          
             print("Steering: ", steering)
             print("Velocity: ", velocity)
 
