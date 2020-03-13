@@ -14,12 +14,9 @@ import logging
 
 class Image_converter:
 
-  def __init__(self, visual, green, record, replay, loop, rc, cFlip):
+  def __init__(self, visual, green, rc, cFlip):
     self.visual = visual
     self.green = green
-    self.record = record
-    self.replay = replay
-    self.loop = loop
     self.rc = rc
     self.cFlip = cFlip
     self.bridge = CvBridge()
@@ -27,9 +24,8 @@ class Image_converter:
     self.depth_pub = rospy.Subscriber("depth_topic", Image, self.depthCallback)
     self.publisher = rospy.Publisher('cmd_vel', Twist, queue_size=10)
     print("Subscribed to topic")
-    height = 720 ; width = 1280
-    self.cv_image = np.zeros((height,width,3), np.uint8)
-    self.cv_depth = np.zeros((height,width,1), np.uint8)
+    self.cv_image = np.zeros((720,1280,3), np.uint8)
+    self.cv_depth = np.zeros((720,1280,1), np.uint8)
 
   def depthCallback(self, data):
     try:
@@ -68,10 +64,10 @@ def mainRosNode(args=[]):
   rospy.spin()
 
 if __name__ == '__main__':
-    visual= False; green= False; record= False; replay= False; loop= True; rc=False; cFlip=0 ;
+    visual= False; green= False; rc=False; cFlip=0
 
     for argument in sys.argv[1:]:
         exec(argument)
 
-    ic = Image_converter(visual, green, record, replay, loop, rc, cFlip)
+    ic = Image_converter(visual, green, rc, cFlip)
     mainRosNode(sys.argv)
