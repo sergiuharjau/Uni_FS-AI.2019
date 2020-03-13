@@ -45,16 +45,17 @@ def mainProgram(visual, rc, cFlip, ic):
 #                     timeMarker = time.time() #resets the time marker
 #                     if lapCounter == 10: #change to 10 in the future 
 #                         raise KeyboardInterrupt
-# """          
-        ic.pub(steering, velocity)
+# """   
+       
+    ic.pub(steering, velocity)
 
-        print("Steering: %d, Velocity: %d" % (steering, velocity))
-        logging.info("Steering: %d, Velocity: %d", steering, velocity)
+    print("Steering: %d, Velocity: %d" % (steering, velocity))
+    logging.info("Steering: %d, Velocity: %d", steering, velocity)
 
-        #time.sleep(1) ??
+    #time.sleep(1) ??
 
-        print("Seconds it took: ", time.time() - startTime)
-        print("Actual framerate: ", 1 / (time.time() - startTime))
+    print("Seconds it took: ", time.time() - startTime)
+    print("Actual framerate: ", 1 / (time.time() - startTime))
 
-        logging.info("\nTotal seconds: %d", time.time()-startTime)
-        logging.info("Framerate: %d", 1 / (time.time() - startTime))
+    logging.info("\nTotal seconds: %d", time.time()-startTime)
+    logging.info("Framerate: %d", 1 / (time.time() - startTime))
