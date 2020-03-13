@@ -3,10 +3,9 @@ import rospy
 import cv2
 import logging
 import numpy as np
-from geometry_msgs.msg import Twist
-from sensor_msgs.msg import  Image
+from webots_ros.srv  import set_float
+from sensor_msgs.msg import  Image, NavSatFix
 from cv_bridge import CvBridge, CvBridgeError
-from sensor_msgs.msg import NavSatFix
 from autocross import mainProgram
 
 class Image_Converter:
@@ -16,10 +15,11 @@ class Image_Converter:
     self.cFlip = cFlip
     self.bridge = CvBridge()
 
-    self.image_sub = rospy.Subscriber("image_topic", Image, self.imageCallback)
-    self.depth_pub = rospy.Subscriber("depth_topic", Image, self.depthCallback)
-    self.depth_pub = rospy.Subscriber("gps_topic", NavSatFix, self.gpsCallback)
-    self.publisher = rospy.Publisher('cmd_vel', Twist, queue_size=10)
+    self.image_sub = rospy.Subscriber("/fsai/zedcam_left_camera/image", Image, self.imageCallback)
+    self.depth_sub = rospy.Subscriber("/fsai/zedcam_left_depth/range_image", Image, self.depthCallback)
+    self.gps_sub = rospy.Subscriber("gps_topic", NavSatFix, self.gpsCallback)
+    self.set_steering = rospy.ServiceProxy('/fsai/automobile/set_steering_angle', set_float)
+    self.set_velocity = rospy.ServiceProxy('/fsai/automobile/set_cruising_speed', set_float)
     print("Subscribed to topic")
 
     self.cv_image = np.zeros((720,1280,3), np.uint8)
@@ -46,27 +46,21 @@ class Image_Converter:
   def latestCamera(self):
     return self.cv_image, self.cv_depth
 
-  def pub(self, steering, velocity):
-    vel_msg = Twist()
-    vel_msg.linear.x = velocity
-    vel_msg.angular.z = steering / 15 #to get the right data in cmd_vel
-    if vel_msg.angular.z > 0.7:
-        vel_msg.angular.z=0.7
-    elif vel_msg.angular.z < -0.7:
-        vel_msg.angular.z=-0.7
-    self.publisher.publish(vel_msg)
+  def publishCommands(self, steering, velocity):
+    steering = max(min(0.7, steering/20), -0.7)
+    self.set_velocity(velocity)
+    self.set_steering(steering)
 
 def mainRosNode():
-
   print("Creating ROS node to grab OpenCV images.")
   rospy.init_node('Image_Converter', anonymous=True)
   rospy.spin()
 
 if __name__ == '__main__':
-    visual= False; green= False; cFlip=0
+    visual= False; cFlip=0
 
     for argument in sys.argv[1:]:
         exec(argument)
 
-    ros = Image_Converter(visual, green, cFlip)
+    ros = Image_Converter(visual, cFlip)
     mainRosNode()
