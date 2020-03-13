@@ -45,7 +45,7 @@ class Image_converter:
     except CvBridgeError as e:
       print(e)
 
-    mainProgram(self.visual, self.green, self.record, self.replay, 1, self.rc, self.cFlip, self)
+    mainProgram(self.visual, self.green, self.rc, self.cFlip, self)
 
   def latest(self):
     return self.cv_image, self.cv_depth

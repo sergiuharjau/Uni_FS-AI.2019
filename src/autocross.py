@@ -1,65 +1,34 @@
-import sys
 import time
-import threading
 from imProc import imProcessing
-#from capturing import ImageCap
-#from rosCapturing import Image_converter, mainRosNode 
 from cmds import calculateReading, issueCommands
 from globals import pixelStrip, startFrom, logInitial
 import cv2
 import logging
-
 #from gps import GPS
 #from geopy import distance
 
-def mainProgram(visual, green, record, replay, loop, rc, cFlip, ic):
+def mainProgram(visual, green, rc, cFlip, ic):
 # //Used when stopping is needed.
 #     gps = GPS()
 #     while gps.getGPS(force=1) == (0,0):
 #         print("Awaiting GPS lock.")
 #         time.sleep(1) 
 # 
-
-    #ic = ImageCap(False, replay)  # ImCapt() #initializes zed object
-    
-
-    
-    #if not visual and not rc: #initalizes CAN connection
-        #issueCommands(0,0)
-
     calculateReading.pastCom = 0  # in case we don't see cones straight away
     startTime = time.time()
-    listReadings = []
-    lapCounter = 0 
-    timeMarker = time.time()
-    setStart = True
+    # lapCounter = 0 
+    # timeMarker = time.time()
+    # setStart = True
 
-    try:
-        i=0
-        while loop:  # for amount in range(framesToDo):
-            time1 = time.time()
-            logging.warning("\n*********\nFrame: " + str(i))
-            image, depth = ic.latest()
-            logging.info("Getting latest image and depth.")
-            
+    original_image, depth = ic.latest()
+    
+    depth_data_ocv = depth[startFrom:startFrom + pixelStrip]
+    image_ocv = original_image[startFrom:startFrom + pixelStrip]
 
-            if not record:
-                original_image = image
-                depth_data_ocv = depth[startFrom:startFrom + pixelStrip]
-                image_ocv = original_image[startFrom:startFrom + pixelStrip]
+    steering, velocity = imProcessing(None, image_ocv, depth_data_ocv, visual, original_image, green, cFlip)
 
-                steering, velocity = imProcessing(None, image_ocv, depth_data_ocv, visual, original_image, green, cFlip)
-            else:
-                steering,velocity = 0,0
-                cv2.imshow("image", image)
-                cv2.waitKey(1)
-
-            #if ic.exit:  # when we replay tests
-            #    raise KeyboardInterrupt
-
-#            steering = min(19, max(-19, steering))
+#   steering = min(19, max(-19, steering))
 #Uncomment to cap steering to a certain boundary
-
 
 # """ //To be used when counting laps
 #             if setStart:
@@ -78,67 +47,21 @@ def mainProgram(visual, green, record, replay, loop, rc, cFlip, ic):
 #                     if lapCounter == 10: #change to 10 in the future 
 #                         raise KeyboardInterrupt
 # """          
-            print("Steering: ", steering)
-            print("Velocity: ", velocity)
 
-            logging.info("Steering: %d, Velocity: %d", steering, velocity)
-            
-            #issueCommands(steering, velocity, False, visual, replay, record, rc)
-            ic.pub(steering, velocity)
+        ic.pub(steering, velocity)
 
-            listReadings.append(steering)
-            
-            if not isinstance(loop, bool):
-                loop -= 1
-                if loop == 0:
-                    raise KeyboardInterrupt
-            
-            time.sleep(1)
-            # if 'car' in issueCommands.__dict__:
-            #       if issueCommands.car.checkEBS():
-            #           raise KeyboardInterrupt
-            i+=1
+        print("Steering: ", steering)
+        print("Velocity: ", velocity)
+        logging.info("Steering: %d, Velocity: %d", steering, velocity)
 
-            logging.warning("End of frame.\n\n")
-
-            #print(time.time()-time1)
-
-            #print("Frames left: ", framesToDo-amount)
-
-    except KeyboardInterrupt:
-        
-        # if not replay:
-        #     ic.zed.close()
-        # issueCommands(0, 0, False, visual, replay, record, rc)
-        # time.sleep(4)
-        # issueCommands(0, 0, True, visual, replay, record, rc) #initiates the exit protocol
-
-        f1 = open("../test/pastMission.txt", "w")
-        for element in listReadings:
-            f1.write(str(element) + ",")
-        f1.close()
+        #time.sleep(1) ??
 
         print("Seconds it took: ", time.time() - startTime)
-        print("Total frames: ", len(listReadings))
-        print("Actual framerate: ", len(listReadings) / (time.time() - startTime))
-        print("\nFINISH")
+        print("Actual framerate: ", 1 / (time.time() - startTime))
 
         logging.info("\nTotal seconds: %d", time.time()-startTime)
-        logging.info("Framerate: %d", len(listReadings) / (time.time() - startTime))
-        logging.warning("Mission end.\n\n")
-        quit()
-
+        logging.info("Framerate: %d", 1 / (time.time() - startTime))
 
 if __name__ == "__main__":
 
     mainProgram(visual, green, record, replay, loop, rc, cFlip, None)
-
-    """
-    What we need to do:
-
-    call the old FS-AI code in the CALLBACK of rosCapturing.py
-
-    So really flip everything on its head. 
-
-    Good luck Future Serge. 
-    """
