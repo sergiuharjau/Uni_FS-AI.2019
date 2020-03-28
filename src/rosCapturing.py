@@ -58,7 +58,7 @@ class Image_Converter:
             scan.ranges.append(-1)
         else:
             scan.ranges.append(self.cv_depth[slice_at][i])  # take the values at px 400 horizontally
-    print("Depth", self.cv_depth[slice_at])
+    #print("Depth", self.cv_depth[slice_at])
     #print("Scan", scan)
     self.scan_pub.publish(scan)
 
