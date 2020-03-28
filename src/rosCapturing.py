@@ -11,7 +11,7 @@ from sensor_msgs.msg import LaserScan
 
 class Image_Converter:
 
-  def __init__(self, visual, cFlip):
+  def __init__(self, visual, cFlip, autonomous):
     self.visual = visual
     self.cFlip = cFlip
     self.bridge = CvBridge()
@@ -68,7 +68,8 @@ class Image_Converter:
       self.cv_image = cv2.resize(intermediate, (1280, 720))
     except CvBridgeError as e:
       print(e)
-    mainProgram(self.visual, self.cFlip, self)
+    if autonomous:
+        mainProgram(self.visual, self.cFlip, self)
 
   def gpsCallback(self, data):
     self.gps = (data.latitude, data.longitude)
@@ -87,10 +88,10 @@ def mainRosNode():
   rospy.spin()
 
 if __name__ == '__main__':
-    visual= False; cFlip=0
+    visual= False; cFlip=0; autonomous=1;
 
     for argument in sys.argv[1:]:
         exec(argument)
 
-    ros = Image_Converter(visual, cFlip)
+    ros = Image_Converter(visual, cFlip, autonomous)
     mainRosNode()
